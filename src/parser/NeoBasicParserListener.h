@@ -37,56 +37,80 @@ public:
   virtual void enterPragmaDirective(NeoBasicParser::PragmaDirectiveContext *ctx) = 0;
   virtual void exitPragmaDirective(NeoBasicParser::PragmaDirectiveContext *ctx) = 0;
 
-  virtual void enterCanaryTestDirective(NeoBasicParser::CanaryTestDirectiveContext *ctx) = 0;
-  virtual void exitCanaryTestDirective(NeoBasicParser::CanaryTestDirectiveContext *ctx) = 0;
+  virtual void enterCanaryTestingDirective(NeoBasicParser::CanaryTestingDirectiveContext *ctx) = 0;
+  virtual void exitCanaryTestingDirective(NeoBasicParser::CanaryTestingDirectiveContext *ctx) = 0;
 
   virtual void enterDeclaration(NeoBasicParser::DeclarationContext *ctx) = 0;
   virtual void exitDeclaration(NeoBasicParser::DeclarationContext *ctx) = 0;
 
-  virtual void enterConstDeclaration(NeoBasicParser::ConstDeclarationContext *ctx) = 0;
-  virtual void exitConstDeclaration(NeoBasicParser::ConstDeclarationContext *ctx) = 0;
+  virtual void enterAccessSpecifier(NeoBasicParser::AccessSpecifierContext *ctx) = 0;
+  virtual void exitAccessSpecifier(NeoBasicParser::AccessSpecifierContext *ctx) = 0;
+
+  virtual void enterConstSentence(NeoBasicParser::ConstSentenceContext *ctx) = 0;
+  virtual void exitConstSentence(NeoBasicParser::ConstSentenceContext *ctx) = 0;
+
+  virtual void enterConstSpecifier(NeoBasicParser::ConstSpecifierContext *ctx) = 0;
+  virtual void exitConstSpecifier(NeoBasicParser::ConstSpecifierContext *ctx) = 0;
 
   virtual void enterConstClause(NeoBasicParser::ConstClauseContext *ctx) = 0;
   virtual void exitConstClause(NeoBasicParser::ConstClauseContext *ctx) = 0;
 
-  virtual void enterConstants(NeoBasicParser::ConstantsContext *ctx) = 0;
-  virtual void exitConstants(NeoBasicParser::ConstantsContext *ctx) = 0;
+  virtual void enterConstDeclare(NeoBasicParser::ConstDeclareContext *ctx) = 0;
+  virtual void exitConstDeclare(NeoBasicParser::ConstDeclareContext *ctx) = 0;
 
-  virtual void enterConstant(NeoBasicParser::ConstantContext *ctx) = 0;
-  virtual void exitConstant(NeoBasicParser::ConstantContext *ctx) = 0;
+  virtual void enterConstDeclareSingle(NeoBasicParser::ConstDeclareSingleContext *ctx) = 0;
+  virtual void exitConstDeclareSingle(NeoBasicParser::ConstDeclareSingleContext *ctx) = 0;
 
-  virtual void enterValDeclaration(NeoBasicParser::ValDeclarationContext *ctx) = 0;
-  virtual void exitValDeclaration(NeoBasicParser::ValDeclarationContext *ctx) = 0;
+  virtual void enterConstDeclareMultiple(NeoBasicParser::ConstDeclareMultipleContext *ctx) = 0;
+  virtual void exitConstDeclareMultiple(NeoBasicParser::ConstDeclareMultipleContext *ctx) = 0;
+
+  virtual void enterConstDeclareParallel(NeoBasicParser::ConstDeclareParallelContext *ctx) = 0;
+  virtual void exitConstDeclareParallel(NeoBasicParser::ConstDeclareParallelContext *ctx) = 0;
+
+  virtual void enterValSentence(NeoBasicParser::ValSentenceContext *ctx) = 0;
+  virtual void exitValSentence(NeoBasicParser::ValSentenceContext *ctx) = 0;
+
+  virtual void enterValSpecifier(NeoBasicParser::ValSpecifierContext *ctx) = 0;
+  virtual void exitValSpecifier(NeoBasicParser::ValSpecifierContext *ctx) = 0;
 
   virtual void enterValClause(NeoBasicParser::ValClauseContext *ctx) = 0;
   virtual void exitValClause(NeoBasicParser::ValClauseContext *ctx) = 0;
 
-  virtual void enterVarDeclaration(NeoBasicParser::VarDeclarationContext *ctx) = 0;
-  virtual void exitVarDeclaration(NeoBasicParser::VarDeclarationContext *ctx) = 0;
+  virtual void enterValDeclare(NeoBasicParser::ValDeclareContext *ctx) = 0;
+  virtual void exitValDeclare(NeoBasicParser::ValDeclareContext *ctx) = 0;
+
+  virtual void enterValDeclareSingle(NeoBasicParser::ValDeclareSingleContext *ctx) = 0;
+  virtual void exitValDeclareSingle(NeoBasicParser::ValDeclareSingleContext *ctx) = 0;
+
+  virtual void enterValDeclareMultiple(NeoBasicParser::ValDeclareMultipleContext *ctx) = 0;
+  virtual void exitValDeclareMultiple(NeoBasicParser::ValDeclareMultipleContext *ctx) = 0;
+
+  virtual void enterValDeclareParallel(NeoBasicParser::ValDeclareParallelContext *ctx) = 0;
+  virtual void exitValDeclareParallel(NeoBasicParser::ValDeclareParallelContext *ctx) = 0;
+
+  virtual void enterVarSentence(NeoBasicParser::VarSentenceContext *ctx) = 0;
+  virtual void exitVarSentence(NeoBasicParser::VarSentenceContext *ctx) = 0;
+
+  virtual void enterVarSpecifier(NeoBasicParser::VarSpecifierContext *ctx) = 0;
+  virtual void exitVarSpecifier(NeoBasicParser::VarSpecifierContext *ctx) = 0;
 
   virtual void enterVarClause(NeoBasicParser::VarClauseContext *ctx) = 0;
   virtual void exitVarClause(NeoBasicParser::VarClauseContext *ctx) = 0;
 
-  virtual void enterVariables(NeoBasicParser::VariablesContext *ctx) = 0;
-  virtual void exitVariables(NeoBasicParser::VariablesContext *ctx) = 0;
+  virtual void enterVarDeclare(NeoBasicParser::VarDeclareContext *ctx) = 0;
+  virtual void exitVarDeclare(NeoBasicParser::VarDeclareContext *ctx) = 0;
 
-  virtual void enterVariable(NeoBasicParser::VariableContext *ctx) = 0;
-  virtual void exitVariable(NeoBasicParser::VariableContext *ctx) = 0;
+  virtual void enterVarDeclareSingle(NeoBasicParser::VarDeclareSingleContext *ctx) = 0;
+  virtual void exitVarDeclareSingle(NeoBasicParser::VarDeclareSingleContext *ctx) = 0;
+
+  virtual void enterVarDeclareMultiple(NeoBasicParser::VarDeclareMultipleContext *ctx) = 0;
+  virtual void exitVarDeclareMultiple(NeoBasicParser::VarDeclareMultipleContext *ctx) = 0;
+
+  virtual void enterVarDeclareParallel(NeoBasicParser::VarDeclareParallelContext *ctx) = 0;
+  virtual void exitVarDeclareParallel(NeoBasicParser::VarDeclareParallelContext *ctx) = 0;
 
   virtual void enterStatement(NeoBasicParser::StatementContext *ctx) = 0;
   virtual void exitStatement(NeoBasicParser::StatementContext *ctx) = 0;
-
-  virtual void enterLabeledStatement(NeoBasicParser::LabeledStatementContext *ctx) = 0;
-  virtual void exitLabeledStatement(NeoBasicParser::LabeledStatementContext *ctx) = 0;
-
-  virtual void enterDebugingStatement(NeoBasicParser::DebugingStatementContext *ctx) = 0;
-  virtual void exitDebugingStatement(NeoBasicParser::DebugingStatementContext *ctx) = 0;
-
-  virtual void enterLoggingStatement(NeoBasicParser::LoggingStatementContext *ctx) = 0;
-  virtual void exitLoggingStatement(NeoBasicParser::LoggingStatementContext *ctx) = 0;
-
-  virtual void enterSExpressionStatement(NeoBasicParser::SExpressionStatementContext *ctx) = 0;
-  virtual void exitSExpressionStatement(NeoBasicParser::SExpressionStatementContext *ctx) = 0;
 
   virtual void enterSimpleStatement(NeoBasicParser::SimpleStatementContext *ctx) = 0;
   virtual void exitSimpleStatement(NeoBasicParser::SimpleStatementContext *ctx) = 0;
@@ -99,6 +123,15 @@ public:
 
   virtual void enterAssignmentStatement(NeoBasicParser::AssignmentStatementContext *ctx) = 0;
   virtual void exitAssignmentStatement(NeoBasicParser::AssignmentStatementContext *ctx) = 0;
+
+  virtual void enterAssignmentSingle(NeoBasicParser::AssignmentSingleContext *ctx) = 0;
+  virtual void exitAssignmentSingle(NeoBasicParser::AssignmentSingleContext *ctx) = 0;
+
+  virtual void enterAssignmentMultiple(NeoBasicParser::AssignmentMultipleContext *ctx) = 0;
+  virtual void exitAssignmentMultiple(NeoBasicParser::AssignmentMultipleContext *ctx) = 0;
+
+  virtual void enterAssignmentParallel(NeoBasicParser::AssignmentParallelContext *ctx) = 0;
+  virtual void exitAssignmentParallel(NeoBasicParser::AssignmentParallelContext *ctx) = 0;
 
   virtual void enterCompoundStatement(NeoBasicParser::CompoundStatementContext *ctx) = 0;
   virtual void exitCompoundStatement(NeoBasicParser::CompoundStatementContext *ctx) = 0;
@@ -193,8 +226,14 @@ public:
   virtual void enterSingleAssignmentOperator(NeoBasicParser::SingleAssignmentOperatorContext *ctx) = 0;
   virtual void exitSingleAssignmentOperator(NeoBasicParser::SingleAssignmentOperatorContext *ctx) = 0;
 
+  virtual void enterMultipleAssignmentOperator(NeoBasicParser::MultipleAssignmentOperatorContext *ctx) = 0;
+  virtual void exitMultipleAssignmentOperator(NeoBasicParser::MultipleAssignmentOperatorContext *ctx) = 0;
+
   virtual void enterCompoundAssignmentOperator(NeoBasicParser::CompoundAssignmentOperatorContext *ctx) = 0;
   virtual void exitCompoundAssignmentOperator(NeoBasicParser::CompoundAssignmentOperatorContext *ctx) = 0;
+
+  virtual void enterLabelIdentifier(NeoBasicParser::LabelIdentifierContext *ctx) = 0;
+  virtual void exitLabelIdentifier(NeoBasicParser::LabelIdentifierContext *ctx) = 0;
 
   virtual void enterSymbolIdentifier(NeoBasicParser::SymbolIdentifierContext *ctx) = 0;
   virtual void exitSymbolIdentifier(NeoBasicParser::SymbolIdentifierContext *ctx) = 0;
@@ -271,8 +310,8 @@ public:
   virtual void enterExpressions(NeoBasicParser::ExpressionsContext *ctx) = 0;
   virtual void exitExpressions(NeoBasicParser::ExpressionsContext *ctx) = 0;
 
-  virtual void enterJuxtapositionExpression(NeoBasicParser::JuxtapositionExpressionContext *ctx) = 0;
-  virtual void exitJuxtapositionExpression(NeoBasicParser::JuxtapositionExpressionContext *ctx) = 0;
+  virtual void enterJuxtapositionExpressions(NeoBasicParser::JuxtapositionExpressionsContext *ctx) = 0;
+  virtual void exitJuxtapositionExpressions(NeoBasicParser::JuxtapositionExpressionsContext *ctx) = 0;
 
   virtual void enterPrimaryExpressions(NeoBasicParser::PrimaryExpressionsContext *ctx) = 0;
   virtual void exitPrimaryExpressions(NeoBasicParser::PrimaryExpressionsContext *ctx) = 0;
@@ -304,6 +343,9 @@ public:
   virtual void enterSlicingRange(NeoBasicParser::SlicingRangeContext *ctx) = 0;
   virtual void exitSlicingRange(NeoBasicParser::SlicingRangeContext *ctx) = 0;
 
+  virtual void enterRangeExpression(NeoBasicParser::RangeExpressionContext *ctx) = 0;
+  virtual void exitRangeExpression(NeoBasicParser::RangeExpressionContext *ctx) = 0;
+
   virtual void enterArguments(NeoBasicParser::ArgumentsContext *ctx) = 0;
   virtual void exitArguments(NeoBasicParser::ArgumentsContext *ctx) = 0;
 
@@ -321,6 +363,12 @@ public:
 
   virtual void enterGuardDefault(NeoBasicParser::GuardDefaultContext *ctx) = 0;
   virtual void exitGuardDefault(NeoBasicParser::GuardDefaultContext *ctx) = 0;
+
+  virtual void enterMacroExpression(NeoBasicParser::MacroExpressionContext *ctx) = 0;
+  virtual void exitMacroExpression(NeoBasicParser::MacroExpressionContext *ctx) = 0;
+
+  virtual void enterMacroCall(NeoBasicParser::MacroCallContext *ctx) = 0;
+  virtual void exitMacroCall(NeoBasicParser::MacroCallContext *ctx) = 0;
 
   virtual void enterLiteral(NeoBasicParser::LiteralContext *ctx) = 0;
   virtual void exitLiteral(NeoBasicParser::LiteralContext *ctx) = 0;
@@ -349,9 +397,6 @@ public:
   virtual void enterSequenceLiteral(NeoBasicParser::SequenceLiteralContext *ctx) = 0;
   virtual void exitSequenceLiteral(NeoBasicParser::SequenceLiteralContext *ctx) = 0;
 
-  virtual void enterCompositeLiteral(NeoBasicParser::CompositeLiteralContext *ctx) = 0;
-  virtual void exitCompositeLiteral(NeoBasicParser::CompositeLiteralContext *ctx) = 0;
-
   virtual void enterOptionLiteral(NeoBasicParser::OptionLiteralContext *ctx) = 0;
   virtual void exitOptionLiteral(NeoBasicParser::OptionLiteralContext *ctx) = 0;
 
@@ -366,6 +411,9 @@ public:
 
   virtual void enterStreamLiteral(NeoBasicParser::StreamLiteralContext *ctx) = 0;
   virtual void exitStreamLiteral(NeoBasicParser::StreamLiteralContext *ctx) = 0;
+
+  virtual void enterLoggingLevel(NeoBasicParser::LoggingLevelContext *ctx) = 0;
+  virtual void exitLoggingLevel(NeoBasicParser::LoggingLevelContext *ctx) = 0;
 
 
 };

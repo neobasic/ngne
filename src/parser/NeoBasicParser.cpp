@@ -54,14 +54,17 @@ void neobasicparserParserInitialize() {
   auto staticData = std::make_unique<NeoBasicParserStaticData>(
     std::vector<std::string>{
       "neoProgram", "oneLinerProgram", "scriptFileProgram", "instructionSentence", 
-      "directive", "interpreterDirective", "pragmaDirective", "canaryTestDirective", 
-      "declaration", "constDeclaration", "constClause", "constants", "constant", 
-      "valDeclaration", "valClause", "varDeclaration", "varClause", "variables", 
-      "variable", "statement", "labeledStatement", "debugingStatement", 
-      "loggingStatement", "sExpressionStatement", "simpleStatement", "emptyStatement", 
-      "expressionStatement", "assignmentStatement", "compoundStatement", 
-      "conditionalStatement", "ifStatement", "ifThenClause", "unlessStatement", 
-      "unlessClause", "prefixUnaryOperator", "posfixUnaryOperator", "unaryArithmeticOperator", 
+      "directive", "interpreterDirective", "pragmaDirective", "canaryTestingDirective", 
+      "declaration", "accessSpecifier", "constSentence", "constSpecifier", 
+      "constClause", "constDeclare", "constDeclareSingle", "constDeclareMultiple", 
+      "constDeclareParallel", "valSentence", "valSpecifier", "valClause", 
+      "valDeclare", "valDeclareSingle", "valDeclareMultiple", "valDeclareParallel", 
+      "varSentence", "varSpecifier", "varClause", "varDeclare", "varDeclareSingle", 
+      "varDeclareMultiple", "varDeclareParallel", "statement", "simpleStatement", 
+      "emptyStatement", "expressionStatement", "assignmentStatement", "assignmentSingle", 
+      "assignmentMultiple", "assignmentParallel", "compoundStatement", "conditionalStatement", 
+      "ifStatement", "ifThenClause", "unlessStatement", "unlessClause", 
+      "prefixUnaryOperator", "posfixUnaryOperator", "unaryArithmeticOperator", 
       "unaryBitwiseOperator", "unaryLogicalOperator", "unarySpreadOperator", 
       "unarySortOperator", "unaryCloneOperator", "unaryMetaOperator", "binaryExponentialOperator", 
       "binaryMultiplicativeOperator", "binaryAdditiveOperator", "bitShiftOperator", 
@@ -69,62 +72,94 @@ void neobasicparserParserInitialize() {
       "binaryComparisonOperator", "binaryRelationalOperator", "binaryConditionalOperator", 
       "binaryConjunctionOperator", "binaryExclusiveDisjunctionOperator", 
       "binaryDisjunctionOperator", "binaryCoalescingOperator", "assignmentOperator", 
-      "singleAssignmentOperator", "compoundAssignmentOperator", "symbolIdentifier", 
-      "qualifiedIdentifier", "identifiers", "symbolIdentifiers", "qualifiedIdentifiers", 
-      "type", "nativeType", "posfixTypeWrapper", "escalarType", "booleanType", 
-      "numericType", "numericDigit", "numericNatural", "numericInteger", 
-      "numericReal", "numericDecimal", "numericRatio", "numericComplex", 
-      "numericQuaternion", "temporalType", "characterType", "sequenceType", 
-      "compositeType", "metaType", "expressions", "juxtapositionExpression", 
-      "primaryExpressions", "expression", "primaryExpression", "operand", 
-      "factScope", "converter", "selector", "indexing", "slicing", "slicingRange", 
+      "singleAssignmentOperator", "multipleAssignmentOperator", "compoundAssignmentOperator", 
+      "labelIdentifier", "symbolIdentifier", "qualifiedIdentifier", "identifiers", 
+      "symbolIdentifiers", "qualifiedIdentifiers", "type", "nativeType", 
+      "posfixTypeWrapper", "escalarType", "booleanType", "numericType", 
+      "numericDigit", "numericNatural", "numericInteger", "numericReal", 
+      "numericDecimal", "numericRatio", "numericComplex", "numericQuaternion", 
+      "temporalType", "characterType", "sequenceType", "compositeType", 
+      "metaType", "expressions", "juxtapositionExpressions", "primaryExpressions", 
+      "expression", "primaryExpression", "operand", "factScope", "converter", 
+      "selector", "indexing", "slicing", "slicingRange", "rangeExpression", 
       "arguments", "assignmentExpression", "condicionalExpression", "guardsExpression", 
-      "guardClause", "guardDefault", "literal", "predeclaredValue", "valueConstruct", 
-      "escalarLiteral", "booleanLiteral", "numericLiteral", "temporalLiteral", 
-      "characterLiteral", "sequenceLiteral", "compositeLiteral", "optionLiteral", 
-      "resultLiteral", "maybeLiteral", "eitherLiteral", "streamLiteral"
+      "guardClause", "guardDefault", "macroExpression", "macroCall", "literal", 
+      "predeclaredValue", "valueConstruct", "escalarLiteral", "booleanLiteral", 
+      "numericLiteral", "temporalLiteral", "characterLiteral", "sequenceLiteral", 
+      "optionLiteral", "resultLiteral", "maybeLiteral", "eitherLiteral", 
+      "streamLiteral", "loggingLevel"
     },
     std::vector<std::string>{
       "", "'('", "')'", "'['", "']'", "'{'", "'}'", "'<'", "'>'", "'.'", 
       "','", "';'", "':'", "'!'", "'\\u003F'", "'''", "'\"'", "'`'", "'@'", 
       "'#'", "'$'", "'&'", "'*'", "'/'", "'\\u00F7'", "'%'", "'\\'", "'~'", 
-      "'^'", "'|'", "'_'", "'='", "'+'", "'-'", "", "", "", "", "", "", 
+      "'^'", "'|'", "'_'", "'='", "'+'", "'-'", "'...'", "'(\\'", "'[['", 
+      "']]'", "'{{'", "'}}'", "'<<'", "'>>'", "'!!'", "'\\u003F\\u003F'", 
+      "'::'", "';;'", "'~='", "'++'", "'--'", "'**'", "'*/'", "'*!'", "'~~'", 
+      "'==='", "'^^'", "'%%'", "'%/'", "'%*'", "'%+'", "'%-'", "'%^'", "'&~'", 
+      "'>>>'", "'\\u003F%'", "'!%'", "'\\u003F:'", "'<=>'", "'=='", "'!='", 
+      "'~=='", "'~!='", "'<='", "'>='", "'!\\u003F'", "'<-'", "'<<-'", "'<|'", 
+      "':='", "'+='", "'-='", "'*='", "'/='", "'\\u00F7='", "'%%='", "'%='", 
+      "'**='", "'*/='", "'%/='", "'%*='", "'%+='", "'%-='", "'%^\\u207C'", 
+      "'&='", "'|='", "'^='", "'&^='", "'<<='", "'>>='", "'>>>='", "'\\u003F\\u003F='", 
+      "'..'", "'>..'", "'..<'", "'>..<'", "", "", "", "'<>'", "'->'", "':-'", 
+      "'=>'", "'=>>'", "'|>'", "'&&'", "'\\u003F&'", "'!&'", "'|&'", "'&>'", 
+      "'&>>'", "'&1>'", "'&1>>'", "'&2>'", "'&2>>'", "", "", "", "", "", 
       "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "'f'", "'s'", "", "", "", "", "", "", "", "", 
-      "", "", "'\\uEFBBBF'", "'\\uFEFF'", "'\\u0000FEFF'", "", "", "", "", 
-      "", "", "'const'", "'val'", "'var'", "'if'", "'then'", "'unless'", 
-      "'orelse'", "'this'", "'iota'", "'all'", "'any'", "'one'", "'two'", 
-      "'nil'", "'typeof'", "'instanceof'", "'sizeof'", "'is'", "'in'", "'between'", 
-      "'like'", "'not'", "'and'", "'or'", "'xor'", "'nand'", "'nor'", "'nxor'", 
-      "'atom'", "'auto'", "'void'", "'Bool8'", "'Bool16'", "'Bool32'", "'Bool64'", 
-      "'Bool128'", "'Bool'", "'Dig'", "'Bit'", "'Oct'", "'Hex'", "'Nibble'", 
-      "'Byte'", "'Number'", "'Nat8'", "'Nat16'", "'Nat32'", "'Nat64'", "'Nat128'", 
-      "'Nat'", "'Bignat'", "'Int8'", "'Int16'", "'Int32'", "'Int64'", "'Int128'", 
-      "'Int'", "'Bigint'", "'Real16'", "'Real32'", "'Real64'", "'Real128'", 
-      "'Real'", "'Bigreal'", "'Dec1'", "'Dec2'", "'Dec3'", "'Dec4'", "'Dec5'", 
-      "'Dec6'", "'Dec7'", "'Dec8'", "'Decimal'", "'Money'", "'Bigdecimal'", 
-      "'Ratio8'", "'Ratio16'", "'Ratio32'", "'Ratio64'", "'Ratio128'", "'Ratio'", 
-      "'Complex16'", "'Complex32'", "'Complex64'", "'Complex128'", "'Complex'", 
-      "'Quatern16'", "'Quatern32'", "'Quatern64'", "'Quatern128'", "'Quatern'", 
-      "'Date'", "'Elapse'", "'Ascii'", "'Char8'", "'Char16'", "'Char32'", 
-      "'Char'", "'Str'", "'String8'", "'String16'", "'String32'", "'String'", 
-      "'Regex'", "'Binary'", "'Range'", "'True'", "'False'", "'Nonzero'", 
-      "'Zero'", "'MinValue'", "'MaxValue'", "'NaN'", "'PositiveInfinity'", 
-      "'NegativeInfinity'", "'LocalDate'", "'LocalDateTime'", "'OffsetDate'", 
-      "'OffsetDateTime'", "'ZonedDate'", "'ZonedDateTime'", "'Tomorrow'", 
-      "'Today'", "'Now'", "'Yesterday'", "'Eon'", "'Epoch'", "'Letter'", 
-      "'Mark'", "'Digit'", "'Punctuation'", "'Symbol'", "'Separator'", "'NonPrintable'", 
-      "'Null'", "'Blank'", "'Nonblank'", "'Okay'", "'Fail'", "'Some'", "'None'", 
-      "'Yea'", "'Nay'", "'Data'", "'EoT'", "'scan'", "'echo'", "'till'", 
-      "'since'", "'play'", "'cls'", "'cd'", "'pwd'", "'ls'", "'mkdir'", 
-      "'rmdir'", "'touch'", "'rm'", "'cp'", "'mv'", "'rename'", "'chmod'", 
-      "'chown'", "'chgrp'", "'raise'", "'panic'", "'trace'", "'debug'", 
-      "'info'", "'warn'", "'error'", "'fatal'"
+      "", "", "", "'L'", "", "", "'a'", "", "", "", "", "", "", "", "", 
+      "", "", "", "", "", "", "", "", "", "", "", "", "'f'", "'s'", "'#!'", 
+      "'#\\u003F'", "'#$'", "", "", "", "", "", "", "", "", "", "'\\uEFBBBF'", 
+      "'\\uFEFF'", "'\\u0000FEFF'", "", "", "'module'", "'algorithm'", "'notabene'", 
+      "'use'", "'as'", "'of'", "'include'", "'interface'", "'extern'", "'rproc'", 
+      "'foreign'", "'const'", "'val'", "'var'", "'func'", "'feed'", "'fmap'", 
+      "'sub'", "'type'", "'dim'", "'fact'", "'enum'", "'struct'", "'proto'", 
+      "'trait'", "'class'", "'get'", "'set'", "'oper'", "'event'", "'def'", 
+      "'defn'", "'undef'", "'public'", "'protected'", "'private'", "'linear'", 
+      "'shared'", "'volatile'", "'local'", "'atomic'", "'static'", "'comptime'", 
+      "'mutable'", "'transient'", "'inline'", "'view'", "'synchro'", "'virtual'", 
+      "'override'", "'final'", "'off'", "'async'", "'abstract'", "'sealed'", 
+      "'singleton'", "'record'", "'monad'", "'measure'", "'infix'", "'explicit'", 
+      "'defer'", "'with'", "'do'", "'if'", "'then'", "'elif'", "'else'", 
+      "'unless'", "'otherwise'", "'match'", "'case'", "'fallthrough'", "'try'", 
+      "'catch'", "'loop'", "'upto'", "'for'", "'each'", "'step'", "'while'", 
+      "'until'", "'redo'", "'next'", "'break'", "'return'", "'yield'", "'go'", 
+      "'to'", "'await'", "'switch'", "'when'", "'default'", "'continue'", 
+      "'begin'", "'finally'", "'invar'", "'this'", "'iota'", "'nth'", "'top'", 
+      "'end'", "'it'", "'self'", "'super'", "'parent'", "'all'", "'any'", 
+      "'one'", "'two'", "'nil'", "'let'", "'own'", "'mut'", "'typeof'", 
+      "'instanceof'", "'sizeof'", "'is'", "'in'", "'between'", "'like'", 
+      "'not'", "'and'", "'or'", "'xor'", "'nand'", "'nor'", "'nxor'", "'new'", 
+      "'del'", "'atom'", "'auto'", "'void'", "'Bool8'", "'Bool16'", "'Bool32'", 
+      "'Bool64'", "'Bool128'", "'Bool'", "'Dig'", "'Bit'", "'Oct'", "'Hex'", 
+      "'Roman'", "'Nibble'", "'Byte'", "'Number'", "'Nat8'", "'Nat16'", 
+      "'Nat32'", "'Nat64'", "'Nat128'", "'Nat'", "'Bignat'", "'Int8'", "'Int16'", 
+      "'Int32'", "'Int64'", "'Int128'", "'Int'", "'Bigint'", "'Real16'", 
+      "'Real32'", "'Real64'", "'Real128'", "'Real'", "'Bigreal'", "'Dec1'", 
+      "'Dec2'", "'Dec3'", "'Dec4'", "'Dec5'", "'Dec6'", "'Dec7'", "'Dec8'", 
+      "'Decimal'", "'Money'", "'Bigdecimal'", "'Ratio8'", "'Ratio16'", "'Ratio32'", 
+      "'Ratio64'", "'Ratio128'", "'Ratio'", "'Complex16'", "'Complex32'", 
+      "'Complex64'", "'Complex128'", "'Complex'", "'Quatern16'", "'Quatern32'", 
+      "'Quatern64'", "'Quatern128'", "'Quatern'", "'Date'", "'Elapse'", 
+      "'Ascii'", "'Char8'", "'Char16'", "'Char32'", "'Char'", "'wchar'", 
+      "'Ansi'", "'Str8'", "'Str16'", "'Str32'", "'Str'", "'cstr'", "'wstr'", 
+      "'Regex'", "'Binary'", "'Path'", "'Uri'", "'Inet'", "'Range'", "'Pair'", 
+      "'Tuple'", "'Array'", "'List'", "'Dict'", "'Chan'", "'Vec'", "'Mat'", 
+      "'Set'", "'Queue'", "'Deque'", "'Xml'", "'Table'", "'Memo'", "'True'", 
+      "'False'", "'Nonzero'", "'Zero'", "'MinValue'", "'MaxValue'", "'NaN'", 
+      "'PositiveInfinity'", "'NegativeInfinity'", "'LocalDate'", "'LocalDateTime'", 
+      "'OffsetDate'", "'OffsetDateTime'", "'ZonedDate'", "'ZonedDateTime'", 
+      "'Tomorrow'", "'Today'", "'Now'", "'Yesterday'", "'Eon'", "'Epoch'", 
+      "'Letter'", "'Mark'", "'Digit'", "'Punctuation'", "'Symbol'", "'Separator'", 
+      "'NonPrintable'", "'Null'", "'Blank'", "'Nonblank'", "'Folder'", "'File'", 
+      "'LinkFile'", "'PipeFile'", "'SocketFile'", "'BlockDevice'", "'CharDevice'", 
+      "'NullDevice'", "'Url'", "'Urn'", "'Ipv4'", "'Ipv6'", "'Okay'", "'Fail'", 
+      "'Some'", "'None'", "'Yea'", "'Nay'", "'Data'", "'EoT'", "'scan'", 
+      "'echo'", "'alert'", "'entry'", "'till'", "'since'", "'timely'", "'cancel'", 
+      "'play'", "'cls'", "'cd'", "'pwd'", "'ls'", "'mkdir'", "'rmdir'", 
+      "'touch'", "'rm'", "'cp'", "'mv'", "'rename'", "'chmod'", "'chown'", 
+      "'chgrp'", "'raise'", "'panic'", "'unit'", "'from'", "'once'", "'data'", 
+      "'call'", "'hide'", "'show'", "'into'", "'pass'", "'past'", "'fail'", 
+      "'trace'", "'debug'", "'info'", "'warn'", "'error'", "'fatal'"
     },
     std::vector<std::string>{
       "", "LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "LEFT_BRACKET", "RIGHT_BRACKET", 
@@ -132,372 +167,459 @@ void neobasicparserParserInitialize() {
       "SEMICOLON", "COLON", "EXCLAMATION", "QUESTION", "APOSTROPHE", "QUOTE", 
       "BACKTICK", "AT", "HASH", "DOLLAR", "AMPERSAND", "ASTERISK", "SLASH", 
       "DIVISION", "PERCENT", "BACKSLASH", "TILDE", "CARET", "PIPE", "UNDERSCORE", 
-      "EQUAL", "PLUS", "MINUS", "POSITIVE", "NEGATIVE", "INCREMENT", "DECREMENT", 
-      "BIT_NOT", "BIT_NEGATION", "SQUARE_POWER", "SQUARE_ROOT", "FACTORIAL", 
-      "ADDITION", "SUBTRACTION", "MULTIPLICATION", "REAL_DIVISION", "INTEGER_DIVISION", 
-      "MODULO", "NTH_POWER", "NTH_ROOT", "PERCENTAGE_RATE", "PERCENTAGE_AMOUNT", 
+      "EQUAL", "PLUS", "MINUS", "ELLIPSIS", "LAMBDA", "DOUBLE_LEFT_BRACKET", 
+      "DOUBLE_RIGHT_BRACKET", "DOUBLE_LEFT_CURLY", "DOUBLE_RIGHT_CURLY", 
+      "DOUBLE_LEFT_ANGLE", "DOUBLE_RIGHT_ANGLE", "DOUBLE_EXCLAMATION", "DOUBLE_QUESTION", 
+      "DOUBLE_COLON", "DOUBLE_SEMICOLON", "SPECIAL_ASSIGNMENT", "INCREMENT", 
+      "DECREMENT", "SQUARE_POWER", "SQUARE_ROOT", "FACTORIAL", "BIT_NEGATION", 
+      "DEEP_CLONING", "SORTING", "QUOTIENT", "PERCENTAGE_RATE", "PERCENTAGE_AMOUNT", 
       "PERCENTAGE_INCREASE", "PERCENTAGE_DECREASE", "PERCENTAGE_VARIATION", 
-      "BIT_AND", "BIT_CLEAR", "BIT_XOR", "BIT_OR", "LEFT_SHIFT", "SIGNED_RIGHT_SHIFT", 
-      "UNSIGNED_RIGHT_SHIFT", "IDENTITY", "NOT_IDENTITY", "MEMBERSHIP", 
-      "NOT_MEMBERSHIP", "BETWEEN_RANGE", "NOT_BETWEEN_RANGE", "MATCHING", 
-      "NOT_MATCHING", "DIVISIBLE_BY", "NOT_DIVISIBLE_BY", "ELVIS_TEST", 
-      "THREE_WAY_TEST", "EQUALS", "NOT_EQUALS", "LESS", "LESS_OR_EQUALS", 
-      "GREATER", "GREATER_OR_EQUALS", "LOGICAL_AND", "LOGICAL_XOR", "LOGICAL_OR", 
-      "LOGICAL_NOT", "LOGICAL_NAND", "LOGICAL_NXOR", "LOGICAL_NOR", "ERROR_PROPAGATION", 
-      "ERROR_COALESCING", "ERROR_PROPAGATION_NONE_COALESCING", "ERROR_TO_NONE_CONVERTION", 
-      "EXCEPTION_COALESCING", "EXCEPTION_STATEMENT", "BASIC_ASSIGNMENT", 
-      "DESTRUCTURING_ASSIGNMENT", "MACRO_ASSIGNMENT", "ADDITION_ASSIGNMENT", 
+      "BIT_CLEAR", "UNSIGNED_RIGHT_SHIFT", "DIVISIBLE_BY", "NOT_DIVISIBLE_BY", 
+      "ELVIS_TEST", "THREE_WAY_TEST", "STRICT_EQUALITY", "STRICT_INEQUALITY", 
+      "LOOSE_EQUALITY", "LOOSE_INEQUALITY", "LESS_OR_EQUALS", "GREATER_OR_EQUALS", 
+      "ERROR_PROPAGATION_NONE_COALESCING", "POP_ONE_ASSIGNMENT", "PULL_ALL_ASSIGNMENT", 
+      "PIPE_ASSIGNMENT", "DESTRUCTURING_ASSIGNMENT", "ADDITION_ASSIGNMENT", 
       "SUBTRACTION_ASSIGNMENT", "MULTIPLICATION_ASSIGNMENT", "REAL_DIVISION_ASSIGNMENT", 
-      "INTEGER_DIVISION_ASSIGNMENT", "MODULO_ASSIGNMENT", "NTH_POWER_ASSIGNMENT", 
-      "NTH_ROOT_ASSIGNMENT", "PERCENTAGE_RATE_ASSIGNMENT", "PERCENTAGE_AMOUNT_ASSIGNMENT", 
-      "PERCENTAGE_INCREASE_ASSIGNMENT", "PERCENTAGE_DECREASE_ASSIGNMENT", 
-      "PERCENTAGE_VARIATION_ASSIGNMENT", "BIT_AND_ASSIGNMENT", "BIT_OR_ASSIGNMENT", 
-      "BIT_XOR_ASSIGNMENT", "BIT_CLEAR_ASSIGNMENT", "BIT_NOT_ASSIGNMENT", 
+      "INTEGER_DIVISION_ASSIGNMENT", "QUOTIENT_ASSIGNMENT", "MODULO_ASSIGNMENT", 
+      "NTH_POWER_ASSIGNMENT", "NTH_ROOT_ASSIGNMENT", "PERCENTAGE_RATE_ASSIGNMENT", 
+      "PERCENTAGE_AMOUNT_ASSIGNMENT", "PERCENTAGE_INCREASE_ASSIGNMENT", 
+      "PERCENTAGE_DECREASE_ASSIGNMENT", "PERCENTAGE_VARIATION_ASSIGNMENT", 
+      "BIT_AND_ASSIGNMENT", "BIT_OR_ASSIGNMENT", "BIT_XOR_ASSIGNMENT", "BIT_CLEAR_ASSIGNMENT", 
       "LEFT_SHIFT_ASSIGNMENT", "SIGNED_RIGHT_SHIFT_ASSIGNMENT", "UNSIGNED_RIGHT_SHIFT_ASSIGNMENT", 
-      "NONE_COALESCING_ASSIGNMENT", "INTERVAL", "ELLIPSIS", "FRACTION", 
-      "IMPLICIT_RETURN", "MONAD_BIND", "NUMBER_LIT", "TIME_LIT", "SEQUENCE_LIT", 
-      "HEREDOC_LITERAL", "HEREDOC_CONTENT", "BINARY_LIT", "REGULAR_EXPRESSION_LIT", 
-      "REGULAR_EXPRESSION_CONTENT", "STRING_LIT", "VERBATIM_STRING_LIT", 
-      "TEMPLATE_STRING_LIT", "STRING_PLACEHOLDER", "CHAR_LIT", "ASCII_LIT", 
-      "ATOM_DOT_LIT", "DOT_FRACTION", "RANGE_LIT", "KEYWORD", "IDENTIFIER", 
-      "ATOM_IDENTIFIER", "MUSIC_NOTE", "MUSIC_ALPHABET", "OCTAVE_DIGIT", 
-      "PITCH_FLAT", "PITCH_SHARP", "SHEBANG", "SHEBANG_INTERPRETER", "WOODSTOCK", 
-      "RUBBERDUCK", "TRACERBIRD", "LOGGING_LEVEL", "HASHTAG", "EOS", "EOL", 
-      "BOM", "UTF8_BOM", "UTF16_BOM", "UTF32_BOM", "WSP", "EXPLICIT_LINE_JOINING", 
-      "LINE_COMMENT", "BLOCK_COMMENT", "DOCUMENTATION_COMMENT", "UnexpectedCharacter", 
-      "CONST", "VAL", "VAR", "IF", "THEN", "UNLESS", "ORELSE", "THIS", "IOTA", 
-      "ALL", "ANY", "ONE", "TWO", "NIL", "TYPEOF", "INSTANCEOF", "SIZEOF", 
-      "IS", "IN", "BETWEEN", "LIKE", "NOT", "AND", "OR", "XOR", "NAND", 
-      "NOR", "NXOR", "ATOM", "AUTO", "VOID", "BOOL8", "BOOL16", "BOOL32", 
-      "BOOL64", "BOOL128", "BOOL", "DIG", "BIT", "OCT", "HEX", "NIBBLE", 
-      "BYTE", "NUMBER", "NAT8", "NAT16", "NAT32", "NAT64", "NAT128", "NAT", 
-      "BIGNAT", "INT8", "INT16", "INT32", "INT64", "INT128", "INT", "BIGINT", 
-      "REAL16", "REAL32", "REAL64", "REAL128", "REAL", "BIGREAL", "DEC1", 
-      "DEC2", "DEC3", "DEC4", "DEC5", "DEC6", "DEC7", "DEC8", "DECIMAL", 
+      "NONE_COALESCING_ASSIGNMENT", "INTERVAL_INCLUSIVE", "INTERVAL_LEFT_EXCLUSIVE", 
+      "INTERVAL_RIGHT_EXCLUSIVE", "INTERVAL_EXCLUSIVE", "INTERVAL", "INTERVAL_LEFT", 
+      "INTERVAL_RIGHT", "MIXIN", "EXTENDS", "NECK_RULE", "ONELINER_SUITE", 
+      "MONAD_BIND", "PIPELINE", "COMMAND_SEQUENCE", "COMMAND_SEQUENCE_OKAY", 
+      "COMMAND_SEQUENCE_FAIL", "COMMAND_BACKGROUND", "OUTPUT_REDIRECTION", 
+      "APPEND_OUTPUT_REDIRECTION", "STDOUT_REDIRECTION", "APPEND_STDOUT_REDIRECTION", 
+      "STDERR_REDIRECTION", "APPEND_STDERR_REDIRECTION", "DEC_LIT", "DECIMAL_NUMBER", 
+      "REAL_LIT", "REAL_NUMBER", "RATIO_LIT", "RATIONAL_NUMBER", "IMAGINARY_LIT", 
+      "IMAGINARY_NUMBER", "NATURAL_LIT", "INTEGER_LIT", "INTEGER_NUMBER", 
+      "BINARY_LIT", "HEREDOC_LITERAL", "HEREDOC_CONTENT", "REGULAR_EXPRESSION_LIT", 
+      "REGULAR_EXPRESSION_CONTENT", "STRING_LIT", "STRING_PREFIX", "WSTRING_LIT", 
+      "STRING_SEQUENCE", "VERBATIM_STRING", "TEMPLATE_STRING", "PLACEHOLDER_VALUE", 
+      "CHAR_LIT", "WCHAR_LIT", "WCHAR_PREFIX", "UNICODE_CHAR", "ASCII_LIT", 
+      "ASCII_PREFIX", "ASCII_CHAR", "ATOM_DOT_LIT", "DOT_FRACTION", "SHELL_LIT", 
+      "SHELL_PATH_LIT", "FILESYSTEM_PATH", "ABSOLUTE_PATH", "RELATIVE_PATH", 
+      "TILDE_PATH", "PATH_NAME", "FILE_NAME", "DRIVE_LETTER", "TAG", "IDENTIFIER", 
+      "ATOM_IDENTIFIER", "ASPECT_IDENTIFIER", "SHELL_IDENTIFIER", "MUSIC_NOTE", 
+      "MUSIC_ALPHABET", "OCTAVE_DIGIT", "PITCH_FLAT", "PITCH_SHARP", "SHEBANG", 
+      "WOODSTOCK", "SHERLOCK", "RUBBERDUCK", "SONGBIRD", "LINE_COMMENT", 
+      "BLOCK_COMMENT", "CELL_COMMENT", "HASHTAG", "EOS", "EOL", "BOM", "UTF8_BOM", 
+      "UTF16_BOM", "UTF32_BOM", "WSP", "UnexpectedCharacter", "MODULE", 
+      "ALGORITHM", "NOTABENE", "USE", "AS", "OF", "INCLUDE", "INTERFACE", 
+      "EXTERN", "RPROC", "FOREIGN", "CONST", "VAL", "VAR", "FUNC", "FEED", 
+      "FMAP", "SUB", "TYPE", "DIM", "FACT", "ENUM", "STRUCT", "PROTO", "TRAIT", 
+      "CLASS", "GET", "SET", "OPER", "EVENT", "DEF", "DEFN", "UNDEF", "PUBLIC", 
+      "PROTECTED", "PRIVATE", "LINEAR", "SHARED", "VOLATILE", "LOCAL", "ATOMIC", 
+      "STATIC", "COMPTIME", "MUTABLE", "TRANSIENT", "INLINE", "VIEW", "SYNCHRO", 
+      "VIRTUAL", "OVERRIDE", "FINAL", "OFF", "ASYNC", "ABSTRACT", "SEALED", 
+      "SINGLETON", "RECORD", "MONAD", "MEASURE", "INFIX", "EXPLICIT", "DEFER", 
+      "WITH", "DO", "IF", "THEN", "ELIF", "ELSE", "UNLESS", "OTHERWISE", 
+      "MATCH", "CASE", "FALLTHROUGH", "TRY", "CATCH", "LOOP", "UPTO", "FOR", 
+      "EACH", "STEP", "WHILE", "UNTIL", "REDO", "NEXT", "BREAK", "RETURN", 
+      "YIELD", "GO", "TO", "AWAIT", "SWITCH", "WHEN", "DEFAULT", "CONTINUE", 
+      "BEGIN", "FINALLY", "INVAR", "THIS", "IOTA", "NTH", "TOP", "END", 
+      "IT", "SELF", "SUPER", "PARENT", "ALL", "ANY", "ONE", "TWO", "NIL", 
+      "LET", "OWN", "MUT", "TYPEOF", "INSTANCEOF", "SIZEOF", "IS", "IN", 
+      "BETWEEN", "LIKE", "NOT", "AND", "OR", "XOR", "NAND", "NOR", "NXOR", 
+      "NEW", "DEL", "ATOM", "AUTO", "VOID", "BOOL8", "BOOL16", "BOOL32", 
+      "BOOL64", "BOOL128", "BOOL", "DIG", "BIT", "OCT", "HEX", "ROMAN", 
+      "NIBBLE", "BYTE", "NUMBER", "NAT8", "NAT16", "NAT32", "NAT64", "NAT128", 
+      "NAT", "BIGNAT", "INT8", "INT16", "INT32", "INT64", "INT128", "INT", 
+      "BIGINT", "REAL16", "REAL32", "REAL64", "REAL128", "REAL", "BIGREAL", 
+      "DEC1", "DEC2", "DEC3", "DEC4", "DEC5", "DEC6", "DEC7", "DEC8", "DECIMAL", 
       "MONEY", "BIGDECIMAL", "RATIO8", "RATIO16", "RATIO32", "RATIO64", 
       "RATIO128", "RATIO", "COMPLEX16", "COMPLEX32", "COMPLEX64", "COMPLEX128", 
       "COMPLEX", "QUATERN16", "QUATERN32", "QUATERN64", "QUATERN128", "QUATERN", 
-      "DATE", "ELAPSE", "ASCII", "CHAR8", "CHAR16", "CHAR32", "CHAR", "STR", 
-      "STRING8", "STRING16", "STRING32", "STRING", "REGEX", "BINARY", "RANGE", 
-      "TRUE", "FALSE", "NONZERO", "ZERO", "MINVALUE", "MAXVALUE", "NAN", 
-      "POSITIVEINFINITY", "NEGATIVEINFINITY", "LOCALDATE", "LOCALDATETIME", 
+      "DATE", "ELAPSE", "ASCII", "CHAR8", "CHAR16", "CHAR32", "CHAR", "WCHAR", 
+      "ANSI", "STR8", "STR16", "STR32", "STR", "CSTR", "WSTR", "REGEX", 
+      "BINARY", "PATH", "URI", "INET", "RANGE", "PAIR", "TUPLE", "ARRAY", 
+      "LIST", "DICT", "CHAN", "VEC", "MAT", "TSET", "QUEUE", "DEQUE", "XML", 
+      "TABLE", "MEMO", "TRUE", "FALSE", "NONZERO", "ZERO", "MINVALUE", "MAXVALUE", 
+      "NAN", "POSITIVEINFINITY", "NEGATIVEINFINITY", "LOCALDATE", "LOCALDATETIME", 
       "OFFSETDATE", "OFFSETDATETIME", "ZONEDDATE", "ZONEDDATETIME", "TOMORROW", 
       "TODAY", "NOW", "YESTERDAY", "EON", "EPOCH", "LETTER", "MARK", "DIGIT", 
       "PUNCTUATION", "SYMBOL", "SEPARATOR", "NONPRINTABLE", "NULL", "BLANK", 
-      "NONBLANK", "OKAY", "FAIL", "SOME", "NONE", "YEA", "NAY", "DATA", 
-      "EOT", "SCAN", "ECHO", "TILL", "SINCE", "PLAY", "CLS", "CD", "PWD", 
-      "LS", "MKDIR", "RMDIR", "TOUCH", "RM", "CP", "MV", "RENAME", "CHMOD", 
-      "CHOWN", "CHGRP", "RAISE", "PANIC", "TRACE", "DEBUG", "INFO", "WARN", 
-      "ERROR", "FATAL"
+      "NONBLANK", "FOLDER", "FILE", "LINKLINKFILE", "PIPEFILE", "SOCKETFILE", 
+      "BLOCKDEVICE", "CHARDEVICE", "NULLDEVICE", "URL", "URN", "IPV4", "IPV6", 
+      "OKAY", "FAIL", "SOME", "NONE", "YEA", "NAY", "DATA", "EOT", "SCAN", 
+      "ECHO", "ALERT", "ENTRY", "TILL", "SINCE", "TIMELY", "CANCEL", "PLAY", 
+      "CLS", "CD", "PWD", "LS", "MKDIR", "RMDIR", "TOUCH", "RM", "CP", "MV", 
+      "RENAME", "CHMOD", "CHOWN", "CHGRP", "RAISE", "PANIC", "UNIT", "FROM", 
+      "ONCE", "TDATA", "CALL", "HIDE", "SHOW", "INTO", "PASS", "PAST", "TFAIL", 
+      "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,339,886,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
-  	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
-  	14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,
-  	21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,
-  	28,2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,
-  	35,2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,7,
-  	42,2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,2,49,7,
-  	49,2,50,7,50,2,51,7,51,2,52,7,52,2,53,7,53,2,54,7,54,2,55,7,55,2,56,7,
-  	56,2,57,7,57,2,58,7,58,2,59,7,59,2,60,7,60,2,61,7,61,2,62,7,62,2,63,7,
-  	63,2,64,7,64,2,65,7,65,2,66,7,66,2,67,7,67,2,68,7,68,2,69,7,69,2,70,7,
-  	70,2,71,7,71,2,72,7,72,2,73,7,73,2,74,7,74,2,75,7,75,2,76,7,76,2,77,7,
-  	77,2,78,7,78,2,79,7,79,2,80,7,80,2,81,7,81,2,82,7,82,2,83,7,83,2,84,7,
-  	84,2,85,7,85,2,86,7,86,2,87,7,87,2,88,7,88,2,89,7,89,2,90,7,90,2,91,7,
-  	91,2,92,7,92,2,93,7,93,2,94,7,94,2,95,7,95,2,96,7,96,2,97,7,97,2,98,7,
-  	98,2,99,7,99,2,100,7,100,2,101,7,101,2,102,7,102,2,103,7,103,2,104,7,
-  	104,2,105,7,105,2,106,7,106,2,107,7,107,2,108,7,108,2,109,7,109,2,110,
+  	4,1,512,1035,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
+  	2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,
+  	7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,
+  	7,21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,
+  	7,28,2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,
+  	7,35,2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,
+  	7,42,2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,2,49,
+  	7,49,2,50,7,50,2,51,7,51,2,52,7,52,2,53,7,53,2,54,7,54,2,55,7,55,2,56,
+  	7,56,2,57,7,57,2,58,7,58,2,59,7,59,2,60,7,60,2,61,7,61,2,62,7,62,2,63,
+  	7,63,2,64,7,64,2,65,7,65,2,66,7,66,2,67,7,67,2,68,7,68,2,69,7,69,2,70,
+  	7,70,2,71,7,71,2,72,7,72,2,73,7,73,2,74,7,74,2,75,7,75,2,76,7,76,2,77,
+  	7,77,2,78,7,78,2,79,7,79,2,80,7,80,2,81,7,81,2,82,7,82,2,83,7,83,2,84,
+  	7,84,2,85,7,85,2,86,7,86,2,87,7,87,2,88,7,88,2,89,7,89,2,90,7,90,2,91,
+  	7,91,2,92,7,92,2,93,7,93,2,94,7,94,2,95,7,95,2,96,7,96,2,97,7,97,2,98,
+  	7,98,2,99,7,99,2,100,7,100,2,101,7,101,2,102,7,102,2,103,7,103,2,104,
+  	7,104,2,105,7,105,2,106,7,106,2,107,7,107,2,108,7,108,2,109,7,109,2,110,
   	7,110,2,111,7,111,2,112,7,112,2,113,7,113,2,114,7,114,2,115,7,115,2,116,
-  	7,116,1,0,1,0,3,0,237,8,0,1,1,1,1,1,2,3,2,242,8,2,1,2,1,2,1,2,5,2,247,
-  	8,2,10,2,12,2,250,9,2,1,3,1,3,1,3,3,3,255,8,3,1,4,1,4,1,4,3,4,260,8,4,
-  	1,5,1,5,1,6,1,6,1,6,3,6,267,8,6,1,7,1,7,1,7,1,7,3,7,273,8,7,1,8,1,8,1,
-  	8,3,8,278,8,8,1,9,1,9,1,10,1,10,1,10,1,11,1,11,1,11,5,11,288,8,11,10,
-  	11,12,11,291,9,11,1,12,1,12,1,12,1,12,1,13,1,13,1,14,1,14,1,14,1,15,1,
-  	15,1,16,1,16,1,16,1,17,1,17,1,17,5,17,310,8,17,10,17,12,17,313,9,17,1,
-  	18,1,18,3,18,317,8,18,1,18,1,18,1,18,3,18,322,8,18,1,19,1,19,1,19,1,19,
-  	1,19,1,19,3,19,330,8,19,1,20,1,20,3,20,334,8,20,1,21,1,21,3,21,338,8,
-  	21,1,22,1,22,3,22,342,8,22,1,23,1,23,1,23,1,23,1,24,1,24,1,24,3,24,351,
-  	8,24,1,25,1,25,1,26,1,26,1,27,1,27,1,27,1,27,1,28,1,28,1,29,1,29,3,29,
-  	365,8,29,1,30,1,30,1,31,1,31,1,31,1,31,1,31,1,32,1,32,1,33,1,33,1,33,
-  	1,33,1,34,1,34,1,34,1,34,1,34,1,34,3,34,386,8,34,1,35,1,35,3,35,390,8,
-  	35,1,36,1,36,1,37,1,37,1,38,1,38,1,39,1,39,1,40,1,40,1,40,3,40,403,8,
-  	40,1,41,1,41,1,41,1,41,3,41,409,8,41,1,42,1,42,1,43,1,43,1,44,1,44,1,
-  	45,1,45,1,46,1,46,1,47,1,47,1,48,1,48,1,49,1,49,1,50,1,50,1,51,1,51,1,
-  	52,1,52,1,53,1,53,1,54,1,54,1,55,1,55,1,56,1,56,1,57,1,57,3,57,443,8,
-  	57,1,58,1,58,1,59,1,59,1,60,1,60,1,61,1,61,1,61,5,61,454,8,61,10,61,12,
-  	61,457,9,61,1,62,1,62,1,62,5,62,462,8,62,10,62,12,62,465,9,62,1,63,1,
-  	63,1,63,5,63,470,8,63,10,63,12,63,473,9,63,1,64,1,64,1,64,5,64,478,8,
-  	64,10,64,12,64,481,9,64,1,65,1,65,1,65,1,65,1,65,1,65,1,65,1,65,1,65,
-  	1,65,1,65,1,65,1,65,3,65,496,8,65,1,66,1,66,1,66,3,66,501,8,66,1,67,1,
-  	67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,1,67,3,67,517,
-  	8,67,1,68,1,68,1,68,1,68,1,68,3,68,524,8,68,1,69,1,69,1,70,1,70,1,70,
-  	1,70,1,70,1,70,1,70,1,70,1,70,3,70,537,8,70,1,71,1,71,1,72,1,72,1,73,
-  	1,73,1,74,1,74,1,75,1,75,1,76,1,76,1,77,1,77,1,78,1,78,1,79,1,79,1,80,
-  	1,80,1,81,1,81,1,82,1,82,1,83,1,83,1,84,1,84,1,84,5,84,568,8,84,10,84,
-  	12,84,571,9,84,1,85,1,85,5,85,575,8,85,10,85,12,85,578,9,85,1,86,1,86,
-  	1,86,5,86,583,8,86,10,86,12,86,586,9,86,1,87,1,87,1,87,1,87,1,87,1,87,
-  	1,87,3,87,595,8,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,
-  	1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,
-  	1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,
-  	1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,1,87,
-  	1,87,1,87,1,87,1,87,1,87,3,87,654,8,87,5,87,656,8,87,10,87,12,87,659,
-  	9,87,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,1,88,
-  	5,88,674,8,88,10,88,12,88,677,9,88,1,89,1,89,1,89,1,89,1,89,1,89,1,89,
-  	1,89,1,89,1,89,1,89,1,89,1,89,1,89,1,89,3,89,694,8,89,1,90,1,90,1,91,
-  	1,91,1,91,1,92,1,92,1,92,1,93,1,93,1,93,1,93,1,94,1,94,1,94,1,94,1,95,
-  	3,95,713,8,95,1,95,1,95,3,95,717,8,95,1,95,3,95,720,8,95,1,95,1,95,3,
-  	95,724,8,95,1,95,1,95,1,95,3,95,729,8,95,1,95,1,95,3,95,733,8,95,1,95,
-  	1,95,3,95,737,8,95,1,95,1,95,3,95,741,8,95,1,96,1,96,1,96,1,96,1,97,1,
-  	97,1,97,1,97,1,98,1,98,1,99,4,99,754,8,99,11,99,12,99,755,1,99,3,99,759,
-  	8,99,1,100,1,100,1,100,1,100,1,100,1,101,1,101,1,101,1,102,1,102,1,102,
-  	3,102,772,8,102,1,103,1,103,1,104,1,104,1,104,1,104,1,105,1,105,1,105,
-  	1,105,1,105,3,105,785,8,105,1,106,1,106,1,107,1,107,1,107,1,107,1,107,
-  	1,107,1,107,1,107,1,107,3,107,798,8,107,1,108,1,108,1,108,3,108,803,8,
-  	108,1,108,1,108,3,108,807,8,108,1,108,1,108,3,108,811,8,108,1,108,1,108,
-  	3,108,815,8,108,1,108,1,108,3,108,819,8,108,1,108,1,108,3,108,823,8,108,
-  	1,108,1,108,1,108,1,108,1,108,1,108,3,108,831,8,108,1,109,1,109,1,109,
-  	1,109,1,109,1,109,1,109,1,109,1,109,1,109,1,109,1,109,1,109,1,109,3,109,
-  	847,8,109,1,110,1,110,1,110,1,110,1,110,3,110,854,8,110,1,111,1,111,1,
-  	112,1,112,1,112,1,112,3,112,862,8,112,1,113,1,113,1,113,1,113,3,113,868,
-  	8,113,1,114,1,114,1,114,3,114,873,8,114,1,115,1,115,1,115,1,115,3,115,
-  	879,8,115,1,116,1,116,1,116,3,116,884,8,116,1,116,0,2,174,176,117,0,2,
-  	4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,
-  	52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,
-  	98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,
-  	134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,
-  	170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,
-  	206,208,210,212,214,216,218,220,222,224,226,228,230,232,0,33,2,0,34,37,
-  	40,42,1,0,38,39,2,0,182,182,184,184,1,0,49,50,2,0,45,48,51,55,1,0,43,
-  	44,1,0,60,62,1,0,56,57,1,0,73,74,1,0,75,80,1,0,63,72,2,0,81,81,85,85,
-  	2,0,82,82,86,86,2,0,83,83,87,87,1,0,88,93,1,0,94,96,1,0,97,118,1,0,199,
-  	204,1,0,205,210,1,0,212,218,1,0,219,225,1,0,226,231,1,0,232,242,1,0,243,
-  	248,1,0,249,253,1,0,254,258,1,0,259,260,1,0,261,265,1,0,266,272,1,0,196,
-  	198,1,0,177,181,1,0,175,176,1,0,274,275,922,0,236,1,0,0,0,2,238,1,0,0,
-  	0,4,241,1,0,0,0,6,254,1,0,0,0,8,259,1,0,0,0,10,261,1,0,0,0,12,263,1,0,
-  	0,0,14,268,1,0,0,0,16,277,1,0,0,0,18,279,1,0,0,0,20,281,1,0,0,0,22,284,
-  	1,0,0,0,24,292,1,0,0,0,26,296,1,0,0,0,28,298,1,0,0,0,30,301,1,0,0,0,32,
-  	303,1,0,0,0,34,306,1,0,0,0,36,314,1,0,0,0,38,329,1,0,0,0,40,331,1,0,0,
-  	0,42,335,1,0,0,0,44,339,1,0,0,0,46,343,1,0,0,0,48,350,1,0,0,0,50,352,
-  	1,0,0,0,52,354,1,0,0,0,54,356,1,0,0,0,56,360,1,0,0,0,58,364,1,0,0,0,60,
-  	366,1,0,0,0,62,368,1,0,0,0,64,373,1,0,0,0,66,375,1,0,0,0,68,385,1,0,0,
-  	0,70,389,1,0,0,0,72,391,1,0,0,0,74,393,1,0,0,0,76,395,1,0,0,0,78,397,
-  	1,0,0,0,80,402,1,0,0,0,82,408,1,0,0,0,84,410,1,0,0,0,86,412,1,0,0,0,88,
-  	414,1,0,0,0,90,416,1,0,0,0,92,418,1,0,0,0,94,420,1,0,0,0,96,422,1,0,0,
-  	0,98,424,1,0,0,0,100,426,1,0,0,0,102,428,1,0,0,0,104,430,1,0,0,0,106,
-  	432,1,0,0,0,108,434,1,0,0,0,110,436,1,0,0,0,112,438,1,0,0,0,114,442,1,
-  	0,0,0,116,444,1,0,0,0,118,446,1,0,0,0,120,448,1,0,0,0,122,450,1,0,0,0,
-  	124,458,1,0,0,0,126,466,1,0,0,0,128,474,1,0,0,0,130,495,1,0,0,0,132,500,
-  	1,0,0,0,134,516,1,0,0,0,136,523,1,0,0,0,138,525,1,0,0,0,140,536,1,0,0,
-  	0,142,538,1,0,0,0,144,540,1,0,0,0,146,542,1,0,0,0,148,544,1,0,0,0,150,
-  	546,1,0,0,0,152,548,1,0,0,0,154,550,1,0,0,0,156,552,1,0,0,0,158,554,1,
-  	0,0,0,160,556,1,0,0,0,162,558,1,0,0,0,164,560,1,0,0,0,166,562,1,0,0,0,
-  	168,564,1,0,0,0,170,572,1,0,0,0,172,579,1,0,0,0,174,594,1,0,0,0,176,660,
-  	1,0,0,0,178,693,1,0,0,0,180,695,1,0,0,0,182,697,1,0,0,0,184,700,1,0,0,
-  	0,186,703,1,0,0,0,188,707,1,0,0,0,190,740,1,0,0,0,192,742,1,0,0,0,194,
-  	746,1,0,0,0,196,750,1,0,0,0,198,753,1,0,0,0,200,760,1,0,0,0,202,765,1,
-  	0,0,0,204,771,1,0,0,0,206,773,1,0,0,0,208,775,1,0,0,0,210,784,1,0,0,0,
-  	212,786,1,0,0,0,214,797,1,0,0,0,216,830,1,0,0,0,218,846,1,0,0,0,220,853,
-  	1,0,0,0,222,855,1,0,0,0,224,861,1,0,0,0,226,867,1,0,0,0,228,872,1,0,0,
-  	0,230,878,1,0,0,0,232,883,1,0,0,0,234,237,3,2,1,0,235,237,3,4,2,0,236,
-  	234,1,0,0,0,236,235,1,0,0,0,237,1,1,0,0,0,238,239,3,6,3,0,239,3,1,0,0,
-  	0,240,242,5,158,0,0,241,240,1,0,0,0,241,242,1,0,0,0,242,248,1,0,0,0,243,
-  	244,3,6,3,0,244,245,5,156,0,0,245,247,1,0,0,0,246,243,1,0,0,0,247,250,
-  	1,0,0,0,248,246,1,0,0,0,248,249,1,0,0,0,249,5,1,0,0,0,250,248,1,0,0,0,
-  	251,255,3,8,4,0,252,255,3,16,8,0,253,255,3,38,19,0,254,251,1,0,0,0,254,
-  	252,1,0,0,0,254,253,1,0,0,0,255,7,1,0,0,0,256,260,3,10,5,0,257,260,3,
-  	12,6,0,258,260,3,14,7,0,259,256,1,0,0,0,259,257,1,0,0,0,259,258,1,0,0,
-  	0,260,9,1,0,0,0,261,262,5,150,0,0,262,11,1,0,0,0,263,264,5,149,0,0,264,
-  	266,5,142,0,0,265,267,3,168,84,0,266,265,1,0,0,0,266,267,1,0,0,0,267,
-  	13,1,0,0,0,268,269,5,151,0,0,269,272,3,174,87,0,270,271,5,13,0,0,271,
-  	273,3,174,87,0,272,270,1,0,0,0,272,273,1,0,0,0,273,15,1,0,0,0,274,278,
-  	3,18,9,0,275,278,3,26,13,0,276,278,3,30,15,0,277,274,1,0,0,0,277,275,
-  	1,0,0,0,277,276,1,0,0,0,278,17,1,0,0,0,279,280,3,20,10,0,280,19,1,0,0,
-  	0,281,282,5,168,0,0,282,283,3,22,11,0,283,21,1,0,0,0,284,289,3,24,12,
-  	0,285,286,5,10,0,0,286,288,3,24,12,0,287,285,1,0,0,0,288,291,1,0,0,0,
-  	289,287,1,0,0,0,289,290,1,0,0,0,290,23,1,0,0,0,291,289,1,0,0,0,292,293,
-  	3,126,63,0,293,294,3,116,58,0,294,295,3,168,84,0,295,25,1,0,0,0,296,297,
-  	3,28,14,0,297,27,1,0,0,0,298,299,5,169,0,0,299,300,3,34,17,0,300,29,1,
-  	0,0,0,301,302,3,32,16,0,302,31,1,0,0,0,303,304,5,170,0,0,304,305,3,34,
-  	17,0,305,33,1,0,0,0,306,311,3,36,18,0,307,308,5,10,0,0,308,310,3,36,18,
-  	0,309,307,1,0,0,0,310,313,1,0,0,0,311,309,1,0,0,0,311,312,1,0,0,0,312,
-  	35,1,0,0,0,313,311,1,0,0,0,314,316,3,126,63,0,315,317,3,130,65,0,316,
-  	315,1,0,0,0,316,317,1,0,0,0,317,321,1,0,0,0,318,319,3,116,58,0,319,320,
-  	3,168,84,0,320,322,1,0,0,0,321,318,1,0,0,0,321,322,1,0,0,0,322,37,1,0,
-  	0,0,323,330,3,40,20,0,324,330,3,42,21,0,325,330,3,44,22,0,326,330,3,46,
-  	23,0,327,330,3,48,24,0,328,330,3,56,28,0,329,323,1,0,0,0,329,324,1,0,
-  	0,0,329,325,1,0,0,0,329,326,1,0,0,0,329,327,1,0,0,0,329,328,1,0,0,0,330,
-  	39,1,0,0,0,331,333,5,143,0,0,332,334,3,38,19,0,333,332,1,0,0,0,333,334,
-  	1,0,0,0,334,41,1,0,0,0,335,337,5,152,0,0,336,338,3,38,19,0,337,336,1,
-  	0,0,0,337,338,1,0,0,0,338,43,1,0,0,0,339,341,5,153,0,0,340,342,3,38,19,
-  	0,341,340,1,0,0,0,341,342,1,0,0,0,342,45,1,0,0,0,343,344,5,1,0,0,344,
-  	345,3,38,19,0,345,346,5,2,0,0,346,47,1,0,0,0,347,351,3,50,25,0,348,351,
-  	3,52,26,0,349,351,3,54,27,0,350,347,1,0,0,0,350,348,1,0,0,0,350,349,1,
-  	0,0,0,351,49,1,0,0,0,352,353,5,120,0,0,353,51,1,0,0,0,354,355,3,168,84,
-  	0,355,53,1,0,0,0,356,357,3,172,86,0,357,358,3,114,57,0,358,359,3,168,
-  	84,0,359,55,1,0,0,0,360,361,3,58,29,0,361,57,1,0,0,0,362,365,3,60,30,
-  	0,363,365,3,64,32,0,364,362,1,0,0,0,364,363,1,0,0,0,365,59,1,0,0,0,366,
-  	367,3,62,31,0,367,61,1,0,0,0,368,369,5,171,0,0,369,370,3,174,87,0,370,
-  	371,5,172,0,0,371,372,3,48,24,0,372,63,1,0,0,0,373,374,3,66,33,0,374,
-  	65,1,0,0,0,375,376,3,48,24,0,376,377,5,173,0,0,377,378,3,174,87,0,378,
-  	67,1,0,0,0,379,386,3,72,36,0,380,386,3,74,37,0,381,386,3,76,38,0,382,
-  	386,3,78,39,0,383,386,3,80,40,0,384,386,3,84,42,0,385,379,1,0,0,0,385,
-  	380,1,0,0,0,385,381,1,0,0,0,385,382,1,0,0,0,385,383,1,0,0,0,385,384,1,
-  	0,0,0,386,69,1,0,0,0,387,390,3,80,40,0,388,390,3,82,41,0,389,387,1,0,
-  	0,0,389,388,1,0,0,0,390,71,1,0,0,0,391,392,7,0,0,0,392,73,1,0,0,0,393,
-  	394,7,1,0,0,394,75,1,0,0,0,395,396,5,84,0,0,396,77,1,0,0,0,397,398,5,
-  	120,0,0,398,79,1,0,0,0,399,403,5,28,0,0,400,401,5,28,0,0,401,403,5,28,
-  	0,0,402,399,1,0,0,0,402,400,1,0,0,0,403,81,1,0,0,0,404,409,5,31,0,0,405,
-  	406,5,31,0,0,406,407,5,31,0,0,407,409,5,31,0,0,408,404,1,0,0,0,408,405,
-  	1,0,0,0,409,83,1,0,0,0,410,411,7,2,0,0,411,85,1,0,0,0,412,413,7,3,0,0,
-  	413,87,1,0,0,0,414,415,7,4,0,0,415,89,1,0,0,0,416,417,7,5,0,0,417,91,
-  	1,0,0,0,418,419,7,6,0,0,419,93,1,0,0,0,420,421,7,7,0,0,421,95,1,0,0,0,
-  	422,423,5,58,0,0,423,97,1,0,0,0,424,425,5,59,0,0,425,99,1,0,0,0,426,427,
-  	7,8,0,0,427,101,1,0,0,0,428,429,7,9,0,0,429,103,1,0,0,0,430,431,7,10,
-  	0,0,431,105,1,0,0,0,432,433,7,11,0,0,433,107,1,0,0,0,434,435,7,12,0,0,
-  	435,109,1,0,0,0,436,437,7,13,0,0,437,111,1,0,0,0,438,439,7,14,0,0,439,
-  	113,1,0,0,0,440,443,3,116,58,0,441,443,3,118,59,0,442,440,1,0,0,0,442,
-  	441,1,0,0,0,443,115,1,0,0,0,444,445,7,15,0,0,445,117,1,0,0,0,446,447,
-  	7,16,0,0,447,119,1,0,0,0,448,449,5,142,0,0,449,121,1,0,0,0,450,455,5,
-  	142,0,0,451,452,5,9,0,0,452,454,5,142,0,0,453,451,1,0,0,0,454,457,1,0,
-  	0,0,455,453,1,0,0,0,455,456,1,0,0,0,456,123,1,0,0,0,457,455,1,0,0,0,458,
-  	463,5,142,0,0,459,460,5,10,0,0,460,462,5,142,0,0,461,459,1,0,0,0,462,
-  	465,1,0,0,0,463,461,1,0,0,0,463,464,1,0,0,0,464,125,1,0,0,0,465,463,1,
-  	0,0,0,466,471,3,120,60,0,467,468,5,10,0,0,468,470,3,120,60,0,469,467,
-  	1,0,0,0,470,473,1,0,0,0,471,469,1,0,0,0,471,472,1,0,0,0,472,127,1,0,0,
-  	0,473,471,1,0,0,0,474,479,3,122,61,0,475,476,5,10,0,0,476,478,3,122,61,
-  	0,477,475,1,0,0,0,478,481,1,0,0,0,479,477,1,0,0,0,479,480,1,0,0,0,480,
-  	129,1,0,0,0,481,479,1,0,0,0,482,496,3,132,66,0,483,484,3,132,66,0,484,
-  	485,3,134,67,0,485,496,1,0,0,0,486,487,3,132,66,0,487,488,5,21,0,0,488,
-  	489,3,132,66,0,489,496,1,0,0,0,490,491,3,132,66,0,491,492,5,29,0,0,492,
-  	493,3,130,65,0,493,496,1,0,0,0,494,496,3,132,66,0,495,482,1,0,0,0,495,
-  	483,1,0,0,0,495,486,1,0,0,0,495,490,1,0,0,0,495,494,1,0,0,0,496,131,1,
-  	0,0,0,497,501,3,136,68,0,498,501,3,164,82,0,499,501,3,166,83,0,500,497,
-  	1,0,0,0,500,498,1,0,0,0,500,499,1,0,0,0,501,133,1,0,0,0,502,517,5,13,
-  	0,0,503,517,5,14,0,0,504,505,5,14,0,0,505,517,5,14,0,0,506,507,5,29,0,
-  	0,507,517,5,8,0,0,508,509,5,13,0,0,509,517,5,14,0,0,510,511,5,13,0,0,
-  	511,512,5,14,0,0,512,517,5,14,0,0,513,514,5,13,0,0,514,515,5,29,0,0,515,
-  	517,5,8,0,0,516,502,1,0,0,0,516,503,1,0,0,0,516,504,1,0,0,0,516,506,1,
-  	0,0,0,516,508,1,0,0,0,516,510,1,0,0,0,516,513,1,0,0,0,517,135,1,0,0,0,
-  	518,524,3,138,69,0,519,524,3,140,70,0,520,524,3,158,79,0,521,524,3,160,
-  	80,0,522,524,3,162,81,0,523,518,1,0,0,0,523,519,1,0,0,0,523,520,1,0,0,
-  	0,523,521,1,0,0,0,523,522,1,0,0,0,524,137,1,0,0,0,525,526,7,17,0,0,526,
-  	139,1,0,0,0,527,537,3,142,71,0,528,537,3,144,72,0,529,537,3,146,73,0,
-  	530,537,3,148,74,0,531,537,3,150,75,0,532,537,3,152,76,0,533,537,3,154,
-  	77,0,534,537,3,156,78,0,535,537,5,211,0,0,536,527,1,0,0,0,536,528,1,0,
-  	0,0,536,529,1,0,0,0,536,530,1,0,0,0,536,531,1,0,0,0,536,532,1,0,0,0,536,
-  	533,1,0,0,0,536,534,1,0,0,0,536,535,1,0,0,0,537,141,1,0,0,0,538,539,7,
-  	18,0,0,539,143,1,0,0,0,540,541,7,19,0,0,541,145,1,0,0,0,542,543,7,20,
-  	0,0,543,147,1,0,0,0,544,545,7,21,0,0,545,149,1,0,0,0,546,547,7,22,0,0,
-  	547,151,1,0,0,0,548,549,7,23,0,0,549,153,1,0,0,0,550,551,7,24,0,0,551,
-  	155,1,0,0,0,552,553,7,25,0,0,553,157,1,0,0,0,554,555,7,26,0,0,555,159,
-  	1,0,0,0,556,557,7,27,0,0,557,161,1,0,0,0,558,559,7,28,0,0,559,163,1,0,
-  	0,0,560,561,5,273,0,0,561,165,1,0,0,0,562,563,7,29,0,0,563,167,1,0,0,
-  	0,564,569,3,174,87,0,565,566,5,10,0,0,566,568,3,174,87,0,567,565,1,0,
-  	0,0,568,571,1,0,0,0,569,567,1,0,0,0,569,570,1,0,0,0,570,169,1,0,0,0,571,
-  	569,1,0,0,0,572,576,3,174,87,0,573,575,3,174,87,0,574,573,1,0,0,0,575,
-  	578,1,0,0,0,576,574,1,0,0,0,576,577,1,0,0,0,577,171,1,0,0,0,578,576,1,
-  	0,0,0,579,584,3,176,88,0,580,581,5,10,0,0,581,583,3,176,88,0,582,580,
-  	1,0,0,0,583,586,1,0,0,0,584,582,1,0,0,0,584,585,1,0,0,0,585,173,1,0,0,
-  	0,586,584,1,0,0,0,587,588,6,87,-1,0,588,595,3,176,88,0,589,590,3,68,34,
-  	0,590,591,3,174,87,18,591,595,1,0,0,0,592,595,3,194,97,0,593,595,3,196,
-  	98,0,594,587,1,0,0,0,594,589,1,0,0,0,594,592,1,0,0,0,594,593,1,0,0,0,
-  	595,657,1,0,0,0,596,597,10,16,0,0,597,598,3,86,43,0,598,599,3,174,87,
-  	17,599,656,1,0,0,0,600,601,10,15,0,0,601,602,3,88,44,0,602,603,3,174,
-  	87,16,603,656,1,0,0,0,604,605,10,14,0,0,605,606,3,90,45,0,606,607,3,174,
-  	87,15,607,656,1,0,0,0,608,609,10,13,0,0,609,610,3,92,46,0,610,611,3,174,
-  	87,14,611,656,1,0,0,0,612,613,10,12,0,0,613,614,3,94,47,0,614,615,3,174,
-  	87,13,615,656,1,0,0,0,616,617,10,11,0,0,617,618,3,96,48,0,618,619,3,174,
-  	87,12,619,656,1,0,0,0,620,621,10,10,0,0,621,622,3,98,49,0,622,623,3,174,
-  	87,11,623,656,1,0,0,0,624,625,10,9,0,0,625,626,3,100,50,0,626,627,3,174,
-  	87,10,627,656,1,0,0,0,628,629,10,8,0,0,629,630,3,102,51,0,630,631,3,174,
-  	87,9,631,656,1,0,0,0,632,633,10,7,0,0,633,634,3,104,52,0,634,635,3,174,
-  	87,8,635,656,1,0,0,0,636,637,10,6,0,0,637,638,3,106,53,0,638,639,3,174,
-  	87,7,639,656,1,0,0,0,640,641,10,5,0,0,641,642,3,108,54,0,642,643,3,174,
-  	87,6,643,656,1,0,0,0,644,645,10,4,0,0,645,646,3,110,55,0,646,647,3,174,
-  	87,5,647,656,1,0,0,0,648,649,10,17,0,0,649,656,3,70,35,0,650,651,10,3,
-  	0,0,651,653,3,112,56,0,652,654,3,174,87,0,653,652,1,0,0,0,653,654,1,0,
-  	0,0,654,656,1,0,0,0,655,596,1,0,0,0,655,600,1,0,0,0,655,604,1,0,0,0,655,
-  	608,1,0,0,0,655,612,1,0,0,0,655,616,1,0,0,0,655,620,1,0,0,0,655,624,1,
-  	0,0,0,655,628,1,0,0,0,655,632,1,0,0,0,655,636,1,0,0,0,655,640,1,0,0,0,
-  	655,644,1,0,0,0,655,648,1,0,0,0,655,650,1,0,0,0,656,659,1,0,0,0,657,655,
-  	1,0,0,0,657,658,1,0,0,0,658,175,1,0,0,0,659,657,1,0,0,0,660,661,6,88,
-  	-1,0,661,662,3,178,89,0,662,675,1,0,0,0,663,664,10,5,0,0,664,674,3,182,
-  	91,0,665,666,10,4,0,0,666,674,3,184,92,0,667,668,10,3,0,0,668,674,3,186,
-  	93,0,669,670,10,2,0,0,670,674,3,188,94,0,671,672,10,1,0,0,672,674,3,192,
-  	96,0,673,663,1,0,0,0,673,665,1,0,0,0,673,667,1,0,0,0,673,669,1,0,0,0,
-  	673,671,1,0,0,0,674,677,1,0,0,0,675,673,1,0,0,0,675,676,1,0,0,0,676,177,
-  	1,0,0,0,677,675,1,0,0,0,678,694,3,204,102,0,679,694,3,206,103,0,680,694,
-  	3,122,61,0,681,682,3,122,61,0,682,683,3,174,87,0,683,694,1,0,0,0,684,
-  	685,3,180,90,0,685,686,5,17,0,0,686,687,3,122,61,0,687,688,3,168,84,0,
-  	688,694,1,0,0,0,689,690,5,1,0,0,690,691,3,168,84,0,691,692,5,2,0,0,692,
-  	694,1,0,0,0,693,678,1,0,0,0,693,679,1,0,0,0,693,680,1,0,0,0,693,681,1,
-  	0,0,0,693,684,1,0,0,0,693,689,1,0,0,0,694,179,1,0,0,0,695,696,7,30,0,
-  	0,696,181,1,0,0,0,697,698,5,11,0,0,698,699,3,122,61,0,699,183,1,0,0,0,
-  	700,701,5,9,0,0,701,702,5,142,0,0,702,185,1,0,0,0,703,704,5,3,0,0,704,
-  	705,3,168,84,0,705,706,5,4,0,0,706,187,1,0,0,0,707,708,5,3,0,0,708,709,
-  	3,190,95,0,709,710,5,4,0,0,710,189,1,0,0,0,711,713,3,174,87,0,712,711,
-  	1,0,0,0,712,713,1,0,0,0,713,714,1,0,0,0,714,716,5,119,0,0,715,717,3,174,
-  	87,0,716,715,1,0,0,0,716,717,1,0,0,0,717,741,1,0,0,0,718,720,3,174,87,
-  	0,719,718,1,0,0,0,719,720,1,0,0,0,720,721,1,0,0,0,721,723,5,119,0,0,722,
-  	724,3,174,87,0,723,722,1,0,0,0,723,724,1,0,0,0,724,725,1,0,0,0,725,726,
-  	5,12,0,0,726,741,3,174,87,0,727,729,3,174,87,0,728,727,1,0,0,0,728,729,
-  	1,0,0,0,729,730,1,0,0,0,730,732,5,119,0,0,731,733,3,174,87,0,732,731,
-  	1,0,0,0,732,733,1,0,0,0,733,734,1,0,0,0,734,736,5,12,0,0,735,737,3,174,
-  	87,0,736,735,1,0,0,0,736,737,1,0,0,0,737,738,1,0,0,0,738,739,5,12,0,0,
-  	739,741,3,174,87,0,740,712,1,0,0,0,740,719,1,0,0,0,740,728,1,0,0,0,741,
-  	191,1,0,0,0,742,743,5,1,0,0,743,744,3,168,84,0,744,745,5,2,0,0,745,193,
-  	1,0,0,0,746,747,3,176,88,0,747,748,3,114,57,0,748,749,3,174,87,0,749,
-  	195,1,0,0,0,750,751,3,198,99,0,751,197,1,0,0,0,752,754,3,200,100,0,753,
-  	752,1,0,0,0,754,755,1,0,0,0,755,753,1,0,0,0,755,756,1,0,0,0,756,758,1,
-  	0,0,0,757,759,3,202,101,0,758,757,1,0,0,0,758,759,1,0,0,0,759,199,1,0,
-  	0,0,760,761,5,29,0,0,761,762,3,174,87,0,762,763,5,122,0,0,763,764,3,174,
-  	87,0,764,201,1,0,0,0,765,766,5,29,0,0,766,767,3,174,87,0,767,203,1,0,
-  	0,0,768,772,3,210,105,0,769,772,3,222,111,0,770,772,3,224,112,0,771,768,
-  	1,0,0,0,771,769,1,0,0,0,771,770,1,0,0,0,772,205,1,0,0,0,773,774,7,31,
-  	0,0,774,207,1,0,0,0,775,776,5,1,0,0,776,777,3,174,87,0,777,778,5,2,0,
-  	0,778,209,1,0,0,0,779,785,3,212,106,0,780,785,3,214,107,0,781,785,3,216,
-  	108,0,782,785,3,218,109,0,783,785,3,220,110,0,784,779,1,0,0,0,784,780,
-  	1,0,0,0,784,781,1,0,0,0,784,782,1,0,0,0,784,783,1,0,0,0,785,211,1,0,0,
-  	0,786,787,7,32,0,0,787,213,1,0,0,0,788,798,5,124,0,0,789,790,5,276,0,
-  	0,790,798,3,208,104,0,791,798,5,277,0,0,792,798,5,278,0,0,793,798,5,279,
-  	0,0,794,798,5,280,0,0,795,798,5,281,0,0,796,798,5,282,0,0,797,788,1,0,
-  	0,0,797,789,1,0,0,0,797,791,1,0,0,0,797,792,1,0,0,0,797,793,1,0,0,0,797,
-  	794,1,0,0,0,797,795,1,0,0,0,797,796,1,0,0,0,798,215,1,0,0,0,799,831,5,
-  	125,0,0,800,802,5,283,0,0,801,803,3,208,104,0,802,801,1,0,0,0,802,803,
-  	1,0,0,0,803,831,1,0,0,0,804,806,5,284,0,0,805,807,3,208,104,0,806,805,
-  	1,0,0,0,806,807,1,0,0,0,807,831,1,0,0,0,808,810,5,285,0,0,809,811,3,208,
-  	104,0,810,809,1,0,0,0,810,811,1,0,0,0,811,831,1,0,0,0,812,814,5,286,0,
-  	0,813,815,3,208,104,0,814,813,1,0,0,0,814,815,1,0,0,0,815,831,1,0,0,0,
-  	816,818,5,287,0,0,817,819,3,208,104,0,818,817,1,0,0,0,818,819,1,0,0,0,
-  	819,831,1,0,0,0,820,822,5,288,0,0,821,823,3,208,104,0,822,821,1,0,0,0,
-  	822,823,1,0,0,0,823,831,1,0,0,0,824,831,5,289,0,0,825,831,5,290,0,0,826,
-  	831,5,291,0,0,827,831,5,292,0,0,828,831,5,293,0,0,829,831,5,294,0,0,830,
-  	799,1,0,0,0,830,800,1,0,0,0,830,804,1,0,0,0,830,808,1,0,0,0,830,812,1,
-  	0,0,0,830,816,1,0,0,0,830,820,1,0,0,0,830,824,1,0,0,0,830,825,1,0,0,0,
-  	830,826,1,0,0,0,830,827,1,0,0,0,830,828,1,0,0,0,830,829,1,0,0,0,831,217,
-  	1,0,0,0,832,847,5,136,0,0,833,834,5,295,0,0,834,847,3,208,104,0,835,836,
-  	5,297,0,0,836,847,3,208,104,0,837,838,5,298,0,0,838,847,3,208,104,0,839,
-  	840,5,299,0,0,840,847,3,208,104,0,841,842,5,300,0,0,842,847,3,208,104,
-  	0,843,844,5,301,0,0,844,847,3,208,104,0,845,847,5,302,0,0,846,832,1,0,
-  	0,0,846,833,1,0,0,0,846,835,1,0,0,0,846,837,1,0,0,0,846,839,1,0,0,0,846,
-  	841,1,0,0,0,846,843,1,0,0,0,846,845,1,0,0,0,847,219,1,0,0,0,848,854,5,
-  	127,0,0,849,854,5,126,0,0,850,851,5,304,0,0,851,854,3,208,104,0,852,854,
-  	5,303,0,0,853,848,1,0,0,0,853,849,1,0,0,0,853,850,1,0,0,0,853,852,1,0,
-  	0,0,854,221,1,0,0,0,855,856,5,140,0,0,856,223,1,0,0,0,857,862,3,226,113,
-  	0,858,862,3,228,114,0,859,862,3,230,115,0,860,862,3,232,116,0,861,857,
-  	1,0,0,0,861,858,1,0,0,0,861,859,1,0,0,0,861,860,1,0,0,0,862,225,1,0,0,
-  	0,863,864,5,305,0,0,864,868,3,208,104,0,865,866,5,306,0,0,866,868,3,208,
-  	104,0,867,863,1,0,0,0,867,865,1,0,0,0,868,227,1,0,0,0,869,870,5,307,0,
-  	0,870,873,3,208,104,0,871,873,5,308,0,0,872,869,1,0,0,0,872,871,1,0,0,
-  	0,873,229,1,0,0,0,874,875,5,309,0,0,875,879,3,208,104,0,876,877,5,310,
-  	0,0,877,879,3,208,104,0,878,874,1,0,0,0,878,876,1,0,0,0,879,231,1,0,0,
-  	0,880,881,5,311,0,0,881,884,3,208,104,0,882,884,5,312,0,0,883,880,1,0,
-  	0,0,883,882,1,0,0,0,884,233,1,0,0,0,69,236,241,248,254,259,266,272,277,
-  	289,311,316,321,329,333,337,341,350,364,385,389,402,408,442,455,463,471,
-  	479,495,500,516,523,536,569,576,584,594,653,655,657,673,675,693,712,716,
-  	719,723,728,732,736,740,755,758,771,784,797,802,806,810,814,818,822,830,
-  	846,853,861,867,872,878,883
+  	7,116,2,117,7,117,2,118,7,118,2,119,7,119,2,120,7,120,2,121,7,121,2,122,
+  	7,122,2,123,7,123,2,124,7,124,2,125,7,125,2,126,7,126,2,127,7,127,2,128,
+  	7,128,2,129,7,129,2,130,7,130,2,131,7,131,2,132,7,132,1,0,1,0,3,0,269,
+  	8,0,1,1,1,1,1,2,1,2,1,2,4,2,276,8,2,11,2,12,2,277,1,3,1,3,1,3,3,3,283,
+  	8,3,1,4,1,4,1,4,3,4,288,8,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,3,6,297,8,6,1,
+  	7,1,7,1,7,1,7,1,7,3,7,304,8,7,1,8,1,8,1,8,1,8,1,8,1,8,3,8,312,8,8,1,9,
+  	1,9,1,10,5,10,317,8,10,10,10,12,10,320,9,10,1,10,1,10,1,11,1,11,1,12,
+  	1,12,1,12,1,13,1,13,1,13,3,13,332,8,13,1,14,1,14,3,14,336,8,14,1,14,1,
+  	14,1,14,1,15,1,15,1,15,4,15,344,8,15,11,15,12,15,345,1,16,1,16,1,16,1,
+  	16,1,17,5,17,353,8,17,10,17,12,17,356,9,17,1,17,1,17,1,18,1,18,1,19,1,
+  	19,1,19,1,20,1,20,1,20,3,20,368,8,20,1,21,1,21,3,21,372,8,21,1,21,1,21,
+  	1,21,3,21,377,8,21,1,22,1,22,1,22,4,22,382,8,22,11,22,12,22,383,1,23,
+  	1,23,1,23,1,23,1,24,5,24,391,8,24,10,24,12,24,394,9,24,1,24,1,24,1,25,
+  	1,25,1,26,1,26,1,26,1,27,1,27,1,27,3,27,406,8,27,1,28,1,28,3,28,410,8,
+  	28,1,28,1,28,1,28,3,28,415,8,28,1,29,1,29,1,29,4,29,420,8,29,11,29,12,
+  	29,421,1,30,1,30,1,30,1,30,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,
+  	31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,3,31,445,8,31,1,32,1,32,1,
+  	32,3,32,450,8,32,1,33,1,33,1,34,1,34,1,35,1,35,1,35,3,35,459,8,35,1,36,
+  	1,36,1,36,1,36,1,37,1,37,1,37,4,37,468,8,37,11,37,12,37,469,1,38,1,38,
+  	1,38,3,38,475,8,38,1,38,1,38,1,39,1,39,1,40,1,40,3,40,483,8,40,1,41,1,
+  	41,1,42,1,42,1,42,1,42,1,42,1,43,1,43,1,44,1,44,1,44,1,44,1,45,1,45,1,
+  	45,1,45,1,45,1,45,3,45,504,8,45,1,46,1,46,3,46,508,8,46,1,47,1,47,1,48,
+  	1,48,1,49,1,49,1,50,1,50,1,51,1,51,1,52,1,52,1,53,1,53,1,54,1,54,1,55,
+  	1,55,1,56,1,56,1,57,1,57,1,58,1,58,1,59,1,59,1,60,1,60,1,61,1,61,1,62,
+  	1,62,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,1,63,
+  	1,63,3,63,556,8,63,1,64,1,64,1,65,1,65,1,66,1,66,1,67,1,67,1,68,1,68,
+  	1,68,3,68,569,8,68,1,69,1,69,1,70,1,70,1,71,1,71,1,72,1,72,1,73,1,73,
+  	1,74,1,74,1,74,5,74,584,8,74,10,74,12,74,587,9,74,1,75,1,75,1,75,5,75,
+  	592,8,75,10,75,12,75,595,9,75,1,76,1,76,1,76,5,76,600,8,76,10,76,12,76,
+  	603,9,76,1,77,1,77,1,77,5,77,608,8,77,10,77,12,77,611,9,77,1,78,1,78,
+  	1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,1,78,3,78,626,8,78,
+  	1,79,1,79,1,79,3,79,631,8,79,1,80,1,80,1,80,1,80,1,80,1,80,1,80,1,80,
+  	1,80,1,80,1,80,1,80,1,80,1,80,3,80,647,8,80,1,81,1,81,1,81,1,81,1,81,
+  	3,81,654,8,81,1,82,1,82,1,83,1,83,1,83,1,83,1,83,1,83,1,83,1,83,1,83,
+  	3,83,667,8,83,1,84,1,84,1,85,1,85,1,86,1,86,1,87,1,87,1,88,1,88,1,89,
+  	1,89,1,90,1,90,1,91,1,91,1,92,1,92,1,93,1,93,1,94,1,94,1,95,1,95,1,96,
+  	1,96,1,97,1,97,1,97,5,97,698,8,97,10,97,12,97,701,9,97,1,98,1,98,5,98,
+  	705,8,98,10,98,12,98,708,9,98,1,99,1,99,1,99,5,99,713,8,99,10,99,12,99,
+  	716,9,99,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,3,100,726,8,
+  	100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
+  	1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
+  	1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
+  	1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,
+  	1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,1,100,3,100,785,
+  	8,100,5,100,787,8,100,10,100,12,100,790,9,100,1,101,1,101,1,101,1,101,
+  	1,101,1,101,1,101,1,101,1,101,1,101,1,101,1,101,1,101,5,101,805,8,101,
+  	10,101,12,101,808,9,101,1,102,1,102,1,102,1,102,1,102,1,102,1,102,1,102,
+  	1,102,1,102,1,102,1,102,1,102,1,102,1,102,3,102,825,8,102,1,103,1,103,
+  	1,104,1,104,1,104,1,105,1,105,1,105,1,106,1,106,1,106,1,106,1,107,1,107,
+  	1,107,1,107,1,108,1,108,1,108,1,108,1,108,3,108,848,8,108,1,109,1,109,
+  	1,109,1,109,1,109,1,109,1,109,1,109,1,109,1,109,3,109,860,8,109,1,109,
+  	1,109,1,109,5,109,865,8,109,10,109,12,109,868,9,109,1,110,1,110,1,110,
+  	1,110,1,111,1,111,1,111,1,111,1,112,1,112,1,113,4,113,881,8,113,11,113,
+  	12,113,882,1,113,3,113,886,8,113,1,114,1,114,1,114,1,114,1,114,1,115,
+  	1,115,1,115,1,116,4,116,897,8,116,11,116,12,116,898,1,117,1,117,5,117,
+  	903,8,117,10,117,12,117,906,9,117,1,118,1,118,3,118,910,8,118,1,119,1,
+  	119,1,120,1,120,1,120,1,120,1,121,1,121,1,121,1,121,1,121,3,121,923,8,
+  	121,1,122,1,122,1,123,1,123,1,123,1,123,1,123,1,123,1,123,1,123,1,123,
+  	1,123,1,123,1,123,1,123,1,123,3,123,941,8,123,1,124,1,124,1,124,3,124,
+  	946,8,124,1,124,1,124,3,124,950,8,124,1,124,1,124,3,124,954,8,124,1,124,
+  	1,124,3,124,958,8,124,1,124,1,124,3,124,962,8,124,1,124,1,124,3,124,966,
+  	8,124,1,124,1,124,1,124,1,124,1,124,1,124,3,124,974,8,124,1,125,1,125,
+  	1,125,1,125,1,125,1,125,1,125,1,125,1,125,1,125,1,125,1,125,1,125,1,125,
+  	1,125,1,125,3,125,992,8,125,1,126,1,126,1,126,1,126,1,126,1,126,1,126,
+  	1,126,1,126,3,126,1003,8,126,1,127,1,127,1,127,1,127,3,127,1009,8,127,
+  	1,128,1,128,1,128,1,128,3,128,1015,8,128,1,129,1,129,1,129,3,129,1020,
+  	8,129,1,130,1,130,1,130,1,130,3,130,1026,8,130,1,131,1,131,1,131,3,131,
+  	1031,8,131,1,132,1,132,1,132,0,3,200,202,218,133,0,2,4,6,8,10,12,14,16,
+  	18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,
+  	64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,
+  	108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,
+  	144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,
+  	180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,
+  	216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,
+  	252,254,256,258,260,262,264,0,41,1,0,224,226,2,0,233,233,236,236,3,0,
+  	227,227,232,233,236,236,2,0,227,233,236,236,2,0,32,33,47,51,2,0,27,27,
+  	52,52,2,0,28,28,54,54,2,0,31,31,53,53,2,0,305,305,307,307,1,0,49,50,2,
+  	0,22,25,55,60,1,0,32,33,2,0,40,41,62,62,2,0,21,21,61,61,1,0,65,66,2,0,
+  	7,8,67,72,2,0,313,313,316,316,2,0,315,315,318,318,2,0,314,314,317,317,
+  	4,0,13,14,42,43,73,73,260,260,2,0,31,31,74,76,2,0,31,31,77,77,2,0,78,
+  	82,84,99,1,0,324,329,2,0,330,333,335,336,1,0,338,344,1,0,345,351,1,0,
+  	352,357,1,0,358,368,1,0,369,374,1,0,375,379,1,0,380,384,1,0,385,386,1,
+  	0,387,392,1,0,393,401,1,0,405,406,1,0,321,323,1,0,297,301,1,0,288,289,
+  	1,0,420,421,1,0,507,512,1087,0,268,1,0,0,0,2,270,1,0,0,0,4,275,1,0,0,
+  	0,6,282,1,0,0,0,8,287,1,0,0,0,10,289,1,0,0,0,12,293,1,0,0,0,14,298,1,
+  	0,0,0,16,311,1,0,0,0,18,313,1,0,0,0,20,318,1,0,0,0,22,323,1,0,0,0,24,
+  	325,1,0,0,0,26,331,1,0,0,0,28,333,1,0,0,0,30,340,1,0,0,0,32,347,1,0,0,
+  	0,34,354,1,0,0,0,36,359,1,0,0,0,38,361,1,0,0,0,40,367,1,0,0,0,42,369,
+  	1,0,0,0,44,378,1,0,0,0,46,385,1,0,0,0,48,392,1,0,0,0,50,397,1,0,0,0,52,
+  	399,1,0,0,0,54,405,1,0,0,0,56,407,1,0,0,0,58,416,1,0,0,0,60,423,1,0,0,
+  	0,62,444,1,0,0,0,64,449,1,0,0,0,66,451,1,0,0,0,68,453,1,0,0,0,70,458,
+  	1,0,0,0,72,460,1,0,0,0,74,464,1,0,0,0,76,471,1,0,0,0,78,478,1,0,0,0,80,
+  	482,1,0,0,0,82,484,1,0,0,0,84,486,1,0,0,0,86,491,1,0,0,0,88,493,1,0,0,
+  	0,90,503,1,0,0,0,92,507,1,0,0,0,94,509,1,0,0,0,96,511,1,0,0,0,98,513,
+  	1,0,0,0,100,515,1,0,0,0,102,517,1,0,0,0,104,519,1,0,0,0,106,521,1,0,0,
+  	0,108,523,1,0,0,0,110,525,1,0,0,0,112,527,1,0,0,0,114,529,1,0,0,0,116,
+  	531,1,0,0,0,118,533,1,0,0,0,120,535,1,0,0,0,122,537,1,0,0,0,124,539,1,
+  	0,0,0,126,555,1,0,0,0,128,557,1,0,0,0,130,559,1,0,0,0,132,561,1,0,0,0,
+  	134,563,1,0,0,0,136,568,1,0,0,0,138,570,1,0,0,0,140,572,1,0,0,0,142,574,
+  	1,0,0,0,144,576,1,0,0,0,146,578,1,0,0,0,148,580,1,0,0,0,150,588,1,0,0,
+  	0,152,596,1,0,0,0,154,604,1,0,0,0,156,625,1,0,0,0,158,630,1,0,0,0,160,
+  	646,1,0,0,0,162,653,1,0,0,0,164,655,1,0,0,0,166,666,1,0,0,0,168,668,1,
+  	0,0,0,170,670,1,0,0,0,172,672,1,0,0,0,174,674,1,0,0,0,176,676,1,0,0,0,
+  	178,678,1,0,0,0,180,680,1,0,0,0,182,682,1,0,0,0,184,684,1,0,0,0,186,686,
+  	1,0,0,0,188,688,1,0,0,0,190,690,1,0,0,0,192,692,1,0,0,0,194,694,1,0,0,
+  	0,196,702,1,0,0,0,198,709,1,0,0,0,200,725,1,0,0,0,202,791,1,0,0,0,204,
+  	824,1,0,0,0,206,826,1,0,0,0,208,828,1,0,0,0,210,831,1,0,0,0,212,834,1,
+  	0,0,0,214,838,1,0,0,0,216,847,1,0,0,0,218,859,1,0,0,0,220,869,1,0,0,0,
+  	222,873,1,0,0,0,224,877,1,0,0,0,226,880,1,0,0,0,228,887,1,0,0,0,230,892,
+  	1,0,0,0,232,896,1,0,0,0,234,900,1,0,0,0,236,909,1,0,0,0,238,911,1,0,0,
+  	0,240,913,1,0,0,0,242,922,1,0,0,0,244,924,1,0,0,0,246,940,1,0,0,0,248,
+  	973,1,0,0,0,250,991,1,0,0,0,252,1002,1,0,0,0,254,1008,1,0,0,0,256,1014,
+  	1,0,0,0,258,1019,1,0,0,0,260,1025,1,0,0,0,262,1030,1,0,0,0,264,1032,1,
+  	0,0,0,266,269,3,2,1,0,267,269,3,4,2,0,268,266,1,0,0,0,268,267,1,0,0,0,
+  	269,1,1,0,0,0,270,271,3,6,3,0,271,3,1,0,0,0,272,273,3,6,3,0,273,274,5,
+  	183,0,0,274,276,1,0,0,0,275,272,1,0,0,0,276,277,1,0,0,0,277,275,1,0,0,
+  	0,277,278,1,0,0,0,278,5,1,0,0,0,279,283,3,8,4,0,280,283,3,16,8,0,281,
+  	283,3,62,31,0,282,279,1,0,0,0,282,280,1,0,0,0,282,281,1,0,0,0,283,7,1,
+  	0,0,0,284,288,3,10,5,0,285,288,3,12,6,0,286,288,3,14,7,0,287,284,1,0,
+  	0,0,287,285,1,0,0,0,287,286,1,0,0,0,288,9,1,0,0,0,289,290,5,174,0,0,290,
+  	291,3,200,100,0,291,292,3,200,100,0,292,11,1,0,0,0,293,294,5,174,0,0,
+  	294,296,5,165,0,0,295,297,3,194,97,0,296,295,1,0,0,0,296,297,1,0,0,0,
+  	297,13,1,0,0,0,298,299,5,175,0,0,299,303,3,200,100,0,300,304,5,13,0,0,
+  	301,302,5,13,0,0,302,304,3,200,100,0,303,300,1,0,0,0,303,301,1,0,0,0,
+  	303,304,1,0,0,0,304,15,1,0,0,0,305,306,3,18,9,0,306,307,3,16,8,0,307,
+  	312,1,0,0,0,308,312,3,20,10,0,309,312,3,34,17,0,310,312,3,48,24,0,311,
+  	305,1,0,0,0,311,308,1,0,0,0,311,309,1,0,0,0,311,310,1,0,0,0,312,17,1,
+  	0,0,0,313,314,7,0,0,0,314,19,1,0,0,0,315,317,3,22,11,0,316,315,1,0,0,
+  	0,317,320,1,0,0,0,318,316,1,0,0,0,318,319,1,0,0,0,319,321,1,0,0,0,320,
+  	318,1,0,0,0,321,322,3,24,12,0,322,21,1,0,0,0,323,324,7,1,0,0,324,23,1,
+  	0,0,0,325,326,5,202,0,0,326,327,3,26,13,0,327,25,1,0,0,0,328,332,3,28,
+  	14,0,329,332,3,30,15,0,330,332,3,32,16,0,331,328,1,0,0,0,331,329,1,0,
+  	0,0,331,330,1,0,0,0,332,27,1,0,0,0,333,335,3,146,73,0,334,336,3,156,78,
+  	0,335,334,1,0,0,0,335,336,1,0,0,0,336,337,1,0,0,0,337,338,3,138,69,0,
+  	338,339,3,200,100,0,339,29,1,0,0,0,340,343,3,28,14,0,341,342,5,10,0,0,
+  	342,344,3,28,14,0,343,341,1,0,0,0,344,345,1,0,0,0,345,343,1,0,0,0,345,
+  	346,1,0,0,0,346,31,1,0,0,0,347,348,3,152,76,0,348,349,3,140,70,0,349,
+  	350,3,194,97,0,350,33,1,0,0,0,351,353,3,36,18,0,352,351,1,0,0,0,353,356,
+  	1,0,0,0,354,352,1,0,0,0,354,355,1,0,0,0,355,357,1,0,0,0,356,354,1,0,0,
+  	0,357,358,3,38,19,0,358,35,1,0,0,0,359,360,7,2,0,0,360,37,1,0,0,0,361,
+  	362,5,203,0,0,362,363,3,54,27,0,363,39,1,0,0,0,364,368,3,42,21,0,365,
+  	368,3,44,22,0,366,368,3,46,23,0,367,364,1,0,0,0,367,365,1,0,0,0,367,366,
+  	1,0,0,0,368,41,1,0,0,0,369,371,3,146,73,0,370,372,3,156,78,0,371,370,
+  	1,0,0,0,371,372,1,0,0,0,372,376,1,0,0,0,373,374,3,138,69,0,374,375,3,
+  	200,100,0,375,377,1,0,0,0,376,373,1,0,0,0,376,377,1,0,0,0,377,43,1,0,
+  	0,0,378,381,3,42,21,0,379,380,5,10,0,0,380,382,3,42,21,0,381,379,1,0,
+  	0,0,382,383,1,0,0,0,383,381,1,0,0,0,383,384,1,0,0,0,384,45,1,0,0,0,385,
+  	386,3,152,76,0,386,387,3,140,70,0,387,388,3,194,97,0,388,47,1,0,0,0,389,
+  	391,3,50,25,0,390,389,1,0,0,0,391,394,1,0,0,0,392,390,1,0,0,0,392,393,
+  	1,0,0,0,393,395,1,0,0,0,394,392,1,0,0,0,395,396,3,52,26,0,396,49,1,0,
+  	0,0,397,398,7,3,0,0,398,51,1,0,0,0,399,400,5,204,0,0,400,401,3,54,27,
+  	0,401,53,1,0,0,0,402,406,3,56,28,0,403,406,3,58,29,0,404,406,3,60,30,
+  	0,405,402,1,0,0,0,405,403,1,0,0,0,405,404,1,0,0,0,406,55,1,0,0,0,407,
+  	409,3,146,73,0,408,410,3,156,78,0,409,408,1,0,0,0,409,410,1,0,0,0,410,
+  	414,1,0,0,0,411,412,3,138,69,0,412,413,3,200,100,0,413,415,1,0,0,0,414,
+  	411,1,0,0,0,414,415,1,0,0,0,415,57,1,0,0,0,416,419,3,56,28,0,417,418,
+  	5,10,0,0,418,420,3,56,28,0,419,417,1,0,0,0,420,421,1,0,0,0,421,419,1,
+  	0,0,0,421,422,1,0,0,0,422,59,1,0,0,0,423,424,3,152,76,0,424,425,3,140,
+  	70,0,425,426,3,194,97,0,426,61,1,0,0,0,427,428,3,144,72,0,428,429,5,12,
+  	0,0,429,445,1,0,0,0,430,431,3,144,72,0,431,432,5,12,0,0,432,433,3,62,
+  	31,0,433,445,1,0,0,0,434,435,5,177,0,0,435,445,3,62,31,0,436,437,5,178,
+  	0,0,437,445,3,62,31,0,438,439,5,1,0,0,439,440,3,62,31,0,440,441,5,2,0,
+  	0,441,445,1,0,0,0,442,445,3,64,32,0,443,445,3,78,39,0,444,427,1,0,0,0,
+  	444,430,1,0,0,0,444,434,1,0,0,0,444,436,1,0,0,0,444,438,1,0,0,0,444,442,
+  	1,0,0,0,444,443,1,0,0,0,445,63,1,0,0,0,446,450,3,66,33,0,447,450,3,68,
+  	34,0,448,450,3,70,35,0,449,446,1,0,0,0,449,447,1,0,0,0,449,448,1,0,0,
+  	0,450,65,1,0,0,0,451,452,5,34,0,0,452,67,1,0,0,0,453,454,3,194,97,0,454,
+  	69,1,0,0,0,455,459,3,72,36,0,456,459,3,74,37,0,457,459,3,76,38,0,458,
+  	455,1,0,0,0,458,456,1,0,0,0,458,457,1,0,0,0,459,71,1,0,0,0,460,461,3,
+  	202,101,0,461,462,3,138,69,0,462,463,3,200,100,0,463,73,1,0,0,0,464,467,
+  	3,72,36,0,465,466,5,10,0,0,466,468,3,72,36,0,467,465,1,0,0,0,468,469,
+  	1,0,0,0,469,467,1,0,0,0,469,470,1,0,0,0,470,75,1,0,0,0,471,474,3,198,
+  	99,0,472,475,3,138,69,0,473,475,3,140,70,0,474,472,1,0,0,0,474,473,1,
+  	0,0,0,475,476,1,0,0,0,476,477,3,194,97,0,477,77,1,0,0,0,478,479,3,80,
+  	40,0,479,79,1,0,0,0,480,483,3,82,41,0,481,483,3,86,43,0,482,480,1,0,0,
+  	0,482,481,1,0,0,0,483,81,1,0,0,0,484,485,3,84,42,0,485,83,1,0,0,0,486,
+  	487,5,255,0,0,487,488,3,200,100,0,488,489,5,256,0,0,489,490,3,64,32,0,
+  	490,85,1,0,0,0,491,492,3,88,44,0,492,87,1,0,0,0,493,494,3,64,32,0,494,
+  	495,5,259,0,0,495,496,3,200,100,0,496,89,1,0,0,0,497,504,3,94,47,0,498,
+  	504,3,96,48,0,499,504,3,98,49,0,500,504,3,100,50,0,501,504,3,102,51,0,
+  	502,504,3,106,53,0,503,497,1,0,0,0,503,498,1,0,0,0,503,499,1,0,0,0,503,
+  	500,1,0,0,0,503,501,1,0,0,0,503,502,1,0,0,0,504,91,1,0,0,0,505,508,3,
+  	102,51,0,506,508,3,104,52,0,507,505,1,0,0,0,507,506,1,0,0,0,508,93,1,
+  	0,0,0,509,510,7,4,0,0,510,95,1,0,0,0,511,512,7,5,0,0,512,97,1,0,0,0,513,
+  	514,5,312,0,0,514,99,1,0,0,0,515,516,5,34,0,0,516,101,1,0,0,0,517,518,
+  	7,6,0,0,518,103,1,0,0,0,519,520,7,7,0,0,520,105,1,0,0,0,521,522,7,8,0,
+  	0,522,107,1,0,0,0,523,524,7,9,0,0,524,109,1,0,0,0,525,526,7,10,0,0,526,
+  	111,1,0,0,0,527,528,7,11,0,0,528,113,1,0,0,0,529,530,7,12,0,0,530,115,
+  	1,0,0,0,531,532,7,13,0,0,532,117,1,0,0,0,533,534,5,28,0,0,534,119,1,0,
+  	0,0,535,536,5,29,0,0,536,121,1,0,0,0,537,538,7,14,0,0,538,123,1,0,0,0,
+  	539,540,7,15,0,0,540,125,1,0,0,0,541,556,5,308,0,0,542,543,5,308,0,0,
+  	543,556,5,312,0,0,544,556,5,309,0,0,545,546,5,312,0,0,546,556,5,309,0,
+  	0,547,556,5,310,0,0,548,549,5,312,0,0,549,556,5,310,0,0,550,556,5,311,
+  	0,0,551,552,5,312,0,0,552,556,5,311,0,0,553,556,5,63,0,0,554,556,5,64,
+  	0,0,555,541,1,0,0,0,555,542,1,0,0,0,555,544,1,0,0,0,555,545,1,0,0,0,555,
+  	547,1,0,0,0,555,548,1,0,0,0,555,550,1,0,0,0,555,551,1,0,0,0,555,553,1,
+  	0,0,0,555,554,1,0,0,0,556,127,1,0,0,0,557,558,7,16,0,0,558,129,1,0,0,
+  	0,559,560,7,17,0,0,560,131,1,0,0,0,561,562,7,18,0,0,562,133,1,0,0,0,563,
+  	564,7,19,0,0,564,135,1,0,0,0,565,569,3,138,69,0,566,569,3,140,70,0,567,
+  	569,3,142,71,0,568,565,1,0,0,0,568,566,1,0,0,0,568,567,1,0,0,0,569,137,
+  	1,0,0,0,570,571,7,20,0,0,571,139,1,0,0,0,572,573,7,21,0,0,573,141,1,0,
+  	0,0,574,575,7,22,0,0,575,143,1,0,0,0,576,577,5,164,0,0,577,145,1,0,0,
+  	0,578,579,5,165,0,0,579,147,1,0,0,0,580,585,5,165,0,0,581,582,5,9,0,0,
+  	582,584,5,165,0,0,583,581,1,0,0,0,584,587,1,0,0,0,585,583,1,0,0,0,585,
+  	586,1,0,0,0,586,149,1,0,0,0,587,585,1,0,0,0,588,593,5,165,0,0,589,590,
+  	5,10,0,0,590,592,5,165,0,0,591,589,1,0,0,0,592,595,1,0,0,0,593,591,1,
+  	0,0,0,593,594,1,0,0,0,594,151,1,0,0,0,595,593,1,0,0,0,596,601,3,146,73,
+  	0,597,598,5,10,0,0,598,600,3,146,73,0,599,597,1,0,0,0,600,603,1,0,0,0,
+  	601,599,1,0,0,0,601,602,1,0,0,0,602,153,1,0,0,0,603,601,1,0,0,0,604,609,
+  	3,148,74,0,605,606,5,10,0,0,606,608,3,148,74,0,607,605,1,0,0,0,608,611,
+  	1,0,0,0,609,607,1,0,0,0,609,610,1,0,0,0,610,155,1,0,0,0,611,609,1,0,0,
+  	0,612,626,3,158,79,0,613,614,3,158,79,0,614,615,3,160,80,0,615,626,1,
+  	0,0,0,616,617,3,158,79,0,617,618,5,21,0,0,618,619,3,158,79,0,619,626,
+  	1,0,0,0,620,621,3,158,79,0,621,622,5,29,0,0,622,623,3,156,78,0,623,626,
+  	1,0,0,0,624,626,3,158,79,0,625,612,1,0,0,0,625,613,1,0,0,0,625,616,1,
+  	0,0,0,625,620,1,0,0,0,625,624,1,0,0,0,626,157,1,0,0,0,627,631,3,162,81,
+  	0,628,631,3,190,95,0,629,631,3,192,96,0,630,627,1,0,0,0,630,628,1,0,0,
+  	0,630,629,1,0,0,0,631,159,1,0,0,0,632,647,5,13,0,0,633,647,5,14,0,0,634,
+  	635,5,14,0,0,635,647,5,14,0,0,636,637,5,29,0,0,637,647,5,8,0,0,638,639,
+  	5,13,0,0,639,647,5,14,0,0,640,641,5,13,0,0,641,642,5,14,0,0,642,647,5,
+  	14,0,0,643,644,5,13,0,0,644,645,5,29,0,0,645,647,5,8,0,0,646,632,1,0,
+  	0,0,646,633,1,0,0,0,646,634,1,0,0,0,646,636,1,0,0,0,646,638,1,0,0,0,646,
+  	640,1,0,0,0,646,643,1,0,0,0,647,161,1,0,0,0,648,654,3,164,82,0,649,654,
+  	3,166,83,0,650,654,3,184,92,0,651,654,3,186,93,0,652,654,3,188,94,0,653,
+  	648,1,0,0,0,653,649,1,0,0,0,653,650,1,0,0,0,653,651,1,0,0,0,653,652,1,
+  	0,0,0,654,163,1,0,0,0,655,656,7,23,0,0,656,165,1,0,0,0,657,667,3,168,
+  	84,0,658,667,3,170,85,0,659,667,3,172,86,0,660,667,3,174,87,0,661,667,
+  	3,176,88,0,662,667,3,178,89,0,663,667,3,180,90,0,664,667,3,182,91,0,665,
+  	667,5,337,0,0,666,657,1,0,0,0,666,658,1,0,0,0,666,659,1,0,0,0,666,660,
+  	1,0,0,0,666,661,1,0,0,0,666,662,1,0,0,0,666,663,1,0,0,0,666,664,1,0,0,
+  	0,666,665,1,0,0,0,667,167,1,0,0,0,668,669,7,24,0,0,669,169,1,0,0,0,670,
+  	671,7,25,0,0,671,171,1,0,0,0,672,673,7,26,0,0,673,173,1,0,0,0,674,675,
+  	7,27,0,0,675,175,1,0,0,0,676,677,7,28,0,0,677,177,1,0,0,0,678,679,7,29,
+  	0,0,679,179,1,0,0,0,680,681,7,30,0,0,681,181,1,0,0,0,682,683,7,31,0,0,
+  	683,183,1,0,0,0,684,685,7,32,0,0,685,185,1,0,0,0,686,687,7,33,0,0,687,
+  	187,1,0,0,0,688,689,7,34,0,0,689,189,1,0,0,0,690,691,7,35,0,0,691,191,
+  	1,0,0,0,692,693,7,36,0,0,693,193,1,0,0,0,694,699,3,200,100,0,695,696,
+  	5,10,0,0,696,698,3,200,100,0,697,695,1,0,0,0,698,701,1,0,0,0,699,697,
+  	1,0,0,0,699,700,1,0,0,0,700,195,1,0,0,0,701,699,1,0,0,0,702,706,3,200,
+  	100,0,703,705,3,200,100,0,704,703,1,0,0,0,705,708,1,0,0,0,706,704,1,0,
+  	0,0,706,707,1,0,0,0,707,197,1,0,0,0,708,706,1,0,0,0,709,714,3,202,101,
+  	0,710,711,5,10,0,0,711,713,3,202,101,0,712,710,1,0,0,0,713,716,1,0,0,
+  	0,714,712,1,0,0,0,714,715,1,0,0,0,715,199,1,0,0,0,716,714,1,0,0,0,717,
+  	718,6,100,-1,0,718,726,3,202,101,0,719,720,3,90,45,0,720,721,3,200,100,
+  	19,721,726,1,0,0,0,722,726,3,222,111,0,723,726,3,224,112,0,724,726,3,
+  	232,116,0,725,717,1,0,0,0,725,719,1,0,0,0,725,722,1,0,0,0,725,723,1,0,
+  	0,0,725,724,1,0,0,0,726,788,1,0,0,0,727,728,10,17,0,0,728,729,3,108,54,
+  	0,729,730,3,200,100,18,730,787,1,0,0,0,731,732,10,16,0,0,732,733,3,110,
+  	55,0,733,734,3,200,100,17,734,787,1,0,0,0,735,736,10,15,0,0,736,737,3,
+  	112,56,0,737,738,3,200,100,16,738,787,1,0,0,0,739,740,10,14,0,0,740,741,
+  	3,114,57,0,741,742,3,200,100,15,742,787,1,0,0,0,743,744,10,13,0,0,744,
+  	745,3,116,58,0,745,746,3,200,100,14,746,787,1,0,0,0,747,748,10,12,0,0,
+  	748,749,3,118,59,0,749,750,3,200,100,13,750,787,1,0,0,0,751,752,10,11,
+  	0,0,752,753,3,120,60,0,753,754,3,200,100,12,754,787,1,0,0,0,755,756,10,
+  	10,0,0,756,757,3,122,61,0,757,758,3,200,100,11,758,787,1,0,0,0,759,760,
+  	10,9,0,0,760,761,3,124,62,0,761,762,3,200,100,10,762,787,1,0,0,0,763,
+  	764,10,8,0,0,764,765,3,126,63,0,765,766,3,200,100,9,766,787,1,0,0,0,767,
+  	768,10,7,0,0,768,769,3,128,64,0,769,770,3,200,100,8,770,787,1,0,0,0,771,
+  	772,10,6,0,0,772,773,3,130,65,0,773,774,3,200,100,7,774,787,1,0,0,0,775,
+  	776,10,5,0,0,776,777,3,132,66,0,777,778,3,200,100,6,778,787,1,0,0,0,779,
+  	780,10,18,0,0,780,787,3,92,46,0,781,782,10,4,0,0,782,784,3,134,67,0,783,
+  	785,3,200,100,0,784,783,1,0,0,0,784,785,1,0,0,0,785,787,1,0,0,0,786,727,
+  	1,0,0,0,786,731,1,0,0,0,786,735,1,0,0,0,786,739,1,0,0,0,786,743,1,0,0,
+  	0,786,747,1,0,0,0,786,751,1,0,0,0,786,755,1,0,0,0,786,759,1,0,0,0,786,
+  	763,1,0,0,0,786,767,1,0,0,0,786,771,1,0,0,0,786,775,1,0,0,0,786,779,1,
+  	0,0,0,786,781,1,0,0,0,787,790,1,0,0,0,788,786,1,0,0,0,788,789,1,0,0,0,
+  	789,201,1,0,0,0,790,788,1,0,0,0,791,792,6,101,-1,0,792,793,3,204,102,
+  	0,793,806,1,0,0,0,794,795,10,5,0,0,795,805,3,208,104,0,796,797,10,4,0,
+  	0,797,805,3,210,105,0,798,799,10,3,0,0,799,805,3,212,106,0,800,801,10,
+  	2,0,0,801,805,3,214,107,0,802,803,10,1,0,0,803,805,3,220,110,0,804,794,
+  	1,0,0,0,804,796,1,0,0,0,804,798,1,0,0,0,804,800,1,0,0,0,804,802,1,0,0,
+  	0,805,808,1,0,0,0,806,804,1,0,0,0,806,807,1,0,0,0,807,203,1,0,0,0,808,
+  	806,1,0,0,0,809,825,3,236,118,0,810,825,3,238,119,0,811,825,3,148,74,
+  	0,812,813,3,148,74,0,813,814,3,200,100,0,814,825,1,0,0,0,815,816,3,206,
+  	103,0,816,817,5,17,0,0,817,818,3,148,74,0,818,819,3,194,97,0,819,825,
+  	1,0,0,0,820,821,5,1,0,0,821,822,3,194,97,0,822,823,5,2,0,0,823,825,1,
+  	0,0,0,824,809,1,0,0,0,824,810,1,0,0,0,824,811,1,0,0,0,824,812,1,0,0,0,
+  	824,815,1,0,0,0,824,820,1,0,0,0,825,205,1,0,0,0,826,827,7,37,0,0,827,
+  	207,1,0,0,0,828,829,5,11,0,0,829,830,3,148,74,0,830,209,1,0,0,0,831,832,
+  	5,9,0,0,832,833,5,165,0,0,833,211,1,0,0,0,834,835,5,3,0,0,835,836,3,194,
+  	97,0,836,837,5,4,0,0,837,213,1,0,0,0,838,839,5,3,0,0,839,840,3,216,108,
+  	0,840,841,5,4,0,0,841,215,1,0,0,0,842,848,3,218,109,0,843,844,3,218,109,
+  	0,844,845,5,12,0,0,845,846,3,200,100,0,846,848,1,0,0,0,847,842,1,0,0,
+  	0,847,843,1,0,0,0,848,217,1,0,0,0,849,850,6,109,-1,0,850,851,3,200,100,
+  	0,851,852,5,104,0,0,852,853,3,200,100,0,853,860,1,0,0,0,854,855,3,200,
+  	100,0,855,856,5,105,0,0,856,860,1,0,0,0,857,858,5,106,0,0,858,860,3,200,
+  	100,0,859,849,1,0,0,0,859,854,1,0,0,0,859,857,1,0,0,0,860,866,1,0,0,0,
+  	861,862,10,1,0,0,862,863,5,12,0,0,863,865,5,133,0,0,864,861,1,0,0,0,865,
+  	868,1,0,0,0,866,864,1,0,0,0,866,867,1,0,0,0,867,219,1,0,0,0,868,866,1,
+  	0,0,0,869,870,5,1,0,0,870,871,3,194,97,0,871,872,5,2,0,0,872,221,1,0,
+  	0,0,873,874,3,202,101,0,874,875,3,136,68,0,875,876,3,200,100,0,876,223,
+  	1,0,0,0,877,878,3,226,113,0,878,225,1,0,0,0,879,881,3,228,114,0,880,879,
+  	1,0,0,0,881,882,1,0,0,0,882,880,1,0,0,0,882,883,1,0,0,0,883,885,1,0,0,
+  	0,884,886,3,230,115,0,885,884,1,0,0,0,885,886,1,0,0,0,886,227,1,0,0,0,
+  	887,888,5,29,0,0,888,889,3,200,100,0,889,890,5,12,0,0,890,891,3,200,100,
+  	0,891,229,1,0,0,0,892,893,5,29,0,0,893,894,3,200,100,0,894,231,1,0,0,
+  	0,895,897,3,234,117,0,896,895,1,0,0,0,897,898,1,0,0,0,898,896,1,0,0,0,
+  	898,899,1,0,0,0,899,233,1,0,0,0,900,904,3,148,74,0,901,903,3,200,100,
+  	0,902,901,1,0,0,0,903,906,1,0,0,0,904,902,1,0,0,0,904,905,1,0,0,0,905,
+  	235,1,0,0,0,906,904,1,0,0,0,907,910,3,242,121,0,908,910,3,254,127,0,909,
+  	907,1,0,0,0,909,908,1,0,0,0,910,237,1,0,0,0,911,912,7,38,0,0,912,239,
+  	1,0,0,0,913,914,5,1,0,0,914,915,3,200,100,0,915,916,5,2,0,0,916,241,1,
+  	0,0,0,917,923,3,244,122,0,918,923,3,246,123,0,919,923,3,248,124,0,920,
+  	923,3,250,125,0,921,923,3,252,126,0,922,917,1,0,0,0,922,918,1,0,0,0,922,
+  	919,1,0,0,0,922,920,1,0,0,0,922,921,1,0,0,0,923,243,1,0,0,0,924,925,7,
+  	39,0,0,925,245,1,0,0,0,926,941,5,131,0,0,927,941,5,132,0,0,928,941,5,
+  	123,0,0,929,941,5,125,0,0,930,941,5,127,0,0,931,941,5,129,0,0,932,933,
+  	5,422,0,0,933,941,3,240,120,0,934,941,5,423,0,0,935,941,5,424,0,0,936,
+  	941,5,425,0,0,937,941,5,426,0,0,938,941,5,427,0,0,939,941,5,428,0,0,940,
+  	926,1,0,0,0,940,927,1,0,0,0,940,928,1,0,0,0,940,929,1,0,0,0,940,930,1,
+  	0,0,0,940,931,1,0,0,0,940,932,1,0,0,0,940,934,1,0,0,0,940,935,1,0,0,0,
+  	940,936,1,0,0,0,940,937,1,0,0,0,940,938,1,0,0,0,940,939,1,0,0,0,941,247,
+  	1,0,0,0,942,974,5,153,0,0,943,945,5,429,0,0,944,946,3,240,120,0,945,944,
+  	1,0,0,0,945,946,1,0,0,0,946,974,1,0,0,0,947,949,5,430,0,0,948,950,3,240,
+  	120,0,949,948,1,0,0,0,949,950,1,0,0,0,950,974,1,0,0,0,951,953,5,431,0,
+  	0,952,954,3,240,120,0,953,952,1,0,0,0,953,954,1,0,0,0,954,974,1,0,0,0,
+  	955,957,5,432,0,0,956,958,3,240,120,0,957,956,1,0,0,0,957,958,1,0,0,0,
+  	958,974,1,0,0,0,959,961,5,433,0,0,960,962,3,240,120,0,961,960,1,0,0,0,
+  	961,962,1,0,0,0,962,974,1,0,0,0,963,965,5,434,0,0,964,966,3,240,120,0,
+  	965,964,1,0,0,0,965,966,1,0,0,0,966,974,1,0,0,0,967,974,5,435,0,0,968,
+  	974,5,436,0,0,969,974,5,437,0,0,970,974,5,438,0,0,971,974,5,439,0,0,972,
+  	974,5,440,0,0,973,942,1,0,0,0,973,943,1,0,0,0,973,947,1,0,0,0,973,951,
+  	1,0,0,0,973,955,1,0,0,0,973,959,1,0,0,0,973,963,1,0,0,0,973,967,1,0,0,
+  	0,973,968,1,0,0,0,973,969,1,0,0,0,973,970,1,0,0,0,973,971,1,0,0,0,973,
+  	972,1,0,0,0,974,249,1,0,0,0,975,992,5,150,0,0,976,992,5,147,0,0,977,992,
+  	5,146,0,0,978,979,5,441,0,0,979,992,3,240,120,0,980,981,5,443,0,0,981,
+  	992,3,240,120,0,982,983,5,444,0,0,983,992,3,240,120,0,984,985,5,445,0,
+  	0,985,992,3,240,120,0,986,987,5,446,0,0,987,992,3,240,120,0,988,989,5,
+  	447,0,0,989,992,3,240,120,0,990,992,5,448,0,0,991,975,1,0,0,0,991,976,
+  	1,0,0,0,991,977,1,0,0,0,991,978,1,0,0,0,991,980,1,0,0,0,991,982,1,0,0,
+  	0,991,984,1,0,0,0,991,986,1,0,0,0,991,988,1,0,0,0,991,990,1,0,0,0,992,
+  	251,1,0,0,0,993,1003,5,135,0,0,994,1003,5,137,0,0,995,1003,5,141,0,0,
+  	996,1003,5,139,0,0,997,1003,5,153,0,0,998,1003,5,134,0,0,999,1000,5,450,
+  	0,0,1000,1003,3,240,120,0,1001,1003,5,449,0,0,1002,993,1,0,0,0,1002,994,
+  	1,0,0,0,1002,995,1,0,0,0,1002,996,1,0,0,0,1002,997,1,0,0,0,1002,998,1,
+  	0,0,0,1002,999,1,0,0,0,1002,1001,1,0,0,0,1003,253,1,0,0,0,1004,1009,3,
+  	256,128,0,1005,1009,3,258,129,0,1006,1009,3,260,130,0,1007,1009,3,262,
+  	131,0,1008,1004,1,0,0,0,1008,1005,1,0,0,0,1008,1006,1,0,0,0,1008,1007,
+  	1,0,0,0,1009,255,1,0,0,0,1010,1011,5,463,0,0,1011,1015,3,240,120,0,1012,
+  	1013,5,464,0,0,1013,1015,3,240,120,0,1014,1010,1,0,0,0,1014,1012,1,0,
+  	0,0,1015,257,1,0,0,0,1016,1017,5,465,0,0,1017,1020,3,240,120,0,1018,1020,
+  	5,466,0,0,1019,1016,1,0,0,0,1019,1018,1,0,0,0,1020,259,1,0,0,0,1021,1022,
+  	5,467,0,0,1022,1026,3,240,120,0,1023,1024,5,468,0,0,1024,1026,3,240,120,
+  	0,1025,1021,1,0,0,0,1025,1023,1,0,0,0,1026,261,1,0,0,0,1027,1028,5,469,
+  	0,0,1028,1031,3,240,120,0,1029,1031,5,470,0,0,1030,1027,1,0,0,0,1030,
+  	1029,1,0,0,0,1031,263,1,0,0,0,1032,1033,7,40,0,0,1033,265,1,0,0,0,74,
+  	268,277,282,287,296,303,311,318,331,335,345,354,367,371,376,383,392,405,
+  	409,414,421,444,449,458,469,474,482,503,507,555,568,585,593,601,609,625,
+  	630,646,653,666,699,706,714,725,784,786,788,804,806,824,847,859,866,882,
+  	885,898,904,909,922,940,945,949,953,957,961,965,973,991,1002,1008,1014,
+  	1019,1025,1030
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -516,7 +638,7 @@ void neobasicparserParserInitialize() {
 
 NeoBasicParser::NeoBasicParser(TokenStream *input) : NeoBasicParser(input, antlr4::atn::ParserATNSimulatorOptions()) {}
 
-NeoBasicParser::NeoBasicParser(TokenStream *input, const antlr4::atn::ParserATNSimulatorOptions &options) : Parser(input) {
+NeoBasicParser::NeoBasicParser(TokenStream *input, const antlr4::atn::ParserATNSimulatorOptions &options) : NeoBasicParserBase(input) {
   NeoBasicParser::initialize();
   _interpreter = new atn::ParserATNSimulator(this, *neobasicparserParserStaticData->atn, neobasicparserParserStaticData->decisionToDFA, neobasicparserParserStaticData->sharedContextCache, options);
 }
@@ -589,19 +711,19 @@ NeoBasicParser::NeoProgramContext* NeoBasicParser::neoProgram() {
     exitRule();
   });
   try {
-    setState(236);
+    setState(268);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 0, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(234);
+      setState(266);
       oneLinerProgram();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(235);
+      setState(267);
       scriptFileProgram();
       break;
     }
@@ -660,7 +782,7 @@ NeoBasicParser::OneLinerProgramContext* NeoBasicParser::oneLinerProgram() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(238);
+    setState(270);
     instructionSentence();
    
   }
@@ -677,10 +799,6 @@ NeoBasicParser::OneLinerProgramContext* NeoBasicParser::oneLinerProgram() {
 
 NeoBasicParser::ScriptFileProgramContext::ScriptFileProgramContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::ScriptFileProgramContext::BOM() {
-  return getToken(NeoBasicParser::BOM, 0);
 }
 
 std::vector<NeoBasicParser::InstructionSentenceContext *> NeoBasicParser::ScriptFileProgramContext::instructionSentence() {
@@ -730,30 +848,23 @@ NeoBasicParser::ScriptFileProgramContext* NeoBasicParser::scriptFileProgram() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(241);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if (_la == NeoBasicParser::BOM) {
-      setState(240);
-      match(NeoBasicParser::BOM);
-    }
-    setState(248);
+    setState(275); 
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 941268883514327041) != 0) || ((((_la - 149) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 149)) & 51480363039) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(243);
+    do {
+      setState(272);
       instructionSentence();
-      setState(244);
+      setState(273);
       match(NeoBasicParser::EOS);
-      setState(250);
+      setState(277); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    }
+    } while ((((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 26880891280162818) != 0) || ((((_la - 123) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 123)) & 60805193272744789) != 0) || ((((_la - 202) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 202)) & 9007220725383175) != 0) || ((((_la - 288) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 288)) & 17448451) != 0) || ((((_la - 420) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 420)) & 2243005863952383) != 0));
    
   }
   catch (RecognitionException &e) {
@@ -812,51 +923,70 @@ NeoBasicParser::InstructionSentenceContext* NeoBasicParser::instructionSentence(
     exitRule();
   });
   try {
-    setState(254);
+    setState(282);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::SHEBANG:
-      case NeoBasicParser::SHEBANG_INTERPRETER:
       case NeoBasicParser::WOODSTOCK: {
         enterOuterAlt(_localctx, 1);
-        setState(251);
+        setState(279);
         directive();
         break;
       }
 
       case NeoBasicParser::CONST:
       case NeoBasicParser::VAL:
-      case NeoBasicParser::VAR: {
+      case NeoBasicParser::VAR:
+      case NeoBasicParser::PUBLIC:
+      case NeoBasicParser::PROTECTED:
+      case NeoBasicParser::PRIVATE:
+      case NeoBasicParser::LINEAR:
+      case NeoBasicParser::SHARED:
+      case NeoBasicParser::VOLATILE:
+      case NeoBasicParser::LOCAL:
+      case NeoBasicParser::ATOMIC:
+      case NeoBasicParser::STATIC:
+      case NeoBasicParser::COMPTIME:
+      case NeoBasicParser::INLINE: {
         enterOuterAlt(_localctx, 2);
-        setState(252);
+        setState(280);
         declaration();
         break;
       }
 
       case NeoBasicParser::LEFT_PARENTHESIS:
+      case NeoBasicParser::TILDE:
       case NeoBasicParser::CARET:
       case NeoBasicParser::PIPE:
-      case NeoBasicParser::POSITIVE:
-      case NeoBasicParser::NEGATIVE:
+      case NeoBasicParser::PLUS:
+      case NeoBasicParser::MINUS:
+      case NeoBasicParser::ELLIPSIS:
       case NeoBasicParser::INCREMENT:
       case NeoBasicParser::DECREMENT:
-      case NeoBasicParser::BIT_NOT:
-      case NeoBasicParser::BIT_NEGATION:
       case NeoBasicParser::SQUARE_POWER:
       case NeoBasicParser::SQUARE_ROOT:
       case NeoBasicParser::FACTORIAL:
-      case NeoBasicParser::LOGICAL_NOT:
-      case NeoBasicParser::ELLIPSIS:
-      case NeoBasicParser::NUMBER_LIT:
-      case NeoBasicParser::TIME_LIT:
-      case NeoBasicParser::SEQUENCE_LIT:
+      case NeoBasicParser::BIT_NEGATION:
+      case NeoBasicParser::SORTING:
+      case NeoBasicParser::DEC_LIT:
+      case NeoBasicParser::REAL_LIT:
+      case NeoBasicParser::RATIO_LIT:
+      case NeoBasicParser::IMAGINARY_LIT:
+      case NeoBasicParser::NATURAL_LIT:
+      case NeoBasicParser::INTEGER_LIT:
+      case NeoBasicParser::BINARY_LIT:
       case NeoBasicParser::HEREDOC_LITERAL:
+      case NeoBasicParser::REGULAR_EXPRESSION_LIT:
+      case NeoBasicParser::STRING_LIT:
+      case NeoBasicParser::WSTRING_LIT:
       case NeoBasicParser::CHAR_LIT:
-      case NeoBasicParser::RANGE_LIT:
+      case NeoBasicParser::WCHAR_LIT:
+      case NeoBasicParser::ASCII_LIT:
+      case NeoBasicParser::ATOM_DOT_LIT:
+      case NeoBasicParser::TAG:
       case NeoBasicParser::IDENTIFIER:
-      case NeoBasicParser::ATOM_IDENTIFIER:
       case NeoBasicParser::RUBBERDUCK:
-      case NeoBasicParser::TRACERBIRD:
+      case NeoBasicParser::SONGBIRD:
       case NeoBasicParser::IF:
       case NeoBasicParser::THIS:
       case NeoBasicParser::IOTA:
@@ -867,6 +997,7 @@ NeoBasicParser::InstructionSentenceContext* NeoBasicParser::instructionSentence(
       case NeoBasicParser::NIL:
       case NeoBasicParser::TYPEOF:
       case NeoBasicParser::SIZEOF:
+      case NeoBasicParser::NOT:
       case NeoBasicParser::TRUE:
       case NeoBasicParser::FALSE:
       case NeoBasicParser::NONZERO:
@@ -906,7 +1037,7 @@ NeoBasicParser::InstructionSentenceContext* NeoBasicParser::instructionSentence(
       case NeoBasicParser::DATA:
       case NeoBasicParser::EOT: {
         enterOuterAlt(_localctx, 3);
-        setState(253);
+        setState(281);
         statement();
         break;
       }
@@ -939,8 +1070,8 @@ NeoBasicParser::PragmaDirectiveContext* NeoBasicParser::DirectiveContext::pragma
   return getRuleContext<NeoBasicParser::PragmaDirectiveContext>(0);
 }
 
-NeoBasicParser::CanaryTestDirectiveContext* NeoBasicParser::DirectiveContext::canaryTestDirective() {
-  return getRuleContext<NeoBasicParser::CanaryTestDirectiveContext>(0);
+NeoBasicParser::CanaryTestingDirectiveContext* NeoBasicParser::DirectiveContext::canaryTestingDirective() {
+  return getRuleContext<NeoBasicParser::CanaryTestingDirectiveContext>(0);
 }
 
 
@@ -972,32 +1103,32 @@ NeoBasicParser::DirectiveContext* NeoBasicParser::directive() {
     exitRule();
   });
   try {
-    setState(259);
+    setState(287);
     _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case NeoBasicParser::SHEBANG_INTERPRETER: {
-        enterOuterAlt(_localctx, 1);
-        setState(256);
-        interpreterDirective();
-        break;
-      }
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(284);
+      interpreterDirective();
+      break;
+    }
 
-      case NeoBasicParser::SHEBANG: {
-        enterOuterAlt(_localctx, 2);
-        setState(257);
-        pragmaDirective();
-        break;
-      }
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(285);
+      pragmaDirective();
+      break;
+    }
 
-      case NeoBasicParser::WOODSTOCK: {
-        enterOuterAlt(_localctx, 3);
-        setState(258);
-        canaryTestDirective();
-        break;
-      }
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(286);
+      canaryTestingDirective();
+      break;
+    }
 
     default:
-      throw NoViableAltException(this);
+      break;
     }
    
   }
@@ -1016,8 +1147,16 @@ NeoBasicParser::InterpreterDirectiveContext::InterpreterDirectiveContext(ParserR
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::InterpreterDirectiveContext::SHEBANG_INTERPRETER() {
-  return getToken(NeoBasicParser::SHEBANG_INTERPRETER, 0);
+tree::TerminalNode* NeoBasicParser::InterpreterDirectiveContext::SHEBANG() {
+  return getToken(NeoBasicParser::SHEBANG, 0);
+}
+
+std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::InterpreterDirectiveContext::expression() {
+  return getRuleContexts<NeoBasicParser::ExpressionContext>();
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::InterpreterDirectiveContext::expression(size_t i) {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(i);
 }
 
 
@@ -1050,8 +1189,12 @@ NeoBasicParser::InterpreterDirectiveContext* NeoBasicParser::interpreterDirectiv
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(261);
-    match(NeoBasicParser::SHEBANG_INTERPRETER);
+    setState(289);
+    match(NeoBasicParser::SHEBANG);
+    setState(290);
+    expression(0);
+    setState(291);
+    expression(0);
    
   }
   catch (RecognitionException &e) {
@@ -1112,20 +1255,20 @@ NeoBasicParser::PragmaDirectiveContext* NeoBasicParser::pragmaDirective() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(263);
+    setState(293);
     match(NeoBasicParser::SHEBANG);
-    setState(264);
+    setState(294);
     match(NeoBasicParser::IDENTIFIER);
-    setState(266);
+    setState(296);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(265);
+      ((1ULL << _la) & 26880891280162818) != 0) || ((((_la - 123) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 123)) & 4399279987541) != 0) || ((((_la - 288) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 288)) & 17448451) != 0) || ((((_la - 420) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 420)) & 2243005863952383) != 0)) {
+      setState(295);
       expressions();
     }
    
@@ -1139,49 +1282,48 @@ NeoBasicParser::PragmaDirectiveContext* NeoBasicParser::pragmaDirective() {
   return _localctx;
 }
 
-//----------------- CanaryTestDirectiveContext ------------------------------------------------------------------
+//----------------- CanaryTestingDirectiveContext ------------------------------------------------------------------
 
-NeoBasicParser::CanaryTestDirectiveContext::CanaryTestDirectiveContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::CanaryTestingDirectiveContext::CanaryTestingDirectiveContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::CanaryTestDirectiveContext::WOODSTOCK() {
+tree::TerminalNode* NeoBasicParser::CanaryTestingDirectiveContext::WOODSTOCK() {
   return getToken(NeoBasicParser::WOODSTOCK, 0);
 }
 
-std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::CanaryTestDirectiveContext::expression() {
+std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::CanaryTestingDirectiveContext::expression() {
   return getRuleContexts<NeoBasicParser::ExpressionContext>();
 }
 
-NeoBasicParser::ExpressionContext* NeoBasicParser::CanaryTestDirectiveContext::expression(size_t i) {
+NeoBasicParser::ExpressionContext* NeoBasicParser::CanaryTestingDirectiveContext::expression(size_t i) {
   return getRuleContext<NeoBasicParser::ExpressionContext>(i);
 }
 
-tree::TerminalNode* NeoBasicParser::CanaryTestDirectiveContext::EXCLAMATION() {
+tree::TerminalNode* NeoBasicParser::CanaryTestingDirectiveContext::EXCLAMATION() {
   return getToken(NeoBasicParser::EXCLAMATION, 0);
 }
 
 
-size_t NeoBasicParser::CanaryTestDirectiveContext::getRuleIndex() const {
-  return NeoBasicParser::RuleCanaryTestDirective;
+size_t NeoBasicParser::CanaryTestingDirectiveContext::getRuleIndex() const {
+  return NeoBasicParser::RuleCanaryTestingDirective;
 }
 
-void NeoBasicParser::CanaryTestDirectiveContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::CanaryTestingDirectiveContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterCanaryTestDirective(this);
+    parserListener->enterCanaryTestingDirective(this);
 }
 
-void NeoBasicParser::CanaryTestDirectiveContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::CanaryTestingDirectiveContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitCanaryTestDirective(this);
+    parserListener->exitCanaryTestingDirective(this);
 }
 
-NeoBasicParser::CanaryTestDirectiveContext* NeoBasicParser::canaryTestDirective() {
-  CanaryTestDirectiveContext *_localctx = _tracker.createInstance<CanaryTestDirectiveContext>(_ctx, getState());
-  enterRule(_localctx, 14, NeoBasicParser::RuleCanaryTestDirective);
-  size_t _la = 0;
+NeoBasicParser::CanaryTestingDirectiveContext* NeoBasicParser::canaryTestingDirective() {
+  CanaryTestingDirectiveContext *_localctx = _tracker.createInstance<CanaryTestingDirectiveContext>(_ctx, getState());
+  enterRule(_localctx, 14, NeoBasicParser::RuleCanaryTestingDirective);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1192,19 +1334,30 @@ NeoBasicParser::CanaryTestDirectiveContext* NeoBasicParser::canaryTestDirective(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(268);
+    setState(298);
     match(NeoBasicParser::WOODSTOCK);
-    setState(269);
+    setState(299);
     expression(0);
-    setState(272);
+    setState(303);
     _errHandler->sync(this);
 
-    _la = _input->LA(1);
-    if (_la == NeoBasicParser::EXCLAMATION) {
-      setState(270);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
+    case 1: {
+      setState(300);
       match(NeoBasicParser::EXCLAMATION);
-      setState(271);
+      break;
+    }
+
+    case 2: {
+      setState(301);
+      match(NeoBasicParser::EXCLAMATION);
+      setState(302);
       expression(0);
+      break;
+    }
+
+    default:
+      break;
     }
    
   }
@@ -1223,16 +1376,24 @@ NeoBasicParser::DeclarationContext::DeclarationContext(ParserRuleContext *parent
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::ConstDeclarationContext* NeoBasicParser::DeclarationContext::constDeclaration() {
-  return getRuleContext<NeoBasicParser::ConstDeclarationContext>(0);
+NeoBasicParser::AccessSpecifierContext* NeoBasicParser::DeclarationContext::accessSpecifier() {
+  return getRuleContext<NeoBasicParser::AccessSpecifierContext>(0);
 }
 
-NeoBasicParser::ValDeclarationContext* NeoBasicParser::DeclarationContext::valDeclaration() {
-  return getRuleContext<NeoBasicParser::ValDeclarationContext>(0);
+NeoBasicParser::DeclarationContext* NeoBasicParser::DeclarationContext::declaration() {
+  return getRuleContext<NeoBasicParser::DeclarationContext>(0);
 }
 
-NeoBasicParser::VarDeclarationContext* NeoBasicParser::DeclarationContext::varDeclaration() {
-  return getRuleContext<NeoBasicParser::VarDeclarationContext>(0);
+NeoBasicParser::ConstSentenceContext* NeoBasicParser::DeclarationContext::constSentence() {
+  return getRuleContext<NeoBasicParser::ConstSentenceContext>(0);
+}
+
+NeoBasicParser::ValSentenceContext* NeoBasicParser::DeclarationContext::valSentence() {
+  return getRuleContext<NeoBasicParser::ValSentenceContext>(0);
+}
+
+NeoBasicParser::VarSentenceContext* NeoBasicParser::DeclarationContext::varSentence() {
+  return getRuleContext<NeoBasicParser::VarSentenceContext>(0);
 }
 
 
@@ -1264,32 +1425,41 @@ NeoBasicParser::DeclarationContext* NeoBasicParser::declaration() {
     exitRule();
   });
   try {
-    setState(277);
+    setState(311);
     _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case NeoBasicParser::CONST: {
-        enterOuterAlt(_localctx, 1);
-        setState(274);
-        constDeclaration();
-        break;
-      }
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(305);
+      accessSpecifier();
+      setState(306);
+      declaration();
+      break;
+    }
 
-      case NeoBasicParser::VAL: {
-        enterOuterAlt(_localctx, 2);
-        setState(275);
-        valDeclaration();
-        break;
-      }
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(308);
+      constSentence();
+      break;
+    }
 
-      case NeoBasicParser::VAR: {
-        enterOuterAlt(_localctx, 3);
-        setState(276);
-        varDeclaration();
-        break;
-      }
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(309);
+      valSentence();
+      break;
+    }
+
+    case 4: {
+      enterOuterAlt(_localctx, 4);
+      setState(310);
+      varSentence();
+      break;
+    }
 
     default:
-      throw NoViableAltException(this);
+      break;
     }
    
   }
@@ -1302,36 +1472,45 @@ NeoBasicParser::DeclarationContext* NeoBasicParser::declaration() {
   return _localctx;
 }
 
-//----------------- ConstDeclarationContext ------------------------------------------------------------------
+//----------------- AccessSpecifierContext ------------------------------------------------------------------
 
-NeoBasicParser::ConstDeclarationContext::ConstDeclarationContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::AccessSpecifierContext::AccessSpecifierContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::ConstClauseContext* NeoBasicParser::ConstDeclarationContext::constClause() {
-  return getRuleContext<NeoBasicParser::ConstClauseContext>(0);
+tree::TerminalNode* NeoBasicParser::AccessSpecifierContext::PUBLIC() {
+  return getToken(NeoBasicParser::PUBLIC, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::AccessSpecifierContext::PROTECTED() {
+  return getToken(NeoBasicParser::PROTECTED, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::AccessSpecifierContext::PRIVATE() {
+  return getToken(NeoBasicParser::PRIVATE, 0);
 }
 
 
-size_t NeoBasicParser::ConstDeclarationContext::getRuleIndex() const {
-  return NeoBasicParser::RuleConstDeclaration;
+size_t NeoBasicParser::AccessSpecifierContext::getRuleIndex() const {
+  return NeoBasicParser::RuleAccessSpecifier;
 }
 
-void NeoBasicParser::ConstDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::AccessSpecifierContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterConstDeclaration(this);
+    parserListener->enterAccessSpecifier(this);
 }
 
-void NeoBasicParser::ConstDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::AccessSpecifierContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitConstDeclaration(this);
+    parserListener->exitAccessSpecifier(this);
 }
 
-NeoBasicParser::ConstDeclarationContext* NeoBasicParser::constDeclaration() {
-  ConstDeclarationContext *_localctx = _tracker.createInstance<ConstDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 18, NeoBasicParser::RuleConstDeclaration);
+NeoBasicParser::AccessSpecifierContext* NeoBasicParser::accessSpecifier() {
+  AccessSpecifierContext *_localctx = _tracker.createInstance<AccessSpecifierContext>(_ctx, getState());
+  enterRule(_localctx, 18, NeoBasicParser::RuleAccessSpecifier);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1342,8 +1521,157 @@ NeoBasicParser::ConstDeclarationContext* NeoBasicParser::constDeclaration() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(279);
+    setState(313);
+    _la = _input->LA(1);
+    if (!(((((_la - 224) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 224)) & 7) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ConstSentenceContext ------------------------------------------------------------------
+
+NeoBasicParser::ConstSentenceContext::ConstSentenceContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::ConstClauseContext* NeoBasicParser::ConstSentenceContext::constClause() {
+  return getRuleContext<NeoBasicParser::ConstClauseContext>(0);
+}
+
+std::vector<NeoBasicParser::ConstSpecifierContext *> NeoBasicParser::ConstSentenceContext::constSpecifier() {
+  return getRuleContexts<NeoBasicParser::ConstSpecifierContext>();
+}
+
+NeoBasicParser::ConstSpecifierContext* NeoBasicParser::ConstSentenceContext::constSpecifier(size_t i) {
+  return getRuleContext<NeoBasicParser::ConstSpecifierContext>(i);
+}
+
+
+size_t NeoBasicParser::ConstSentenceContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstSentence;
+}
+
+void NeoBasicParser::ConstSentenceContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterConstSentence(this);
+}
+
+void NeoBasicParser::ConstSentenceContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitConstSentence(this);
+}
+
+NeoBasicParser::ConstSentenceContext* NeoBasicParser::constSentence() {
+  ConstSentenceContext *_localctx = _tracker.createInstance<ConstSentenceContext>(_ctx, getState());
+  enterRule(_localctx, 20, NeoBasicParser::RuleConstSentence);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(318);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (_la == NeoBasicParser::COMPTIME
+
+    || _la == NeoBasicParser::INLINE) {
+      setState(315);
+      constSpecifier();
+      setState(320);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(321);
     constClause();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ConstSpecifierContext ------------------------------------------------------------------
+
+NeoBasicParser::ConstSpecifierContext::ConstSpecifierContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::ConstSpecifierContext::COMPTIME() {
+  return getToken(NeoBasicParser::COMPTIME, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::ConstSpecifierContext::INLINE() {
+  return getToken(NeoBasicParser::INLINE, 0);
+}
+
+
+size_t NeoBasicParser::ConstSpecifierContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstSpecifier;
+}
+
+void NeoBasicParser::ConstSpecifierContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterConstSpecifier(this);
+}
+
+void NeoBasicParser::ConstSpecifierContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitConstSpecifier(this);
+}
+
+NeoBasicParser::ConstSpecifierContext* NeoBasicParser::constSpecifier() {
+  ConstSpecifierContext *_localctx = _tracker.createInstance<ConstSpecifierContext>(_ctx, getState());
+  enterRule(_localctx, 22, NeoBasicParser::RuleConstSpecifier);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(323);
+    _la = _input->LA(1);
+    if (!(_la == NeoBasicParser::COMPTIME
+
+    || _la == NeoBasicParser::INLINE)) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
    
   }
   catch (RecognitionException &e) {
@@ -1365,8 +1693,8 @@ tree::TerminalNode* NeoBasicParser::ConstClauseContext::CONST() {
   return getToken(NeoBasicParser::CONST, 0);
 }
 
-NeoBasicParser::ConstantsContext* NeoBasicParser::ConstClauseContext::constants() {
-  return getRuleContext<NeoBasicParser::ConstantsContext>(0);
+NeoBasicParser::ConstDeclareContext* NeoBasicParser::ConstClauseContext::constDeclare() {
+  return getRuleContext<NeoBasicParser::ConstDeclareContext>(0);
 }
 
 
@@ -1388,7 +1716,7 @@ void NeoBasicParser::ConstClauseContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::ConstClauseContext* NeoBasicParser::constClause() {
   ConstClauseContext *_localctx = _tracker.createInstance<ConstClauseContext>(_ctx, getState());
-  enterRule(_localctx, 20, NeoBasicParser::RuleConstClause);
+  enterRule(_localctx, 24, NeoBasicParser::RuleConstClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1399,10 +1727,10 @@ NeoBasicParser::ConstClauseContext* NeoBasicParser::constClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(281);
+    setState(325);
     match(NeoBasicParser::CONST);
-    setState(282);
-    constants();
+    setState(326);
+    constDeclare();
    
   }
   catch (RecognitionException &e) {
@@ -1414,49 +1742,44 @@ NeoBasicParser::ConstClauseContext* NeoBasicParser::constClause() {
   return _localctx;
 }
 
-//----------------- ConstantsContext ------------------------------------------------------------------
+//----------------- ConstDeclareContext ------------------------------------------------------------------
 
-NeoBasicParser::ConstantsContext::ConstantsContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::ConstDeclareContext::ConstDeclareContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<NeoBasicParser::ConstantContext *> NeoBasicParser::ConstantsContext::constant() {
-  return getRuleContexts<NeoBasicParser::ConstantContext>();
+NeoBasicParser::ConstDeclareSingleContext* NeoBasicParser::ConstDeclareContext::constDeclareSingle() {
+  return getRuleContext<NeoBasicParser::ConstDeclareSingleContext>(0);
 }
 
-NeoBasicParser::ConstantContext* NeoBasicParser::ConstantsContext::constant(size_t i) {
-  return getRuleContext<NeoBasicParser::ConstantContext>(i);
+NeoBasicParser::ConstDeclareMultipleContext* NeoBasicParser::ConstDeclareContext::constDeclareMultiple() {
+  return getRuleContext<NeoBasicParser::ConstDeclareMultipleContext>(0);
 }
 
-std::vector<tree::TerminalNode *> NeoBasicParser::ConstantsContext::COMMA() {
-  return getTokens(NeoBasicParser::COMMA);
-}
-
-tree::TerminalNode* NeoBasicParser::ConstantsContext::COMMA(size_t i) {
-  return getToken(NeoBasicParser::COMMA, i);
+NeoBasicParser::ConstDeclareParallelContext* NeoBasicParser::ConstDeclareContext::constDeclareParallel() {
+  return getRuleContext<NeoBasicParser::ConstDeclareParallelContext>(0);
 }
 
 
-size_t NeoBasicParser::ConstantsContext::getRuleIndex() const {
-  return NeoBasicParser::RuleConstants;
+size_t NeoBasicParser::ConstDeclareContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstDeclare;
 }
 
-void NeoBasicParser::ConstantsContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ConstDeclareContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterConstants(this);
+    parserListener->enterConstDeclare(this);
 }
 
-void NeoBasicParser::ConstantsContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ConstDeclareContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitConstants(this);
+    parserListener->exitConstDeclare(this);
 }
 
-NeoBasicParser::ConstantsContext* NeoBasicParser::constants() {
-  ConstantsContext *_localctx = _tracker.createInstance<ConstantsContext>(_ctx, getState());
-  enterRule(_localctx, 22, NeoBasicParser::RuleConstants);
-  size_t _la = 0;
+NeoBasicParser::ConstDeclareContext* NeoBasicParser::constDeclare() {
+  ConstDeclareContext *_localctx = _tracker.createInstance<ConstDeclareContext>(_ctx, getState());
+  enterRule(_localctx, 26, NeoBasicParser::RuleConstDeclare);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1466,20 +1789,32 @@ NeoBasicParser::ConstantsContext* NeoBasicParser::constants() {
     exitRule();
   });
   try {
-    enterOuterAlt(_localctx, 1);
-    setState(284);
-    constant();
-    setState(289);
+    setState(331);
     _errHandler->sync(this);
-    _la = _input->LA(1);
-    while (_la == NeoBasicParser::COMMA) {
-      setState(285);
-      match(NeoBasicParser::COMMA);
-      setState(286);
-      constant();
-      setState(291);
-      _errHandler->sync(this);
-      _la = _input->LA(1);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(328);
+      constDeclareSingle();
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(329);
+      constDeclareMultiple();
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(330);
+      constDeclareParallel();
+      break;
+    }
+
+    default:
+      break;
     }
    
   }
@@ -1492,44 +1827,49 @@ NeoBasicParser::ConstantsContext* NeoBasicParser::constants() {
   return _localctx;
 }
 
-//----------------- ConstantContext ------------------------------------------------------------------
+//----------------- ConstDeclareSingleContext ------------------------------------------------------------------
 
-NeoBasicParser::ConstantContext::ConstantContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::ConstDeclareSingleContext::ConstDeclareSingleContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::ConstantContext::symbolIdentifiers() {
-  return getRuleContext<NeoBasicParser::SymbolIdentifiersContext>(0);
+NeoBasicParser::SymbolIdentifierContext* NeoBasicParser::ConstDeclareSingleContext::symbolIdentifier() {
+  return getRuleContext<NeoBasicParser::SymbolIdentifierContext>(0);
 }
 
-NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::ConstantContext::singleAssignmentOperator() {
+NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::ConstDeclareSingleContext::singleAssignmentOperator() {
   return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
 }
 
-NeoBasicParser::ExpressionsContext* NeoBasicParser::ConstantContext::expressions() {
-  return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
+NeoBasicParser::ExpressionContext* NeoBasicParser::ConstDeclareSingleContext::expression() {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(0);
+}
+
+NeoBasicParser::TypeContext* NeoBasicParser::ConstDeclareSingleContext::type() {
+  return getRuleContext<NeoBasicParser::TypeContext>(0);
 }
 
 
-size_t NeoBasicParser::ConstantContext::getRuleIndex() const {
-  return NeoBasicParser::RuleConstant;
+size_t NeoBasicParser::ConstDeclareSingleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstDeclareSingle;
 }
 
-void NeoBasicParser::ConstantContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ConstDeclareSingleContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterConstant(this);
+    parserListener->enterConstDeclareSingle(this);
 }
 
-void NeoBasicParser::ConstantContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ConstDeclareSingleContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitConstant(this);
+    parserListener->exitConstDeclareSingle(this);
 }
 
-NeoBasicParser::ConstantContext* NeoBasicParser::constant() {
-  ConstantContext *_localctx = _tracker.createInstance<ConstantContext>(_ctx, getState());
-  enterRule(_localctx, 24, NeoBasicParser::RuleConstant);
+NeoBasicParser::ConstDeclareSingleContext* NeoBasicParser::constDeclareSingle() {
+  ConstDeclareSingleContext *_localctx = _tracker.createInstance<ConstDeclareSingleContext>(_ctx, getState());
+  enterRule(_localctx, 28, NeoBasicParser::RuleConstDeclareSingle);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1540,11 +1880,164 @@ NeoBasicParser::ConstantContext* NeoBasicParser::constant() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(292);
-    symbolIdentifiers();
-    setState(293);
+    setState(333);
+    symbolIdentifier();
+    setState(335);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (((((_la - 321) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 321)) & -8193) != 0) || ((((_la - 385) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 385)) & 3276799) != 0)) {
+      setState(334);
+      type();
+    }
+    setState(337);
     singleAssignmentOperator();
-    setState(294);
+    setState(338);
+    expression(0);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ConstDeclareMultipleContext ------------------------------------------------------------------
+
+NeoBasicParser::ConstDeclareMultipleContext::ConstDeclareMultipleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::ConstDeclareSingleContext *> NeoBasicParser::ConstDeclareMultipleContext::constDeclareSingle() {
+  return getRuleContexts<NeoBasicParser::ConstDeclareSingleContext>();
+}
+
+NeoBasicParser::ConstDeclareSingleContext* NeoBasicParser::ConstDeclareMultipleContext::constDeclareSingle(size_t i) {
+  return getRuleContext<NeoBasicParser::ConstDeclareSingleContext>(i);
+}
+
+std::vector<tree::TerminalNode *> NeoBasicParser::ConstDeclareMultipleContext::COMMA() {
+  return getTokens(NeoBasicParser::COMMA);
+}
+
+tree::TerminalNode* NeoBasicParser::ConstDeclareMultipleContext::COMMA(size_t i) {
+  return getToken(NeoBasicParser::COMMA, i);
+}
+
+
+size_t NeoBasicParser::ConstDeclareMultipleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstDeclareMultiple;
+}
+
+void NeoBasicParser::ConstDeclareMultipleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterConstDeclareMultiple(this);
+}
+
+void NeoBasicParser::ConstDeclareMultipleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitConstDeclareMultiple(this);
+}
+
+NeoBasicParser::ConstDeclareMultipleContext* NeoBasicParser::constDeclareMultiple() {
+  ConstDeclareMultipleContext *_localctx = _tracker.createInstance<ConstDeclareMultipleContext>(_ctx, getState());
+  enterRule(_localctx, 30, NeoBasicParser::RuleConstDeclareMultiple);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(340);
+    constDeclareSingle();
+    setState(343); 
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    do {
+      setState(341);
+      match(NeoBasicParser::COMMA);
+      setState(342);
+      constDeclareSingle();
+      setState(345); 
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    } while (_la == NeoBasicParser::COMMA);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ConstDeclareParallelContext ------------------------------------------------------------------
+
+NeoBasicParser::ConstDeclareParallelContext::ConstDeclareParallelContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::ConstDeclareParallelContext::symbolIdentifiers() {
+  return getRuleContext<NeoBasicParser::SymbolIdentifiersContext>(0);
+}
+
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::ConstDeclareParallelContext::multipleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::MultipleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::ExpressionsContext* NeoBasicParser::ConstDeclareParallelContext::expressions() {
+  return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
+}
+
+
+size_t NeoBasicParser::ConstDeclareParallelContext::getRuleIndex() const {
+  return NeoBasicParser::RuleConstDeclareParallel;
+}
+
+void NeoBasicParser::ConstDeclareParallelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterConstDeclareParallel(this);
+}
+
+void NeoBasicParser::ConstDeclareParallelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitConstDeclareParallel(this);
+}
+
+NeoBasicParser::ConstDeclareParallelContext* NeoBasicParser::constDeclareParallel() {
+  ConstDeclareParallelContext *_localctx = _tracker.createInstance<ConstDeclareParallelContext>(_ctx, getState());
+  enterRule(_localctx, 32, NeoBasicParser::RuleConstDeclareParallel);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(347);
+    symbolIdentifiers();
+    setState(348);
+    multipleAssignmentOperator();
+    setState(349);
     expressions();
    
   }
@@ -1557,36 +2050,45 @@ NeoBasicParser::ConstantContext* NeoBasicParser::constant() {
   return _localctx;
 }
 
-//----------------- ValDeclarationContext ------------------------------------------------------------------
+//----------------- ValSentenceContext ------------------------------------------------------------------
 
-NeoBasicParser::ValDeclarationContext::ValDeclarationContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::ValSentenceContext::ValSentenceContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::ValClauseContext* NeoBasicParser::ValDeclarationContext::valClause() {
+NeoBasicParser::ValClauseContext* NeoBasicParser::ValSentenceContext::valClause() {
   return getRuleContext<NeoBasicParser::ValClauseContext>(0);
 }
 
-
-size_t NeoBasicParser::ValDeclarationContext::getRuleIndex() const {
-  return NeoBasicParser::RuleValDeclaration;
+std::vector<NeoBasicParser::ValSpecifierContext *> NeoBasicParser::ValSentenceContext::valSpecifier() {
+  return getRuleContexts<NeoBasicParser::ValSpecifierContext>();
 }
 
-void NeoBasicParser::ValDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+NeoBasicParser::ValSpecifierContext* NeoBasicParser::ValSentenceContext::valSpecifier(size_t i) {
+  return getRuleContext<NeoBasicParser::ValSpecifierContext>(i);
+}
+
+
+size_t NeoBasicParser::ValSentenceContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValSentence;
+}
+
+void NeoBasicParser::ValSentenceContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterValDeclaration(this);
+    parserListener->enterValSentence(this);
 }
 
-void NeoBasicParser::ValDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ValSentenceContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitValDeclaration(this);
+    parserListener->exitValSentence(this);
 }
 
-NeoBasicParser::ValDeclarationContext* NeoBasicParser::valDeclaration() {
-  ValDeclarationContext *_localctx = _tracker.createInstance<ValDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 26, NeoBasicParser::RuleValDeclaration);
+NeoBasicParser::ValSentenceContext* NeoBasicParser::valSentence() {
+  ValSentenceContext *_localctx = _tracker.createInstance<ValSentenceContext>(_ctx, getState());
+  enterRule(_localctx, 34, NeoBasicParser::RuleValSentence);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1597,8 +2099,93 @@ NeoBasicParser::ValDeclarationContext* NeoBasicParser::valDeclaration() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(296);
+    setState(354);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (((((_la - 227) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 227)) & 609) != 0)) {
+      setState(351);
+      valSpecifier();
+      setState(356);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(357);
     valClause();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ValSpecifierContext ------------------------------------------------------------------
+
+NeoBasicParser::ValSpecifierContext::ValSpecifierContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::ValSpecifierContext::COMPTIME() {
+  return getToken(NeoBasicParser::COMPTIME, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::ValSpecifierContext::STATIC() {
+  return getToken(NeoBasicParser::STATIC, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::ValSpecifierContext::LINEAR() {
+  return getToken(NeoBasicParser::LINEAR, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::ValSpecifierContext::INLINE() {
+  return getToken(NeoBasicParser::INLINE, 0);
+}
+
+
+size_t NeoBasicParser::ValSpecifierContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValSpecifier;
+}
+
+void NeoBasicParser::ValSpecifierContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterValSpecifier(this);
+}
+
+void NeoBasicParser::ValSpecifierContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitValSpecifier(this);
+}
+
+NeoBasicParser::ValSpecifierContext* NeoBasicParser::valSpecifier() {
+  ValSpecifierContext *_localctx = _tracker.createInstance<ValSpecifierContext>(_ctx, getState());
+  enterRule(_localctx, 36, NeoBasicParser::RuleValSpecifier);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(359);
+    _la = _input->LA(1);
+    if (!(((((_la - 227) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 227)) & 609) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
    
   }
   catch (RecognitionException &e) {
@@ -1620,8 +2207,8 @@ tree::TerminalNode* NeoBasicParser::ValClauseContext::VAL() {
   return getToken(NeoBasicParser::VAL, 0);
 }
 
-NeoBasicParser::VariablesContext* NeoBasicParser::ValClauseContext::variables() {
-  return getRuleContext<NeoBasicParser::VariablesContext>(0);
+NeoBasicParser::VarDeclareContext* NeoBasicParser::ValClauseContext::varDeclare() {
+  return getRuleContext<NeoBasicParser::VarDeclareContext>(0);
 }
 
 
@@ -1643,7 +2230,7 @@ void NeoBasicParser::ValClauseContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::ValClauseContext* NeoBasicParser::valClause() {
   ValClauseContext *_localctx = _tracker.createInstance<ValClauseContext>(_ctx, getState());
-  enterRule(_localctx, 28, NeoBasicParser::RuleValClause);
+  enterRule(_localctx, 38, NeoBasicParser::RuleValClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1654,10 +2241,10 @@ NeoBasicParser::ValClauseContext* NeoBasicParser::valClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(298);
+    setState(361);
     match(NeoBasicParser::VAL);
-    setState(299);
-    variables();
+    setState(362);
+    varDeclare();
    
   }
   catch (RecognitionException &e) {
@@ -1669,36 +2256,134 @@ NeoBasicParser::ValClauseContext* NeoBasicParser::valClause() {
   return _localctx;
 }
 
-//----------------- VarDeclarationContext ------------------------------------------------------------------
+//----------------- ValDeclareContext ------------------------------------------------------------------
 
-NeoBasicParser::VarDeclarationContext::VarDeclarationContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::ValDeclareContext::ValDeclareContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::VarClauseContext* NeoBasicParser::VarDeclarationContext::varClause() {
-  return getRuleContext<NeoBasicParser::VarClauseContext>(0);
+NeoBasicParser::ValDeclareSingleContext* NeoBasicParser::ValDeclareContext::valDeclareSingle() {
+  return getRuleContext<NeoBasicParser::ValDeclareSingleContext>(0);
+}
+
+NeoBasicParser::ValDeclareMultipleContext* NeoBasicParser::ValDeclareContext::valDeclareMultiple() {
+  return getRuleContext<NeoBasicParser::ValDeclareMultipleContext>(0);
+}
+
+NeoBasicParser::ValDeclareParallelContext* NeoBasicParser::ValDeclareContext::valDeclareParallel() {
+  return getRuleContext<NeoBasicParser::ValDeclareParallelContext>(0);
 }
 
 
-size_t NeoBasicParser::VarDeclarationContext::getRuleIndex() const {
-  return NeoBasicParser::RuleVarDeclaration;
+size_t NeoBasicParser::ValDeclareContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValDeclare;
 }
 
-void NeoBasicParser::VarDeclarationContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ValDeclareContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterVarDeclaration(this);
+    parserListener->enterValDeclare(this);
 }
 
-void NeoBasicParser::VarDeclarationContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::ValDeclareContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitVarDeclaration(this);
+    parserListener->exitValDeclare(this);
 }
 
-NeoBasicParser::VarDeclarationContext* NeoBasicParser::varDeclaration() {
-  VarDeclarationContext *_localctx = _tracker.createInstance<VarDeclarationContext>(_ctx, getState());
-  enterRule(_localctx, 30, NeoBasicParser::RuleVarDeclaration);
+NeoBasicParser::ValDeclareContext* NeoBasicParser::valDeclare() {
+  ValDeclareContext *_localctx = _tracker.createInstance<ValDeclareContext>(_ctx, getState());
+  enterRule(_localctx, 40, NeoBasicParser::RuleValDeclare);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    setState(367);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(364);
+      valDeclareSingle();
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(365);
+      valDeclareMultiple();
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(366);
+      valDeclareParallel();
+      break;
+    }
+
+    default:
+      break;
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ValDeclareSingleContext ------------------------------------------------------------------
+
+NeoBasicParser::ValDeclareSingleContext::ValDeclareSingleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::SymbolIdentifierContext* NeoBasicParser::ValDeclareSingleContext::symbolIdentifier() {
+  return getRuleContext<NeoBasicParser::SymbolIdentifierContext>(0);
+}
+
+NeoBasicParser::TypeContext* NeoBasicParser::ValDeclareSingleContext::type() {
+  return getRuleContext<NeoBasicParser::TypeContext>(0);
+}
+
+NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::ValDeclareSingleContext::singleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::ValDeclareSingleContext::expression() {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(0);
+}
+
+
+size_t NeoBasicParser::ValDeclareSingleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValDeclareSingle;
+}
+
+void NeoBasicParser::ValDeclareSingleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterValDeclareSingle(this);
+}
+
+void NeoBasicParser::ValDeclareSingleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitValDeclareSingle(this);
+}
+
+NeoBasicParser::ValDeclareSingleContext* NeoBasicParser::valDeclareSingle() {
+  ValDeclareSingleContext *_localctx = _tracker.createInstance<ValDeclareSingleContext>(_ctx, getState());
+  enterRule(_localctx, 42, NeoBasicParser::RuleValDeclareSingle);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1709,8 +2394,335 @@ NeoBasicParser::VarDeclarationContext* NeoBasicParser::varDeclaration() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(301);
+    setState(369);
+    symbolIdentifier();
+    setState(371);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (((((_la - 321) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 321)) & -8193) != 0) || ((((_la - 385) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 385)) & 3276799) != 0)) {
+      setState(370);
+      type();
+    }
+    setState(376);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (((((_la - 31) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 31)) & 61572651155457) != 0)) {
+      setState(373);
+      singleAssignmentOperator();
+      setState(374);
+      expression(0);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ValDeclareMultipleContext ------------------------------------------------------------------
+
+NeoBasicParser::ValDeclareMultipleContext::ValDeclareMultipleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::ValDeclareSingleContext *> NeoBasicParser::ValDeclareMultipleContext::valDeclareSingle() {
+  return getRuleContexts<NeoBasicParser::ValDeclareSingleContext>();
+}
+
+NeoBasicParser::ValDeclareSingleContext* NeoBasicParser::ValDeclareMultipleContext::valDeclareSingle(size_t i) {
+  return getRuleContext<NeoBasicParser::ValDeclareSingleContext>(i);
+}
+
+std::vector<tree::TerminalNode *> NeoBasicParser::ValDeclareMultipleContext::COMMA() {
+  return getTokens(NeoBasicParser::COMMA);
+}
+
+tree::TerminalNode* NeoBasicParser::ValDeclareMultipleContext::COMMA(size_t i) {
+  return getToken(NeoBasicParser::COMMA, i);
+}
+
+
+size_t NeoBasicParser::ValDeclareMultipleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValDeclareMultiple;
+}
+
+void NeoBasicParser::ValDeclareMultipleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterValDeclareMultiple(this);
+}
+
+void NeoBasicParser::ValDeclareMultipleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitValDeclareMultiple(this);
+}
+
+NeoBasicParser::ValDeclareMultipleContext* NeoBasicParser::valDeclareMultiple() {
+  ValDeclareMultipleContext *_localctx = _tracker.createInstance<ValDeclareMultipleContext>(_ctx, getState());
+  enterRule(_localctx, 44, NeoBasicParser::RuleValDeclareMultiple);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(378);
+    valDeclareSingle();
+    setState(381); 
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    do {
+      setState(379);
+      match(NeoBasicParser::COMMA);
+      setState(380);
+      valDeclareSingle();
+      setState(383); 
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    } while (_la == NeoBasicParser::COMMA);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ValDeclareParallelContext ------------------------------------------------------------------
+
+NeoBasicParser::ValDeclareParallelContext::ValDeclareParallelContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::ValDeclareParallelContext::symbolIdentifiers() {
+  return getRuleContext<NeoBasicParser::SymbolIdentifiersContext>(0);
+}
+
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::ValDeclareParallelContext::multipleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::MultipleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::ExpressionsContext* NeoBasicParser::ValDeclareParallelContext::expressions() {
+  return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
+}
+
+
+size_t NeoBasicParser::ValDeclareParallelContext::getRuleIndex() const {
+  return NeoBasicParser::RuleValDeclareParallel;
+}
+
+void NeoBasicParser::ValDeclareParallelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterValDeclareParallel(this);
+}
+
+void NeoBasicParser::ValDeclareParallelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitValDeclareParallel(this);
+}
+
+NeoBasicParser::ValDeclareParallelContext* NeoBasicParser::valDeclareParallel() {
+  ValDeclareParallelContext *_localctx = _tracker.createInstance<ValDeclareParallelContext>(_ctx, getState());
+  enterRule(_localctx, 46, NeoBasicParser::RuleValDeclareParallel);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(385);
+    symbolIdentifiers();
+    setState(386);
+    multipleAssignmentOperator();
+    setState(387);
+    expressions();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- VarSentenceContext ------------------------------------------------------------------
+
+NeoBasicParser::VarSentenceContext::VarSentenceContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::VarClauseContext* NeoBasicParser::VarSentenceContext::varClause() {
+  return getRuleContext<NeoBasicParser::VarClauseContext>(0);
+}
+
+std::vector<NeoBasicParser::VarSpecifierContext *> NeoBasicParser::VarSentenceContext::varSpecifier() {
+  return getRuleContexts<NeoBasicParser::VarSpecifierContext>();
+}
+
+NeoBasicParser::VarSpecifierContext* NeoBasicParser::VarSentenceContext::varSpecifier(size_t i) {
+  return getRuleContext<NeoBasicParser::VarSpecifierContext>(i);
+}
+
+
+size_t NeoBasicParser::VarSentenceContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarSentence;
+}
+
+void NeoBasicParser::VarSentenceContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarSentence(this);
+}
+
+void NeoBasicParser::VarSentenceContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarSentence(this);
+}
+
+NeoBasicParser::VarSentenceContext* NeoBasicParser::varSentence() {
+  VarSentenceContext *_localctx = _tracker.createInstance<VarSentenceContext>(_ctx, getState());
+  enterRule(_localctx, 48, NeoBasicParser::RuleVarSentence);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(392);
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    while (((((_la - 227) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 227)) & 639) != 0)) {
+      setState(389);
+      varSpecifier();
+      setState(394);
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    }
+    setState(395);
     varClause();
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- VarSpecifierContext ------------------------------------------------------------------
+
+NeoBasicParser::VarSpecifierContext::VarSpecifierContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::COMPTIME() {
+  return getToken(NeoBasicParser::COMPTIME, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::STATIC() {
+  return getToken(NeoBasicParser::STATIC, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::VOLATILE() {
+  return getToken(NeoBasicParser::VOLATILE, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::SHARED() {
+  return getToken(NeoBasicParser::SHARED, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::LOCAL() {
+  return getToken(NeoBasicParser::LOCAL, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::ATOMIC() {
+  return getToken(NeoBasicParser::ATOMIC, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::LINEAR() {
+  return getToken(NeoBasicParser::LINEAR, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::VarSpecifierContext::INLINE() {
+  return getToken(NeoBasicParser::INLINE, 0);
+}
+
+
+size_t NeoBasicParser::VarSpecifierContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarSpecifier;
+}
+
+void NeoBasicParser::VarSpecifierContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarSpecifier(this);
+}
+
+void NeoBasicParser::VarSpecifierContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarSpecifier(this);
+}
+
+NeoBasicParser::VarSpecifierContext* NeoBasicParser::varSpecifier() {
+  VarSpecifierContext *_localctx = _tracker.createInstance<VarSpecifierContext>(_ctx, getState());
+  enterRule(_localctx, 50, NeoBasicParser::RuleVarSpecifier);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(397);
+    _la = _input->LA(1);
+    if (!(((((_la - 227) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 227)) & 639) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
    
   }
   catch (RecognitionException &e) {
@@ -1732,8 +2744,8 @@ tree::TerminalNode* NeoBasicParser::VarClauseContext::VAR() {
   return getToken(NeoBasicParser::VAR, 0);
 }
 
-NeoBasicParser::VariablesContext* NeoBasicParser::VarClauseContext::variables() {
-  return getRuleContext<NeoBasicParser::VariablesContext>(0);
+NeoBasicParser::VarDeclareContext* NeoBasicParser::VarClauseContext::varDeclare() {
+  return getRuleContext<NeoBasicParser::VarDeclareContext>(0);
 }
 
 
@@ -1755,7 +2767,7 @@ void NeoBasicParser::VarClauseContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::VarClauseContext* NeoBasicParser::varClause() {
   VarClauseContext *_localctx = _tracker.createInstance<VarClauseContext>(_ctx, getState());
-  enterRule(_localctx, 32, NeoBasicParser::RuleVarClause);
+  enterRule(_localctx, 52, NeoBasicParser::RuleVarClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1766,10 +2778,10 @@ NeoBasicParser::VarClauseContext* NeoBasicParser::varClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(303);
+    setState(399);
     match(NeoBasicParser::VAR);
-    setState(304);
-    variables();
+    setState(400);
+    varDeclare();
    
   }
   catch (RecognitionException &e) {
@@ -1781,48 +2793,220 @@ NeoBasicParser::VarClauseContext* NeoBasicParser::varClause() {
   return _localctx;
 }
 
-//----------------- VariablesContext ------------------------------------------------------------------
+//----------------- VarDeclareContext ------------------------------------------------------------------
 
-NeoBasicParser::VariablesContext::VariablesContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::VarDeclareContext::VarDeclareContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<NeoBasicParser::VariableContext *> NeoBasicParser::VariablesContext::variable() {
-  return getRuleContexts<NeoBasicParser::VariableContext>();
+NeoBasicParser::VarDeclareSingleContext* NeoBasicParser::VarDeclareContext::varDeclareSingle() {
+  return getRuleContext<NeoBasicParser::VarDeclareSingleContext>(0);
 }
 
-NeoBasicParser::VariableContext* NeoBasicParser::VariablesContext::variable(size_t i) {
-  return getRuleContext<NeoBasicParser::VariableContext>(i);
+NeoBasicParser::VarDeclareMultipleContext* NeoBasicParser::VarDeclareContext::varDeclareMultiple() {
+  return getRuleContext<NeoBasicParser::VarDeclareMultipleContext>(0);
 }
 
-std::vector<tree::TerminalNode *> NeoBasicParser::VariablesContext::COMMA() {
+NeoBasicParser::VarDeclareParallelContext* NeoBasicParser::VarDeclareContext::varDeclareParallel() {
+  return getRuleContext<NeoBasicParser::VarDeclareParallelContext>(0);
+}
+
+
+size_t NeoBasicParser::VarDeclareContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarDeclare;
+}
+
+void NeoBasicParser::VarDeclareContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarDeclare(this);
+}
+
+void NeoBasicParser::VarDeclareContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarDeclare(this);
+}
+
+NeoBasicParser::VarDeclareContext* NeoBasicParser::varDeclare() {
+  VarDeclareContext *_localctx = _tracker.createInstance<VarDeclareContext>(_ctx, getState());
+  enterRule(_localctx, 54, NeoBasicParser::RuleVarDeclare);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    setState(405);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(402);
+      varDeclareSingle();
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(403);
+      varDeclareMultiple();
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(404);
+      varDeclareParallel();
+      break;
+    }
+
+    default:
+      break;
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- VarDeclareSingleContext ------------------------------------------------------------------
+
+NeoBasicParser::VarDeclareSingleContext::VarDeclareSingleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::SymbolIdentifierContext* NeoBasicParser::VarDeclareSingleContext::symbolIdentifier() {
+  return getRuleContext<NeoBasicParser::SymbolIdentifierContext>(0);
+}
+
+NeoBasicParser::TypeContext* NeoBasicParser::VarDeclareSingleContext::type() {
+  return getRuleContext<NeoBasicParser::TypeContext>(0);
+}
+
+NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::VarDeclareSingleContext::singleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::VarDeclareSingleContext::expression() {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(0);
+}
+
+
+size_t NeoBasicParser::VarDeclareSingleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarDeclareSingle;
+}
+
+void NeoBasicParser::VarDeclareSingleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarDeclareSingle(this);
+}
+
+void NeoBasicParser::VarDeclareSingleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarDeclareSingle(this);
+}
+
+NeoBasicParser::VarDeclareSingleContext* NeoBasicParser::varDeclareSingle() {
+  VarDeclareSingleContext *_localctx = _tracker.createInstance<VarDeclareSingleContext>(_ctx, getState());
+  enterRule(_localctx, 56, NeoBasicParser::RuleVarDeclareSingle);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(407);
+    symbolIdentifier();
+    setState(409);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (((((_la - 321) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 321)) & -8193) != 0) || ((((_la - 385) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 385)) & 3276799) != 0)) {
+      setState(408);
+      type();
+    }
+    setState(414);
+    _errHandler->sync(this);
+
+    _la = _input->LA(1);
+    if (((((_la - 31) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 31)) & 61572651155457) != 0)) {
+      setState(411);
+      singleAssignmentOperator();
+      setState(412);
+      expression(0);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- VarDeclareMultipleContext ------------------------------------------------------------------
+
+NeoBasicParser::VarDeclareMultipleContext::VarDeclareMultipleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::VarDeclareSingleContext *> NeoBasicParser::VarDeclareMultipleContext::varDeclareSingle() {
+  return getRuleContexts<NeoBasicParser::VarDeclareSingleContext>();
+}
+
+NeoBasicParser::VarDeclareSingleContext* NeoBasicParser::VarDeclareMultipleContext::varDeclareSingle(size_t i) {
+  return getRuleContext<NeoBasicParser::VarDeclareSingleContext>(i);
+}
+
+std::vector<tree::TerminalNode *> NeoBasicParser::VarDeclareMultipleContext::COMMA() {
   return getTokens(NeoBasicParser::COMMA);
 }
 
-tree::TerminalNode* NeoBasicParser::VariablesContext::COMMA(size_t i) {
+tree::TerminalNode* NeoBasicParser::VarDeclareMultipleContext::COMMA(size_t i) {
   return getToken(NeoBasicParser::COMMA, i);
 }
 
 
-size_t NeoBasicParser::VariablesContext::getRuleIndex() const {
-  return NeoBasicParser::RuleVariables;
+size_t NeoBasicParser::VarDeclareMultipleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarDeclareMultiple;
 }
 
-void NeoBasicParser::VariablesContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::VarDeclareMultipleContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterVariables(this);
+    parserListener->enterVarDeclareMultiple(this);
 }
 
-void NeoBasicParser::VariablesContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::VarDeclareMultipleContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitVariables(this);
+    parserListener->exitVarDeclareMultiple(this);
 }
 
-NeoBasicParser::VariablesContext* NeoBasicParser::variables() {
-  VariablesContext *_localctx = _tracker.createInstance<VariablesContext>(_ctx, getState());
-  enterRule(_localctx, 34, NeoBasicParser::RuleVariables);
+NeoBasicParser::VarDeclareMultipleContext* NeoBasicParser::varDeclareMultiple() {
+  VarDeclareMultipleContext *_localctx = _tracker.createInstance<VarDeclareMultipleContext>(_ctx, getState());
+  enterRule(_localctx, 58, NeoBasicParser::RuleVarDeclareMultiple);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -1834,20 +3018,20 @@ NeoBasicParser::VariablesContext* NeoBasicParser::variables() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(306);
-    variable();
-    setState(311);
+    setState(416);
+    varDeclareSingle();
+    setState(419); 
     _errHandler->sync(this);
     _la = _input->LA(1);
-    while (_la == NeoBasicParser::COMMA) {
-      setState(307);
+    do {
+      setState(417);
       match(NeoBasicParser::COMMA);
-      setState(308);
-      variable();
-      setState(313);
+      setState(418);
+      varDeclareSingle();
+      setState(421); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    }
+    } while (_la == NeoBasicParser::COMMA);
    
   }
   catch (RecognitionException &e) {
@@ -1859,49 +3043,44 @@ NeoBasicParser::VariablesContext* NeoBasicParser::variables() {
   return _localctx;
 }
 
-//----------------- VariableContext ------------------------------------------------------------------
+//----------------- VarDeclareParallelContext ------------------------------------------------------------------
 
-NeoBasicParser::VariableContext::VariableContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::VarDeclareParallelContext::VarDeclareParallelContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::VariableContext::symbolIdentifiers() {
+NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::VarDeclareParallelContext::symbolIdentifiers() {
   return getRuleContext<NeoBasicParser::SymbolIdentifiersContext>(0);
 }
 
-NeoBasicParser::TypeContext* NeoBasicParser::VariableContext::type() {
-  return getRuleContext<NeoBasicParser::TypeContext>(0);
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::VarDeclareParallelContext::multipleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::MultipleAssignmentOperatorContext>(0);
 }
 
-NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::VariableContext::singleAssignmentOperator() {
-  return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
-}
-
-NeoBasicParser::ExpressionsContext* NeoBasicParser::VariableContext::expressions() {
+NeoBasicParser::ExpressionsContext* NeoBasicParser::VarDeclareParallelContext::expressions() {
   return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
 }
 
 
-size_t NeoBasicParser::VariableContext::getRuleIndex() const {
-  return NeoBasicParser::RuleVariable;
+size_t NeoBasicParser::VarDeclareParallelContext::getRuleIndex() const {
+  return NeoBasicParser::RuleVarDeclareParallel;
 }
 
-void NeoBasicParser::VariableContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::VarDeclareParallelContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterVariable(this);
+    parserListener->enterVarDeclareParallel(this);
 }
 
-void NeoBasicParser::VariableContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::VarDeclareParallelContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitVariable(this);
+    parserListener->exitVarDeclareParallel(this);
 }
 
-NeoBasicParser::VariableContext* NeoBasicParser::variable() {
-  VariableContext *_localctx = _tracker.createInstance<VariableContext>(_ctx, getState());
-  enterRule(_localctx, 36, NeoBasicParser::RuleVariable);
-  size_t _la = 0;
+NeoBasicParser::VarDeclareParallelContext* NeoBasicParser::varDeclareParallel() {
+  VarDeclareParallelContext *_localctx = _tracker.createInstance<VarDeclareParallelContext>(_ctx, getState());
+  enterRule(_localctx, 60, NeoBasicParser::RuleVarDeclareParallel);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -1912,29 +3091,12 @@ NeoBasicParser::VariableContext* NeoBasicParser::variable() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(314);
+    setState(423);
     symbolIdentifiers();
-    setState(316);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if (((((_la - 196) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 196)) & -1) != 0) || ((((_la - 260) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 260)) & 16383) != 0)) {
-      setState(315);
-      type();
-    }
-    setState(321);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if (((((_la - 94) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 94)) & 7) != 0)) {
-      setState(318);
-      singleAssignmentOperator();
-      setState(319);
-      expressions();
-    }
+    setState(424);
+    multipleAssignmentOperator();
+    setState(425);
+    expressions();
    
   }
   catch (RecognitionException &e) {
@@ -1952,20 +3114,32 @@ NeoBasicParser::StatementContext::StatementContext(ParserRuleContext *parent, si
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::LabeledStatementContext* NeoBasicParser::StatementContext::labeledStatement() {
-  return getRuleContext<NeoBasicParser::LabeledStatementContext>(0);
+NeoBasicParser::LabelIdentifierContext* NeoBasicParser::StatementContext::labelIdentifier() {
+  return getRuleContext<NeoBasicParser::LabelIdentifierContext>(0);
 }
 
-NeoBasicParser::DebugingStatementContext* NeoBasicParser::StatementContext::debugingStatement() {
-  return getRuleContext<NeoBasicParser::DebugingStatementContext>(0);
+tree::TerminalNode* NeoBasicParser::StatementContext::COLON() {
+  return getToken(NeoBasicParser::COLON, 0);
 }
 
-NeoBasicParser::LoggingStatementContext* NeoBasicParser::StatementContext::loggingStatement() {
-  return getRuleContext<NeoBasicParser::LoggingStatementContext>(0);
+NeoBasicParser::StatementContext* NeoBasicParser::StatementContext::statement() {
+  return getRuleContext<NeoBasicParser::StatementContext>(0);
 }
 
-NeoBasicParser::SExpressionStatementContext* NeoBasicParser::StatementContext::sExpressionStatement() {
-  return getRuleContext<NeoBasicParser::SExpressionStatementContext>(0);
+tree::TerminalNode* NeoBasicParser::StatementContext::RUBBERDUCK() {
+  return getToken(NeoBasicParser::RUBBERDUCK, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::StatementContext::SONGBIRD() {
+  return getToken(NeoBasicParser::SONGBIRD, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::StatementContext::LEFT_PARENTHESIS() {
+  return getToken(NeoBasicParser::LEFT_PARENTHESIS, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::StatementContext::RIGHT_PARENTHESIS() {
+  return getToken(NeoBasicParser::RIGHT_PARENTHESIS, 0);
 }
 
 NeoBasicParser::SimpleStatementContext* NeoBasicParser::StatementContext::simpleStatement() {
@@ -1995,7 +3169,7 @@ void NeoBasicParser::StatementContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::StatementContext* NeoBasicParser::statement() {
   StatementContext *_localctx = _tracker.createInstance<StatementContext>(_ctx, getState());
-  enterRule(_localctx, 38, NeoBasicParser::RuleStatement);
+  enterRule(_localctx, 62, NeoBasicParser::RuleStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2005,47 +3179,68 @@ NeoBasicParser::StatementContext* NeoBasicParser::statement() {
     exitRule();
   });
   try {
-    setState(329);
+    setState(444);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(323);
-      labeledStatement();
+      setState(427);
+      labelIdentifier();
+      setState(428);
+      match(NeoBasicParser::COLON);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(324);
-      debugingStatement();
+      setState(430);
+      labelIdentifier();
+      setState(431);
+      match(NeoBasicParser::COLON);
+      setState(432);
+      statement();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(325);
-      loggingStatement();
+      setState(434);
+      match(NeoBasicParser::RUBBERDUCK);
+      setState(435);
+      statement();
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(326);
-      sExpressionStatement();
+      setState(436);
+      match(NeoBasicParser::SONGBIRD);
+      setState(437);
+      statement();
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(327);
-      simpleStatement();
+      setState(438);
+      match(NeoBasicParser::LEFT_PARENTHESIS);
+      setState(439);
+      statement();
+      setState(440);
+      match(NeoBasicParser::RIGHT_PARENTHESIS);
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(328);
+      setState(442);
+      simpleStatement();
+      break;
+    }
+
+    case 7: {
+      enterOuterAlt(_localctx, 7);
+      setState(443);
       compoundStatement();
       break;
     }
@@ -2053,281 +3248,6 @@ NeoBasicParser::StatementContext* NeoBasicParser::statement() {
     default:
       break;
     }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- LabeledStatementContext ------------------------------------------------------------------
-
-NeoBasicParser::LabeledStatementContext::LabeledStatementContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::LabeledStatementContext::ATOM_IDENTIFIER() {
-  return getToken(NeoBasicParser::ATOM_IDENTIFIER, 0);
-}
-
-NeoBasicParser::StatementContext* NeoBasicParser::LabeledStatementContext::statement() {
-  return getRuleContext<NeoBasicParser::StatementContext>(0);
-}
-
-
-size_t NeoBasicParser::LabeledStatementContext::getRuleIndex() const {
-  return NeoBasicParser::RuleLabeledStatement;
-}
-
-void NeoBasicParser::LabeledStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterLabeledStatement(this);
-}
-
-void NeoBasicParser::LabeledStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitLabeledStatement(this);
-}
-
-NeoBasicParser::LabeledStatementContext* NeoBasicParser::labeledStatement() {
-  LabeledStatementContext *_localctx = _tracker.createInstance<LabeledStatementContext>(_ctx, getState());
-  enterRule(_localctx, 40, NeoBasicParser::RuleLabeledStatement);
-  size_t _la = 0;
-
-#if __cplusplus > 201703L
-  auto onExit = finally([=, this] {
-#else
-  auto onExit = finally([=] {
-#endif
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(331);
-    match(NeoBasicParser::ATOM_IDENTIFIER);
-    setState(333);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 941268883514327041) != 0) || ((((_la - 152) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 152)) & 6434586627) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(332);
-      statement();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- DebugingStatementContext ------------------------------------------------------------------
-
-NeoBasicParser::DebugingStatementContext::DebugingStatementContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::DebugingStatementContext::RUBBERDUCK() {
-  return getToken(NeoBasicParser::RUBBERDUCK, 0);
-}
-
-NeoBasicParser::StatementContext* NeoBasicParser::DebugingStatementContext::statement() {
-  return getRuleContext<NeoBasicParser::StatementContext>(0);
-}
-
-
-size_t NeoBasicParser::DebugingStatementContext::getRuleIndex() const {
-  return NeoBasicParser::RuleDebugingStatement;
-}
-
-void NeoBasicParser::DebugingStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterDebugingStatement(this);
-}
-
-void NeoBasicParser::DebugingStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitDebugingStatement(this);
-}
-
-NeoBasicParser::DebugingStatementContext* NeoBasicParser::debugingStatement() {
-  DebugingStatementContext *_localctx = _tracker.createInstance<DebugingStatementContext>(_ctx, getState());
-  enterRule(_localctx, 42, NeoBasicParser::RuleDebugingStatement);
-  size_t _la = 0;
-
-#if __cplusplus > 201703L
-  auto onExit = finally([=, this] {
-#else
-  auto onExit = finally([=] {
-#endif
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(335);
-    match(NeoBasicParser::RUBBERDUCK);
-    setState(337);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 941268883514327041) != 0) || ((((_la - 152) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 152)) & 6434586627) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(336);
-      statement();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- LoggingStatementContext ------------------------------------------------------------------
-
-NeoBasicParser::LoggingStatementContext::LoggingStatementContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::LoggingStatementContext::TRACERBIRD() {
-  return getToken(NeoBasicParser::TRACERBIRD, 0);
-}
-
-NeoBasicParser::StatementContext* NeoBasicParser::LoggingStatementContext::statement() {
-  return getRuleContext<NeoBasicParser::StatementContext>(0);
-}
-
-
-size_t NeoBasicParser::LoggingStatementContext::getRuleIndex() const {
-  return NeoBasicParser::RuleLoggingStatement;
-}
-
-void NeoBasicParser::LoggingStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterLoggingStatement(this);
-}
-
-void NeoBasicParser::LoggingStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitLoggingStatement(this);
-}
-
-NeoBasicParser::LoggingStatementContext* NeoBasicParser::loggingStatement() {
-  LoggingStatementContext *_localctx = _tracker.createInstance<LoggingStatementContext>(_ctx, getState());
-  enterRule(_localctx, 44, NeoBasicParser::RuleLoggingStatement);
-  size_t _la = 0;
-
-#if __cplusplus > 201703L
-  auto onExit = finally([=, this] {
-#else
-  auto onExit = finally([=] {
-#endif
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(339);
-    match(NeoBasicParser::TRACERBIRD);
-    setState(341);
-    _errHandler->sync(this);
-
-    _la = _input->LA(1);
-    if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 941268883514327041) != 0) || ((((_la - 152) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 152)) & 6434586627) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(340);
-      statement();
-    }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- SExpressionStatementContext ------------------------------------------------------------------
-
-NeoBasicParser::SExpressionStatementContext::SExpressionStatementContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::SExpressionStatementContext::LEFT_PARENTHESIS() {
-  return getToken(NeoBasicParser::LEFT_PARENTHESIS, 0);
-}
-
-NeoBasicParser::StatementContext* NeoBasicParser::SExpressionStatementContext::statement() {
-  return getRuleContext<NeoBasicParser::StatementContext>(0);
-}
-
-tree::TerminalNode* NeoBasicParser::SExpressionStatementContext::RIGHT_PARENTHESIS() {
-  return getToken(NeoBasicParser::RIGHT_PARENTHESIS, 0);
-}
-
-
-size_t NeoBasicParser::SExpressionStatementContext::getRuleIndex() const {
-  return NeoBasicParser::RuleSExpressionStatement;
-}
-
-void NeoBasicParser::SExpressionStatementContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterSExpressionStatement(this);
-}
-
-void NeoBasicParser::SExpressionStatementContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitSExpressionStatement(this);
-}
-
-NeoBasicParser::SExpressionStatementContext* NeoBasicParser::sExpressionStatement() {
-  SExpressionStatementContext *_localctx = _tracker.createInstance<SExpressionStatementContext>(_ctx, getState());
-  enterRule(_localctx, 46, NeoBasicParser::RuleSExpressionStatement);
-
-#if __cplusplus > 201703L
-  auto onExit = finally([=, this] {
-#else
-  auto onExit = finally([=] {
-#endif
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(343);
-    match(NeoBasicParser::LEFT_PARENTHESIS);
-    setState(344);
-    statement();
-    setState(345);
-    match(NeoBasicParser::RIGHT_PARENTHESIS);
    
   }
   catch (RecognitionException &e) {
@@ -2376,7 +3296,7 @@ void NeoBasicParser::SimpleStatementContext::exitRule(tree::ParseTreeListener *l
 
 NeoBasicParser::SimpleStatementContext* NeoBasicParser::simpleStatement() {
   SimpleStatementContext *_localctx = _tracker.createInstance<SimpleStatementContext>(_ctx, getState());
-  enterRule(_localctx, 48, NeoBasicParser::RuleSimpleStatement);
+  enterRule(_localctx, 64, NeoBasicParser::RuleSimpleStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2386,26 +3306,26 @@ NeoBasicParser::SimpleStatementContext* NeoBasicParser::simpleStatement() {
     exitRule();
   });
   try {
-    setState(350);
+    setState(449);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(347);
+      setState(446);
       emptyStatement();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(348);
+      setState(447);
       expressionStatement();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(349);
+      setState(448);
       assignmentStatement();
       break;
     }
@@ -2453,7 +3373,7 @@ void NeoBasicParser::EmptyStatementContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::EmptyStatementContext* NeoBasicParser::emptyStatement() {
   EmptyStatementContext *_localctx = _tracker.createInstance<EmptyStatementContext>(_ctx, getState());
-  enterRule(_localctx, 50, NeoBasicParser::RuleEmptyStatement);
+  enterRule(_localctx, 66, NeoBasicParser::RuleEmptyStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2464,7 +3384,7 @@ NeoBasicParser::EmptyStatementContext* NeoBasicParser::emptyStatement() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(352);
+    setState(451);
     match(NeoBasicParser::ELLIPSIS);
    
   }
@@ -2506,7 +3426,7 @@ void NeoBasicParser::ExpressionStatementContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::ExpressionStatementContext* NeoBasicParser::expressionStatement() {
   ExpressionStatementContext *_localctx = _tracker.createInstance<ExpressionStatementContext>(_ctx, getState());
-  enterRule(_localctx, 52, NeoBasicParser::RuleExpressionStatement);
+  enterRule(_localctx, 68, NeoBasicParser::RuleExpressionStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2517,7 +3437,7 @@ NeoBasicParser::ExpressionStatementContext* NeoBasicParser::expressionStatement(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(354);
+    setState(453);
     expressions();
    
   }
@@ -2536,16 +3456,16 @@ NeoBasicParser::AssignmentStatementContext::AssignmentStatementContext(ParserRul
   : ParserRuleContext(parent, invokingState) {
 }
 
-NeoBasicParser::PrimaryExpressionsContext* NeoBasicParser::AssignmentStatementContext::primaryExpressions() {
-  return getRuleContext<NeoBasicParser::PrimaryExpressionsContext>(0);
+NeoBasicParser::AssignmentSingleContext* NeoBasicParser::AssignmentStatementContext::assignmentSingle() {
+  return getRuleContext<NeoBasicParser::AssignmentSingleContext>(0);
 }
 
-NeoBasicParser::AssignmentOperatorContext* NeoBasicParser::AssignmentStatementContext::assignmentOperator() {
-  return getRuleContext<NeoBasicParser::AssignmentOperatorContext>(0);
+NeoBasicParser::AssignmentMultipleContext* NeoBasicParser::AssignmentStatementContext::assignmentMultiple() {
+  return getRuleContext<NeoBasicParser::AssignmentMultipleContext>(0);
 }
 
-NeoBasicParser::ExpressionsContext* NeoBasicParser::AssignmentStatementContext::expressions() {
-  return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
+NeoBasicParser::AssignmentParallelContext* NeoBasicParser::AssignmentStatementContext::assignmentParallel() {
+  return getRuleContext<NeoBasicParser::AssignmentParallelContext>(0);
 }
 
 
@@ -2567,7 +3487,92 @@ void NeoBasicParser::AssignmentStatementContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::AssignmentStatementContext* NeoBasicParser::assignmentStatement() {
   AssignmentStatementContext *_localctx = _tracker.createInstance<AssignmentStatementContext>(_ctx, getState());
-  enterRule(_localctx, 54, NeoBasicParser::RuleAssignmentStatement);
+  enterRule(_localctx, 70, NeoBasicParser::RuleAssignmentStatement);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    setState(458);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(455);
+      assignmentSingle();
+      break;
+    }
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(456);
+      assignmentMultiple();
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(457);
+      assignmentParallel();
+      break;
+    }
+
+    default:
+      break;
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- AssignmentSingleContext ------------------------------------------------------------------
+
+NeoBasicParser::AssignmentSingleContext::AssignmentSingleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::AssignmentSingleContext::primaryExpression() {
+  return getRuleContext<NeoBasicParser::PrimaryExpressionContext>(0);
+}
+
+NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::AssignmentSingleContext::singleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::AssignmentSingleContext::expression() {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(0);
+}
+
+
+size_t NeoBasicParser::AssignmentSingleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleAssignmentSingle;
+}
+
+void NeoBasicParser::AssignmentSingleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAssignmentSingle(this);
+}
+
+void NeoBasicParser::AssignmentSingleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAssignmentSingle(this);
+}
+
+NeoBasicParser::AssignmentSingleContext* NeoBasicParser::assignmentSingle() {
+  AssignmentSingleContext *_localctx = _tracker.createInstance<AssignmentSingleContext>(_ctx, getState());
+  enterRule(_localctx, 72, NeoBasicParser::RuleAssignmentSingle);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2578,11 +3583,174 @@ NeoBasicParser::AssignmentStatementContext* NeoBasicParser::assignmentStatement(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(356);
+    setState(460);
+    primaryExpression(0);
+    setState(461);
+    singleAssignmentOperator();
+    setState(462);
+    expression(0);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- AssignmentMultipleContext ------------------------------------------------------------------
+
+NeoBasicParser::AssignmentMultipleContext::AssignmentMultipleContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::AssignmentSingleContext *> NeoBasicParser::AssignmentMultipleContext::assignmentSingle() {
+  return getRuleContexts<NeoBasicParser::AssignmentSingleContext>();
+}
+
+NeoBasicParser::AssignmentSingleContext* NeoBasicParser::AssignmentMultipleContext::assignmentSingle(size_t i) {
+  return getRuleContext<NeoBasicParser::AssignmentSingleContext>(i);
+}
+
+std::vector<tree::TerminalNode *> NeoBasicParser::AssignmentMultipleContext::COMMA() {
+  return getTokens(NeoBasicParser::COMMA);
+}
+
+tree::TerminalNode* NeoBasicParser::AssignmentMultipleContext::COMMA(size_t i) {
+  return getToken(NeoBasicParser::COMMA, i);
+}
+
+
+size_t NeoBasicParser::AssignmentMultipleContext::getRuleIndex() const {
+  return NeoBasicParser::RuleAssignmentMultiple;
+}
+
+void NeoBasicParser::AssignmentMultipleContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAssignmentMultiple(this);
+}
+
+void NeoBasicParser::AssignmentMultipleContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAssignmentMultiple(this);
+}
+
+NeoBasicParser::AssignmentMultipleContext* NeoBasicParser::assignmentMultiple() {
+  AssignmentMultipleContext *_localctx = _tracker.createInstance<AssignmentMultipleContext>(_ctx, getState());
+  enterRule(_localctx, 74, NeoBasicParser::RuleAssignmentMultiple);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(464);
+    assignmentSingle();
+    setState(467); 
+    _errHandler->sync(this);
+    _la = _input->LA(1);
+    do {
+      setState(465);
+      match(NeoBasicParser::COMMA);
+      setState(466);
+      assignmentSingle();
+      setState(469); 
+      _errHandler->sync(this);
+      _la = _input->LA(1);
+    } while (_la == NeoBasicParser::COMMA);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- AssignmentParallelContext ------------------------------------------------------------------
+
+NeoBasicParser::AssignmentParallelContext::AssignmentParallelContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::PrimaryExpressionsContext* NeoBasicParser::AssignmentParallelContext::primaryExpressions() {
+  return getRuleContext<NeoBasicParser::PrimaryExpressionsContext>(0);
+}
+
+NeoBasicParser::ExpressionsContext* NeoBasicParser::AssignmentParallelContext::expressions() {
+  return getRuleContext<NeoBasicParser::ExpressionsContext>(0);
+}
+
+NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::AssignmentParallelContext::singleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
+}
+
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::AssignmentParallelContext::multipleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::MultipleAssignmentOperatorContext>(0);
+}
+
+
+size_t NeoBasicParser::AssignmentParallelContext::getRuleIndex() const {
+  return NeoBasicParser::RuleAssignmentParallel;
+}
+
+void NeoBasicParser::AssignmentParallelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterAssignmentParallel(this);
+}
+
+void NeoBasicParser::AssignmentParallelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitAssignmentParallel(this);
+}
+
+NeoBasicParser::AssignmentParallelContext* NeoBasicParser::assignmentParallel() {
+  AssignmentParallelContext *_localctx = _tracker.createInstance<AssignmentParallelContext>(_ctx, getState());
+  enterRule(_localctx, 76, NeoBasicParser::RuleAssignmentParallel);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(471);
     primaryExpressions();
-    setState(357);
-    assignmentOperator();
-    setState(358);
+    setState(474);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx)) {
+    case 1: {
+      setState(472);
+      singleAssignmentOperator();
+      break;
+    }
+
+    case 2: {
+      setState(473);
+      multipleAssignmentOperator();
+      break;
+    }
+
+    default:
+      break;
+    }
+    setState(476);
     expressions();
    
   }
@@ -2624,7 +3792,7 @@ void NeoBasicParser::CompoundStatementContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::CompoundStatementContext* NeoBasicParser::compoundStatement() {
   CompoundStatementContext *_localctx = _tracker.createInstance<CompoundStatementContext>(_ctx, getState());
-  enterRule(_localctx, 56, NeoBasicParser::RuleCompoundStatement);
+  enterRule(_localctx, 78, NeoBasicParser::RuleCompoundStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2635,7 +3803,7 @@ NeoBasicParser::CompoundStatementContext* NeoBasicParser::compoundStatement() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(360);
+    setState(478);
     conditionalStatement();
    
   }
@@ -2681,7 +3849,7 @@ void NeoBasicParser::ConditionalStatementContext::exitRule(tree::ParseTreeListen
 
 NeoBasicParser::ConditionalStatementContext* NeoBasicParser::conditionalStatement() {
   ConditionalStatementContext *_localctx = _tracker.createInstance<ConditionalStatementContext>(_ctx, getState());
-  enterRule(_localctx, 58, NeoBasicParser::RuleConditionalStatement);
+  enterRule(_localctx, 80, NeoBasicParser::RuleConditionalStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2691,36 +3859,45 @@ NeoBasicParser::ConditionalStatementContext* NeoBasicParser::conditionalStatemen
     exitRule();
   });
   try {
-    setState(364);
+    setState(482);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::IF: {
         enterOuterAlt(_localctx, 1);
-        setState(362);
+        setState(480);
         ifStatement();
         break;
       }
 
       case NeoBasicParser::LEFT_PARENTHESIS:
+      case NeoBasicParser::TILDE:
       case NeoBasicParser::CARET:
       case NeoBasicParser::PIPE:
-      case NeoBasicParser::POSITIVE:
-      case NeoBasicParser::NEGATIVE:
+      case NeoBasicParser::PLUS:
+      case NeoBasicParser::MINUS:
+      case NeoBasicParser::ELLIPSIS:
       case NeoBasicParser::INCREMENT:
       case NeoBasicParser::DECREMENT:
-      case NeoBasicParser::BIT_NOT:
-      case NeoBasicParser::BIT_NEGATION:
       case NeoBasicParser::SQUARE_POWER:
       case NeoBasicParser::SQUARE_ROOT:
       case NeoBasicParser::FACTORIAL:
-      case NeoBasicParser::LOGICAL_NOT:
-      case NeoBasicParser::ELLIPSIS:
-      case NeoBasicParser::NUMBER_LIT:
-      case NeoBasicParser::TIME_LIT:
-      case NeoBasicParser::SEQUENCE_LIT:
+      case NeoBasicParser::BIT_NEGATION:
+      case NeoBasicParser::SORTING:
+      case NeoBasicParser::DEC_LIT:
+      case NeoBasicParser::REAL_LIT:
+      case NeoBasicParser::RATIO_LIT:
+      case NeoBasicParser::IMAGINARY_LIT:
+      case NeoBasicParser::NATURAL_LIT:
+      case NeoBasicParser::INTEGER_LIT:
+      case NeoBasicParser::BINARY_LIT:
       case NeoBasicParser::HEREDOC_LITERAL:
+      case NeoBasicParser::REGULAR_EXPRESSION_LIT:
+      case NeoBasicParser::STRING_LIT:
+      case NeoBasicParser::WSTRING_LIT:
       case NeoBasicParser::CHAR_LIT:
-      case NeoBasicParser::RANGE_LIT:
+      case NeoBasicParser::WCHAR_LIT:
+      case NeoBasicParser::ASCII_LIT:
+      case NeoBasicParser::ATOM_DOT_LIT:
       case NeoBasicParser::IDENTIFIER:
       case NeoBasicParser::THIS:
       case NeoBasicParser::IOTA:
@@ -2731,6 +3908,7 @@ NeoBasicParser::ConditionalStatementContext* NeoBasicParser::conditionalStatemen
       case NeoBasicParser::NIL:
       case NeoBasicParser::TYPEOF:
       case NeoBasicParser::SIZEOF:
+      case NeoBasicParser::NOT:
       case NeoBasicParser::TRUE:
       case NeoBasicParser::FALSE:
       case NeoBasicParser::NONZERO:
@@ -2770,7 +3948,7 @@ NeoBasicParser::ConditionalStatementContext* NeoBasicParser::conditionalStatemen
       case NeoBasicParser::DATA:
       case NeoBasicParser::EOT: {
         enterOuterAlt(_localctx, 2);
-        setState(363);
+        setState(481);
         unlessStatement();
         break;
       }
@@ -2818,7 +3996,7 @@ void NeoBasicParser::IfStatementContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::IfStatementContext* NeoBasicParser::ifStatement() {
   IfStatementContext *_localctx = _tracker.createInstance<IfStatementContext>(_ctx, getState());
-  enterRule(_localctx, 60, NeoBasicParser::RuleIfStatement);
+  enterRule(_localctx, 82, NeoBasicParser::RuleIfStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2829,7 +4007,7 @@ NeoBasicParser::IfStatementContext* NeoBasicParser::ifStatement() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(366);
+    setState(484);
     ifThenClause();
    
   }
@@ -2883,7 +4061,7 @@ void NeoBasicParser::IfThenClauseContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::IfThenClauseContext* NeoBasicParser::ifThenClause() {
   IfThenClauseContext *_localctx = _tracker.createInstance<IfThenClauseContext>(_ctx, getState());
-  enterRule(_localctx, 62, NeoBasicParser::RuleIfThenClause);
+  enterRule(_localctx, 84, NeoBasicParser::RuleIfThenClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2894,13 +4072,13 @@ NeoBasicParser::IfThenClauseContext* NeoBasicParser::ifThenClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(368);
+    setState(486);
     match(NeoBasicParser::IF);
-    setState(369);
+    setState(487);
     expression(0);
-    setState(370);
+    setState(488);
     match(NeoBasicParser::THEN);
-    setState(371);
+    setState(489);
     simpleStatement();
    
   }
@@ -2942,7 +4120,7 @@ void NeoBasicParser::UnlessStatementContext::exitRule(tree::ParseTreeListener *l
 
 NeoBasicParser::UnlessStatementContext* NeoBasicParser::unlessStatement() {
   UnlessStatementContext *_localctx = _tracker.createInstance<UnlessStatementContext>(_ctx, getState());
-  enterRule(_localctx, 64, NeoBasicParser::RuleUnlessStatement);
+  enterRule(_localctx, 86, NeoBasicParser::RuleUnlessStatement);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2953,7 +4131,7 @@ NeoBasicParser::UnlessStatementContext* NeoBasicParser::unlessStatement() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(373);
+    setState(491);
     unlessClause();
    
   }
@@ -3003,7 +4181,7 @@ void NeoBasicParser::UnlessClauseContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::UnlessClauseContext* NeoBasicParser::unlessClause() {
   UnlessClauseContext *_localctx = _tracker.createInstance<UnlessClauseContext>(_ctx, getState());
-  enterRule(_localctx, 66, NeoBasicParser::RuleUnlessClause);
+  enterRule(_localctx, 88, NeoBasicParser::RuleUnlessClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3014,11 +4192,11 @@ NeoBasicParser::UnlessClauseContext* NeoBasicParser::unlessClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(375);
+    setState(493);
     simpleStatement();
-    setState(376);
+    setState(494);
     match(NeoBasicParser::UNLESS);
-    setState(377);
+    setState(495);
     expression(0);
    
   }
@@ -3080,7 +4258,7 @@ void NeoBasicParser::PrefixUnaryOperatorContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::PrefixUnaryOperatorContext* NeoBasicParser::prefixUnaryOperator() {
   PrefixUnaryOperatorContext *_localctx = _tracker.createInstance<PrefixUnaryOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 68, NeoBasicParser::RulePrefixUnaryOperator);
+  enterRule(_localctx, 90, NeoBasicParser::RulePrefixUnaryOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3090,47 +4268,48 @@ NeoBasicParser::PrefixUnaryOperatorContext* NeoBasicParser::prefixUnaryOperator(
     exitRule();
   });
   try {
-    setState(385);
+    setState(503);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::POSITIVE:
-      case NeoBasicParser::NEGATIVE:
+      case NeoBasicParser::PLUS:
+      case NeoBasicParser::MINUS:
       case NeoBasicParser::INCREMENT:
       case NeoBasicParser::DECREMENT:
       case NeoBasicParser::SQUARE_POWER:
       case NeoBasicParser::SQUARE_ROOT:
       case NeoBasicParser::FACTORIAL: {
         enterOuterAlt(_localctx, 1);
-        setState(379);
+        setState(497);
         unaryArithmeticOperator();
         break;
       }
 
-      case NeoBasicParser::BIT_NOT:
+      case NeoBasicParser::TILDE:
       case NeoBasicParser::BIT_NEGATION: {
         enterOuterAlt(_localctx, 2);
-        setState(380);
+        setState(498);
         unaryBitwiseOperator();
         break;
       }
 
-      case NeoBasicParser::LOGICAL_NOT: {
+      case NeoBasicParser::NOT: {
         enterOuterAlt(_localctx, 3);
-        setState(381);
+        setState(499);
         unaryLogicalOperator();
         break;
       }
 
       case NeoBasicParser::ELLIPSIS: {
         enterOuterAlt(_localctx, 4);
-        setState(382);
+        setState(500);
         unarySpreadOperator();
         break;
       }
 
-      case NeoBasicParser::CARET: {
+      case NeoBasicParser::CARET:
+      case NeoBasicParser::SORTING: {
         enterOuterAlt(_localctx, 5);
-        setState(383);
+        setState(501);
         unarySortOperator();
         break;
       }
@@ -3138,7 +4317,7 @@ NeoBasicParser::PrefixUnaryOperatorContext* NeoBasicParser::prefixUnaryOperator(
       case NeoBasicParser::TYPEOF:
       case NeoBasicParser::SIZEOF: {
         enterOuterAlt(_localctx, 6);
-        setState(384);
+        setState(502);
         unaryMetaOperator();
         break;
       }
@@ -3190,7 +4369,7 @@ void NeoBasicParser::PosfixUnaryOperatorContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::PosfixUnaryOperatorContext* NeoBasicParser::posfixUnaryOperator() {
   PosfixUnaryOperatorContext *_localctx = _tracker.createInstance<PosfixUnaryOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 70, NeoBasicParser::RulePosfixUnaryOperator);
+  enterRule(_localctx, 92, NeoBasicParser::RulePosfixUnaryOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3200,19 +4379,21 @@ NeoBasicParser::PosfixUnaryOperatorContext* NeoBasicParser::posfixUnaryOperator(
     exitRule();
   });
   try {
-    setState(389);
+    setState(507);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::CARET: {
+      case NeoBasicParser::CARET:
+      case NeoBasicParser::SORTING: {
         enterOuterAlt(_localctx, 1);
-        setState(387);
+        setState(505);
         unarySortOperator();
         break;
       }
 
-      case NeoBasicParser::EQUAL: {
+      case NeoBasicParser::EQUAL:
+      case NeoBasicParser::DEEP_CLONING: {
         enterOuterAlt(_localctx, 2);
-        setState(388);
+        setState(506);
         unaryCloneOperator();
         break;
       }
@@ -3237,12 +4418,12 @@ NeoBasicParser::UnaryArithmeticOperatorContext::UnaryArithmeticOperatorContext(P
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::UnaryArithmeticOperatorContext::POSITIVE() {
-  return getToken(NeoBasicParser::POSITIVE, 0);
+tree::TerminalNode* NeoBasicParser::UnaryArithmeticOperatorContext::PLUS() {
+  return getToken(NeoBasicParser::PLUS, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::UnaryArithmeticOperatorContext::NEGATIVE() {
-  return getToken(NeoBasicParser::NEGATIVE, 0);
+tree::TerminalNode* NeoBasicParser::UnaryArithmeticOperatorContext::MINUS() {
+  return getToken(NeoBasicParser::MINUS, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::UnaryArithmeticOperatorContext::INCREMENT() {
@@ -3284,7 +4465,7 @@ void NeoBasicParser::UnaryArithmeticOperatorContext::exitRule(tree::ParseTreeLis
 
 NeoBasicParser::UnaryArithmeticOperatorContext* NeoBasicParser::unaryArithmeticOperator() {
   UnaryArithmeticOperatorContext *_localctx = _tracker.createInstance<UnaryArithmeticOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 72, NeoBasicParser::RuleUnaryArithmeticOperator);
+  enterRule(_localctx, 94, NeoBasicParser::RuleUnaryArithmeticOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3296,10 +4477,10 @@ NeoBasicParser::UnaryArithmeticOperatorContext* NeoBasicParser::unaryArithmeticO
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(391);
+    setState(509);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 7954279432192) != 0))) {
+      ((1ULL << _la) & 4362875023917056) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3323,8 +4504,8 @@ NeoBasicParser::UnaryBitwiseOperatorContext::UnaryBitwiseOperatorContext(ParserR
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::UnaryBitwiseOperatorContext::BIT_NOT() {
-  return getToken(NeoBasicParser::BIT_NOT, 0);
+tree::TerminalNode* NeoBasicParser::UnaryBitwiseOperatorContext::TILDE() {
+  return getToken(NeoBasicParser::TILDE, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::UnaryBitwiseOperatorContext::BIT_NEGATION() {
@@ -3350,7 +4531,7 @@ void NeoBasicParser::UnaryBitwiseOperatorContext::exitRule(tree::ParseTreeListen
 
 NeoBasicParser::UnaryBitwiseOperatorContext* NeoBasicParser::unaryBitwiseOperator() {
   UnaryBitwiseOperatorContext *_localctx = _tracker.createInstance<UnaryBitwiseOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 74, NeoBasicParser::RuleUnaryBitwiseOperator);
+  enterRule(_localctx, 96, NeoBasicParser::RuleUnaryBitwiseOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3362,9 +4543,9 @@ NeoBasicParser::UnaryBitwiseOperatorContext* NeoBasicParser::unaryBitwiseOperato
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(393);
+    setState(511);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::BIT_NOT
+    if (!(_la == NeoBasicParser::TILDE
 
     || _la == NeoBasicParser::BIT_NEGATION)) {
     _errHandler->recoverInline(this);
@@ -3390,8 +4571,8 @@ NeoBasicParser::UnaryLogicalOperatorContext::UnaryLogicalOperatorContext(ParserR
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::UnaryLogicalOperatorContext::LOGICAL_NOT() {
-  return getToken(NeoBasicParser::LOGICAL_NOT, 0);
+tree::TerminalNode* NeoBasicParser::UnaryLogicalOperatorContext::NOT() {
+  return getToken(NeoBasicParser::NOT, 0);
 }
 
 
@@ -3413,7 +4594,7 @@ void NeoBasicParser::UnaryLogicalOperatorContext::exitRule(tree::ParseTreeListen
 
 NeoBasicParser::UnaryLogicalOperatorContext* NeoBasicParser::unaryLogicalOperator() {
   UnaryLogicalOperatorContext *_localctx = _tracker.createInstance<UnaryLogicalOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 76, NeoBasicParser::RuleUnaryLogicalOperator);
+  enterRule(_localctx, 98, NeoBasicParser::RuleUnaryLogicalOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3424,8 +4605,8 @@ NeoBasicParser::UnaryLogicalOperatorContext* NeoBasicParser::unaryLogicalOperato
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(395);
-    match(NeoBasicParser::LOGICAL_NOT);
+    setState(513);
+    match(NeoBasicParser::NOT);
    
   }
   catch (RecognitionException &e) {
@@ -3466,7 +4647,7 @@ void NeoBasicParser::UnarySpreadOperatorContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::UnarySpreadOperatorContext* NeoBasicParser::unarySpreadOperator() {
   UnarySpreadOperatorContext *_localctx = _tracker.createInstance<UnarySpreadOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 78, NeoBasicParser::RuleUnarySpreadOperator);
+  enterRule(_localctx, 100, NeoBasicParser::RuleUnarySpreadOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3477,7 +4658,7 @@ NeoBasicParser::UnarySpreadOperatorContext* NeoBasicParser::unarySpreadOperator(
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(397);
+    setState(515);
     match(NeoBasicParser::ELLIPSIS);
    
   }
@@ -3496,12 +4677,12 @@ NeoBasicParser::UnarySortOperatorContext::UnarySortOperatorContext(ParserRuleCon
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<tree::TerminalNode *> NeoBasicParser::UnarySortOperatorContext::CARET() {
-  return getTokens(NeoBasicParser::CARET);
+tree::TerminalNode* NeoBasicParser::UnarySortOperatorContext::CARET() {
+  return getToken(NeoBasicParser::CARET, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::UnarySortOperatorContext::CARET(size_t i) {
-  return getToken(NeoBasicParser::CARET, i);
+tree::TerminalNode* NeoBasicParser::UnarySortOperatorContext::SORTING() {
+  return getToken(NeoBasicParser::SORTING, 0);
 }
 
 
@@ -3523,7 +4704,8 @@ void NeoBasicParser::UnarySortOperatorContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::UnarySortOperatorContext* NeoBasicParser::unarySortOperator() {
   UnarySortOperatorContext *_localctx = _tracker.createInstance<UnarySortOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 80, NeoBasicParser::RuleUnarySortOperator);
+  enterRule(_localctx, 102, NeoBasicParser::RuleUnarySortOperator);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3533,27 +4715,17 @@ NeoBasicParser::UnarySortOperatorContext* NeoBasicParser::unarySortOperator() {
     exitRule();
   });
   try {
-    setState(402);
-    _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx)) {
-    case 1: {
-      enterOuterAlt(_localctx, 1);
-      setState(399);
-      match(NeoBasicParser::CARET);
-      break;
-    }
+    enterOuterAlt(_localctx, 1);
+    setState(517);
+    _la = _input->LA(1);
+    if (!(_la == NeoBasicParser::CARET
 
-    case 2: {
-      enterOuterAlt(_localctx, 2);
-      setState(400);
-      match(NeoBasicParser::CARET);
-      setState(401);
-      match(NeoBasicParser::CARET);
-      break;
+    || _la == NeoBasicParser::SORTING)) {
+    _errHandler->recoverInline(this);
     }
-
-    default:
-      break;
+    else {
+      _errHandler->reportMatch(this);
+      consume();
     }
    
   }
@@ -3572,12 +4744,12 @@ NeoBasicParser::UnaryCloneOperatorContext::UnaryCloneOperatorContext(ParserRuleC
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<tree::TerminalNode *> NeoBasicParser::UnaryCloneOperatorContext::EQUAL() {
-  return getTokens(NeoBasicParser::EQUAL);
+tree::TerminalNode* NeoBasicParser::UnaryCloneOperatorContext::EQUAL() {
+  return getToken(NeoBasicParser::EQUAL, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::UnaryCloneOperatorContext::EQUAL(size_t i) {
-  return getToken(NeoBasicParser::EQUAL, i);
+tree::TerminalNode* NeoBasicParser::UnaryCloneOperatorContext::DEEP_CLONING() {
+  return getToken(NeoBasicParser::DEEP_CLONING, 0);
 }
 
 
@@ -3599,7 +4771,8 @@ void NeoBasicParser::UnaryCloneOperatorContext::exitRule(tree::ParseTreeListener
 
 NeoBasicParser::UnaryCloneOperatorContext* NeoBasicParser::unaryCloneOperator() {
   UnaryCloneOperatorContext *_localctx = _tracker.createInstance<UnaryCloneOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 82, NeoBasicParser::RuleUnaryCloneOperator);
+  enterRule(_localctx, 104, NeoBasicParser::RuleUnaryCloneOperator);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3609,29 +4782,17 @@ NeoBasicParser::UnaryCloneOperatorContext* NeoBasicParser::unaryCloneOperator() 
     exitRule();
   });
   try {
-    setState(408);
-    _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
-    case 1: {
-      enterOuterAlt(_localctx, 1);
-      setState(404);
-      match(NeoBasicParser::EQUAL);
-      break;
-    }
+    enterOuterAlt(_localctx, 1);
+    setState(519);
+    _la = _input->LA(1);
+    if (!(_la == NeoBasicParser::EQUAL
 
-    case 2: {
-      enterOuterAlt(_localctx, 2);
-      setState(405);
-      match(NeoBasicParser::EQUAL);
-      setState(406);
-      match(NeoBasicParser::EQUAL);
-      setState(407);
-      match(NeoBasicParser::EQUAL);
-      break;
+    || _la == NeoBasicParser::DEEP_CLONING)) {
+    _errHandler->recoverInline(this);
     }
-
-    default:
-      break;
+    else {
+      _errHandler->reportMatch(this);
+      consume();
     }
    
   }
@@ -3677,7 +4838,7 @@ void NeoBasicParser::UnaryMetaOperatorContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::UnaryMetaOperatorContext* NeoBasicParser::unaryMetaOperator() {
   UnaryMetaOperatorContext *_localctx = _tracker.createInstance<UnaryMetaOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 84, NeoBasicParser::RuleUnaryMetaOperator);
+  enterRule(_localctx, 106, NeoBasicParser::RuleUnaryMetaOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3689,7 +4850,7 @@ NeoBasicParser::UnaryMetaOperatorContext* NeoBasicParser::unaryMetaOperator() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(410);
+    setState(521);
     _la = _input->LA(1);
     if (!(_la == NeoBasicParser::TYPEOF
 
@@ -3717,12 +4878,12 @@ NeoBasicParser::BinaryExponentialOperatorContext::BinaryExponentialOperatorConte
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryExponentialOperatorContext::NTH_POWER() {
-  return getToken(NeoBasicParser::NTH_POWER, 0);
+tree::TerminalNode* NeoBasicParser::BinaryExponentialOperatorContext::SQUARE_POWER() {
+  return getToken(NeoBasicParser::SQUARE_POWER, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryExponentialOperatorContext::NTH_ROOT() {
-  return getToken(NeoBasicParser::NTH_ROOT, 0);
+tree::TerminalNode* NeoBasicParser::BinaryExponentialOperatorContext::SQUARE_ROOT() {
+  return getToken(NeoBasicParser::SQUARE_ROOT, 0);
 }
 
 
@@ -3744,7 +4905,7 @@ void NeoBasicParser::BinaryExponentialOperatorContext::exitRule(tree::ParseTreeL
 
 NeoBasicParser::BinaryExponentialOperatorContext* NeoBasicParser::binaryExponentialOperator() {
   BinaryExponentialOperatorContext *_localctx = _tracker.createInstance<BinaryExponentialOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 86, NeoBasicParser::RuleBinaryExponentialOperator);
+  enterRule(_localctx, 108, NeoBasicParser::RuleBinaryExponentialOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3756,11 +4917,11 @@ NeoBasicParser::BinaryExponentialOperatorContext* NeoBasicParser::binaryExponent
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(412);
+    setState(523);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::NTH_POWER
+    if (!(_la == NeoBasicParser::SQUARE_POWER
 
-    || _la == NeoBasicParser::NTH_ROOT)) {
+    || _la == NeoBasicParser::SQUARE_ROOT)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3784,20 +4945,24 @@ NeoBasicParser::BinaryMultiplicativeOperatorContext::BinaryMultiplicativeOperato
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::MULTIPLICATION() {
-  return getToken(NeoBasicParser::MULTIPLICATION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::ASTERISK() {
+  return getToken(NeoBasicParser::ASTERISK, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::REAL_DIVISION() {
-  return getToken(NeoBasicParser::REAL_DIVISION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::SLASH() {
+  return getToken(NeoBasicParser::SLASH, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::INTEGER_DIVISION() {
-  return getToken(NeoBasicParser::INTEGER_DIVISION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::DIVISION() {
+  return getToken(NeoBasicParser::DIVISION, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::MODULO() {
-  return getToken(NeoBasicParser::MODULO, 0);
+tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::QUOTIENT() {
+  return getToken(NeoBasicParser::QUOTIENT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::PERCENT() {
+  return getToken(NeoBasicParser::PERCENT, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BinaryMultiplicativeOperatorContext::PERCENTAGE_RATE() {
@@ -3839,7 +5004,7 @@ void NeoBasicParser::BinaryMultiplicativeOperatorContext::exitRule(tree::ParseTr
 
 NeoBasicParser::BinaryMultiplicativeOperatorContext* NeoBasicParser::binaryMultiplicativeOperator() {
   BinaryMultiplicativeOperatorContext *_localctx = _tracker.createInstance<BinaryMultiplicativeOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 88, NeoBasicParser::RuleBinaryMultiplicativeOperator);
+  enterRule(_localctx, 110, NeoBasicParser::RuleBinaryMultiplicativeOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3851,10 +5016,10 @@ NeoBasicParser::BinaryMultiplicativeOperatorContext* NeoBasicParser::binaryMulti
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(414);
+    setState(525);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 70333559805575168) != 0))) {
+      ((1ULL << _la) & 2269814212257644544) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3878,12 +5043,12 @@ NeoBasicParser::BinaryAdditiveOperatorContext::BinaryAdditiveOperatorContext(Par
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryAdditiveOperatorContext::ADDITION() {
-  return getToken(NeoBasicParser::ADDITION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryAdditiveOperatorContext::PLUS() {
+  return getToken(NeoBasicParser::PLUS, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryAdditiveOperatorContext::SUBTRACTION() {
-  return getToken(NeoBasicParser::SUBTRACTION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryAdditiveOperatorContext::MINUS() {
+  return getToken(NeoBasicParser::MINUS, 0);
 }
 
 
@@ -3905,7 +5070,7 @@ void NeoBasicParser::BinaryAdditiveOperatorContext::exitRule(tree::ParseTreeList
 
 NeoBasicParser::BinaryAdditiveOperatorContext* NeoBasicParser::binaryAdditiveOperator() {
   BinaryAdditiveOperatorContext *_localctx = _tracker.createInstance<BinaryAdditiveOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 90, NeoBasicParser::RuleBinaryAdditiveOperator);
+  enterRule(_localctx, 112, NeoBasicParser::RuleBinaryAdditiveOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3917,11 +5082,11 @@ NeoBasicParser::BinaryAdditiveOperatorContext* NeoBasicParser::binaryAdditiveOpe
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(416);
+    setState(527);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::ADDITION
+    if (!(_la == NeoBasicParser::PLUS
 
-    || _la == NeoBasicParser::SUBTRACTION)) {
+    || _la == NeoBasicParser::MINUS)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -3945,12 +5110,12 @@ NeoBasicParser::BitShiftOperatorContext::BitShiftOperatorContext(ParserRuleConte
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BitShiftOperatorContext::LEFT_SHIFT() {
-  return getToken(NeoBasicParser::LEFT_SHIFT, 0);
+tree::TerminalNode* NeoBasicParser::BitShiftOperatorContext::DOUBLE_LEFT_ANGLE() {
+  return getToken(NeoBasicParser::DOUBLE_LEFT_ANGLE, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BitShiftOperatorContext::SIGNED_RIGHT_SHIFT() {
-  return getToken(NeoBasicParser::SIGNED_RIGHT_SHIFT, 0);
+tree::TerminalNode* NeoBasicParser::BitShiftOperatorContext::DOUBLE_RIGHT_ANGLE() {
+  return getToken(NeoBasicParser::DOUBLE_RIGHT_ANGLE, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BitShiftOperatorContext::UNSIGNED_RIGHT_SHIFT() {
@@ -3976,7 +5141,7 @@ void NeoBasicParser::BitShiftOperatorContext::exitRule(tree::ParseTreeListener *
 
 NeoBasicParser::BitShiftOperatorContext* NeoBasicParser::bitShiftOperator() {
   BitShiftOperatorContext *_localctx = _tracker.createInstance<BitShiftOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 92, NeoBasicParser::RuleBitShiftOperator);
+  enterRule(_localctx, 114, NeoBasicParser::RuleBitShiftOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3988,10 +5153,10 @@ NeoBasicParser::BitShiftOperatorContext* NeoBasicParser::bitShiftOperator() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(418);
+    setState(529);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8070450532247928832) != 0))) {
+      ((1ULL << _la) & 4611689316962271232) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4015,8 +5180,8 @@ NeoBasicParser::BitConjunctionOperatorContext::BitConjunctionOperatorContext(Par
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BitConjunctionOperatorContext::BIT_AND() {
-  return getToken(NeoBasicParser::BIT_AND, 0);
+tree::TerminalNode* NeoBasicParser::BitConjunctionOperatorContext::AMPERSAND() {
+  return getToken(NeoBasicParser::AMPERSAND, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BitConjunctionOperatorContext::BIT_CLEAR() {
@@ -4042,7 +5207,7 @@ void NeoBasicParser::BitConjunctionOperatorContext::exitRule(tree::ParseTreeList
 
 NeoBasicParser::BitConjunctionOperatorContext* NeoBasicParser::bitConjunctionOperator() {
   BitConjunctionOperatorContext *_localctx = _tracker.createInstance<BitConjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 94, NeoBasicParser::RuleBitConjunctionOperator);
+  enterRule(_localctx, 116, NeoBasicParser::RuleBitConjunctionOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4054,9 +5219,9 @@ NeoBasicParser::BitConjunctionOperatorContext* NeoBasicParser::bitConjunctionOpe
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(420);
+    setState(531);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::BIT_AND
+    if (!(_la == NeoBasicParser::AMPERSAND
 
     || _la == NeoBasicParser::BIT_CLEAR)) {
     _errHandler->recoverInline(this);
@@ -4082,8 +5247,8 @@ NeoBasicParser::BitExclusiveDisjunctionOperatorContext::BitExclusiveDisjunctionO
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BitExclusiveDisjunctionOperatorContext::BIT_XOR() {
-  return getToken(NeoBasicParser::BIT_XOR, 0);
+tree::TerminalNode* NeoBasicParser::BitExclusiveDisjunctionOperatorContext::CARET() {
+  return getToken(NeoBasicParser::CARET, 0);
 }
 
 
@@ -4105,7 +5270,7 @@ void NeoBasicParser::BitExclusiveDisjunctionOperatorContext::exitRule(tree::Pars
 
 NeoBasicParser::BitExclusiveDisjunctionOperatorContext* NeoBasicParser::bitExclusiveDisjunctionOperator() {
   BitExclusiveDisjunctionOperatorContext *_localctx = _tracker.createInstance<BitExclusiveDisjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 96, NeoBasicParser::RuleBitExclusiveDisjunctionOperator);
+  enterRule(_localctx, 118, NeoBasicParser::RuleBitExclusiveDisjunctionOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4116,8 +5281,8 @@ NeoBasicParser::BitExclusiveDisjunctionOperatorContext* NeoBasicParser::bitExclu
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(422);
-    match(NeoBasicParser::BIT_XOR);
+    setState(533);
+    match(NeoBasicParser::CARET);
    
   }
   catch (RecognitionException &e) {
@@ -4135,8 +5300,8 @@ NeoBasicParser::BitDisjunctionOperatorContext::BitDisjunctionOperatorContext(Par
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BitDisjunctionOperatorContext::BIT_OR() {
-  return getToken(NeoBasicParser::BIT_OR, 0);
+tree::TerminalNode* NeoBasicParser::BitDisjunctionOperatorContext::PIPE() {
+  return getToken(NeoBasicParser::PIPE, 0);
 }
 
 
@@ -4158,7 +5323,7 @@ void NeoBasicParser::BitDisjunctionOperatorContext::exitRule(tree::ParseTreeList
 
 NeoBasicParser::BitDisjunctionOperatorContext* NeoBasicParser::bitDisjunctionOperator() {
   BitDisjunctionOperatorContext *_localctx = _tracker.createInstance<BitDisjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 98, NeoBasicParser::RuleBitDisjunctionOperator);
+  enterRule(_localctx, 120, NeoBasicParser::RuleBitDisjunctionOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4169,8 +5334,8 @@ NeoBasicParser::BitDisjunctionOperatorContext* NeoBasicParser::bitDisjunctionOpe
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(424);
-    match(NeoBasicParser::BIT_OR);
+    setState(535);
+    match(NeoBasicParser::PIPE);
    
   }
   catch (RecognitionException &e) {
@@ -4215,7 +5380,7 @@ void NeoBasicParser::BinaryComparisonOperatorContext::exitRule(tree::ParseTreeLi
 
 NeoBasicParser::BinaryComparisonOperatorContext* NeoBasicParser::binaryComparisonOperator() {
   BinaryComparisonOperatorContext *_localctx = _tracker.createInstance<BinaryComparisonOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 100, NeoBasicParser::RuleBinaryComparisonOperator);
+  enterRule(_localctx, 122, NeoBasicParser::RuleBinaryComparisonOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4227,7 +5392,7 @@ NeoBasicParser::BinaryComparisonOperatorContext* NeoBasicParser::binaryCompariso
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(426);
+    setState(537);
     _la = _input->LA(1);
     if (!(_la == NeoBasicParser::ELVIS_TEST
 
@@ -4255,24 +5420,32 @@ NeoBasicParser::BinaryRelationalOperatorContext::BinaryRelationalOperatorContext
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::EQUALS() {
-  return getToken(NeoBasicParser::EQUALS, 0);
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::STRICT_EQUALITY() {
+  return getToken(NeoBasicParser::STRICT_EQUALITY, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::NOT_EQUALS() {
-  return getToken(NeoBasicParser::NOT_EQUALS, 0);
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::STRICT_INEQUALITY() {
+  return getToken(NeoBasicParser::STRICT_INEQUALITY, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::LESS() {
-  return getToken(NeoBasicParser::LESS, 0);
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::LOOSE_EQUALITY() {
+  return getToken(NeoBasicParser::LOOSE_EQUALITY, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::LOOSE_INEQUALITY() {
+  return getToken(NeoBasicParser::LOOSE_INEQUALITY, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::LEFT_ANGLE() {
+  return getToken(NeoBasicParser::LEFT_ANGLE, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::LESS_OR_EQUALS() {
   return getToken(NeoBasicParser::LESS_OR_EQUALS, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::GREATER() {
-  return getToken(NeoBasicParser::GREATER, 0);
+tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::RIGHT_ANGLE() {
+  return getToken(NeoBasicParser::RIGHT_ANGLE, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BinaryRelationalOperatorContext::GREATER_OR_EQUALS() {
@@ -4298,7 +5471,7 @@ void NeoBasicParser::BinaryRelationalOperatorContext::exitRule(tree::ParseTreeLi
 
 NeoBasicParser::BinaryRelationalOperatorContext* NeoBasicParser::binaryRelationalOperator() {
   BinaryRelationalOperatorContext *_localctx = _tracker.createInstance<BinaryRelationalOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 102, NeoBasicParser::RuleBinaryRelationalOperator);
+  enterRule(_localctx, 124, NeoBasicParser::RuleBinaryRelationalOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4310,10 +5483,12 @@ NeoBasicParser::BinaryRelationalOperatorContext* NeoBasicParser::binaryRelationa
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(428);
+    setState(539);
     _la = _input->LA(1);
-    if (!(((((_la - 75) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 75)) & 63) != 0))) {
+    if (!(_la == NeoBasicParser::LEFT_ANGLE
+
+    || _la == NeoBasicParser::RIGHT_ANGLE || ((((_la - 67) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 67)) & 63) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4337,36 +5512,24 @@ NeoBasicParser::BinaryConditionalOperatorContext::BinaryConditionalOperatorConte
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::IDENTITY() {
-  return getToken(NeoBasicParser::IDENTITY, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::IS() {
+  return getToken(NeoBasicParser::IS, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::NOT_IDENTITY() {
-  return getToken(NeoBasicParser::NOT_IDENTITY, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::NOT() {
+  return getToken(NeoBasicParser::NOT, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::MEMBERSHIP() {
-  return getToken(NeoBasicParser::MEMBERSHIP, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::IN() {
+  return getToken(NeoBasicParser::IN, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::NOT_MEMBERSHIP() {
-  return getToken(NeoBasicParser::NOT_MEMBERSHIP, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::BETWEEN() {
+  return getToken(NeoBasicParser::BETWEEN, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::BETWEEN_RANGE() {
-  return getToken(NeoBasicParser::BETWEEN_RANGE, 0);
-}
-
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::NOT_BETWEEN_RANGE() {
-  return getToken(NeoBasicParser::NOT_BETWEEN_RANGE, 0);
-}
-
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::MATCHING() {
-  return getToken(NeoBasicParser::MATCHING, 0);
-}
-
-tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::NOT_MATCHING() {
-  return getToken(NeoBasicParser::NOT_MATCHING, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::LIKE() {
+  return getToken(NeoBasicParser::LIKE, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BinaryConditionalOperatorContext::DIVISIBLE_BY() {
@@ -4396,8 +5559,7 @@ void NeoBasicParser::BinaryConditionalOperatorContext::exitRule(tree::ParseTreeL
 
 NeoBasicParser::BinaryConditionalOperatorContext* NeoBasicParser::binaryConditionalOperator() {
   BinaryConditionalOperatorContext *_localctx = _tracker.createInstance<BinaryConditionalOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 104, NeoBasicParser::RuleBinaryConditionalOperator);
-  size_t _la = 0;
+  enterRule(_localctx, 126, NeoBasicParser::RuleBinaryConditionalOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4407,16 +5569,89 @@ NeoBasicParser::BinaryConditionalOperatorContext* NeoBasicParser::binaryConditio
     exitRule();
   });
   try {
-    enterOuterAlt(_localctx, 1);
-    setState(430);
-    _la = _input->LA(1);
-    if (!(((((_la - 63) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 63)) & 1023) != 0))) {
-    _errHandler->recoverInline(this);
+    setState(555);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(541);
+      match(NeoBasicParser::IS);
+      break;
     }
-    else {
-      _errHandler->reportMatch(this);
-      consume();
+
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(542);
+      match(NeoBasicParser::IS);
+      setState(543);
+      match(NeoBasicParser::NOT);
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(544);
+      match(NeoBasicParser::IN);
+      break;
+    }
+
+    case 4: {
+      enterOuterAlt(_localctx, 4);
+      setState(545);
+      match(NeoBasicParser::NOT);
+      setState(546);
+      match(NeoBasicParser::IN);
+      break;
+    }
+
+    case 5: {
+      enterOuterAlt(_localctx, 5);
+      setState(547);
+      match(NeoBasicParser::BETWEEN);
+      break;
+    }
+
+    case 6: {
+      enterOuterAlt(_localctx, 6);
+      setState(548);
+      match(NeoBasicParser::NOT);
+      setState(549);
+      match(NeoBasicParser::BETWEEN);
+      break;
+    }
+
+    case 7: {
+      enterOuterAlt(_localctx, 7);
+      setState(550);
+      match(NeoBasicParser::LIKE);
+      break;
+    }
+
+    case 8: {
+      enterOuterAlt(_localctx, 8);
+      setState(551);
+      match(NeoBasicParser::NOT);
+      setState(552);
+      match(NeoBasicParser::LIKE);
+      break;
+    }
+
+    case 9: {
+      enterOuterAlt(_localctx, 9);
+      setState(553);
+      match(NeoBasicParser::DIVISIBLE_BY);
+      break;
+    }
+
+    case 10: {
+      enterOuterAlt(_localctx, 10);
+      setState(554);
+      match(NeoBasicParser::NOT_DIVISIBLE_BY);
+      break;
+    }
+
+    default:
+      break;
     }
    
   }
@@ -4435,12 +5670,12 @@ NeoBasicParser::BinaryConjunctionOperatorContext::BinaryConjunctionOperatorConte
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConjunctionOperatorContext::LOGICAL_AND() {
-  return getToken(NeoBasicParser::LOGICAL_AND, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConjunctionOperatorContext::AND() {
+  return getToken(NeoBasicParser::AND, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryConjunctionOperatorContext::LOGICAL_NAND() {
-  return getToken(NeoBasicParser::LOGICAL_NAND, 0);
+tree::TerminalNode* NeoBasicParser::BinaryConjunctionOperatorContext::NAND() {
+  return getToken(NeoBasicParser::NAND, 0);
 }
 
 
@@ -4462,7 +5697,7 @@ void NeoBasicParser::BinaryConjunctionOperatorContext::exitRule(tree::ParseTreeL
 
 NeoBasicParser::BinaryConjunctionOperatorContext* NeoBasicParser::binaryConjunctionOperator() {
   BinaryConjunctionOperatorContext *_localctx = _tracker.createInstance<BinaryConjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 106, NeoBasicParser::RuleBinaryConjunctionOperator);
+  enterRule(_localctx, 128, NeoBasicParser::RuleBinaryConjunctionOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4474,11 +5709,11 @@ NeoBasicParser::BinaryConjunctionOperatorContext* NeoBasicParser::binaryConjunct
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(432);
+    setState(557);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::LOGICAL_AND
+    if (!(_la == NeoBasicParser::AND
 
-    || _la == NeoBasicParser::LOGICAL_NAND)) {
+    || _la == NeoBasicParser::NAND)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4502,12 +5737,12 @@ NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::BinaryExclusiveDisjun
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::LOGICAL_XOR() {
-  return getToken(NeoBasicParser::LOGICAL_XOR, 0);
+tree::TerminalNode* NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::XOR() {
+  return getToken(NeoBasicParser::XOR, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::LOGICAL_NXOR() {
-  return getToken(NeoBasicParser::LOGICAL_NXOR, 0);
+tree::TerminalNode* NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::NXOR() {
+  return getToken(NeoBasicParser::NXOR, 0);
 }
 
 
@@ -4529,7 +5764,7 @@ void NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext::exitRule(tree::P
 
 NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext* NeoBasicParser::binaryExclusiveDisjunctionOperator() {
   BinaryExclusiveDisjunctionOperatorContext *_localctx = _tracker.createInstance<BinaryExclusiveDisjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 108, NeoBasicParser::RuleBinaryExclusiveDisjunctionOperator);
+  enterRule(_localctx, 130, NeoBasicParser::RuleBinaryExclusiveDisjunctionOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4541,11 +5776,11 @@ NeoBasicParser::BinaryExclusiveDisjunctionOperatorContext* NeoBasicParser::binar
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(434);
+    setState(559);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::LOGICAL_XOR
+    if (!(_la == NeoBasicParser::XOR
 
-    || _la == NeoBasicParser::LOGICAL_NXOR)) {
+    || _la == NeoBasicParser::NXOR)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4569,12 +5804,12 @@ NeoBasicParser::BinaryDisjunctionOperatorContext::BinaryDisjunctionOperatorConte
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryDisjunctionOperatorContext::LOGICAL_OR() {
-  return getToken(NeoBasicParser::LOGICAL_OR, 0);
+tree::TerminalNode* NeoBasicParser::BinaryDisjunctionOperatorContext::OR() {
+  return getToken(NeoBasicParser::OR, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryDisjunctionOperatorContext::LOGICAL_NOR() {
-  return getToken(NeoBasicParser::LOGICAL_NOR, 0);
+tree::TerminalNode* NeoBasicParser::BinaryDisjunctionOperatorContext::NOR() {
+  return getToken(NeoBasicParser::NOR, 0);
 }
 
 
@@ -4596,7 +5831,7 @@ void NeoBasicParser::BinaryDisjunctionOperatorContext::exitRule(tree::ParseTreeL
 
 NeoBasicParser::BinaryDisjunctionOperatorContext* NeoBasicParser::binaryDisjunctionOperator() {
   BinaryDisjunctionOperatorContext *_localctx = _tracker.createInstance<BinaryDisjunctionOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 110, NeoBasicParser::RuleBinaryDisjunctionOperator);
+  enterRule(_localctx, 132, NeoBasicParser::RuleBinaryDisjunctionOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4608,11 +5843,11 @@ NeoBasicParser::BinaryDisjunctionOperatorContext* NeoBasicParser::binaryDisjunct
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(436);
+    setState(561);
     _la = _input->LA(1);
-    if (!(_la == NeoBasicParser::LOGICAL_OR
+    if (!(_la == NeoBasicParser::OR
 
-    || _la == NeoBasicParser::LOGICAL_NOR)) {
+    || _la == NeoBasicParser::NOR)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4636,28 +5871,28 @@ NeoBasicParser::BinaryCoalescingOperatorContext::BinaryCoalescingOperatorContext
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::ERROR_PROPAGATION() {
-  return getToken(NeoBasicParser::ERROR_PROPAGATION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::EXCLAMATION() {
+  return getToken(NeoBasicParser::EXCLAMATION, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::ERROR_COALESCING() {
-  return getToken(NeoBasicParser::ERROR_COALESCING, 0);
+tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::DOUBLE_EXCLAMATION() {
+  return getToken(NeoBasicParser::DOUBLE_EXCLAMATION, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::ERROR_PROPAGATION_NONE_COALESCING() {
   return getToken(NeoBasicParser::ERROR_PROPAGATION_NONE_COALESCING, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::ERROR_TO_NONE_CONVERTION() {
-  return getToken(NeoBasicParser::ERROR_TO_NONE_CONVERTION, 0);
+tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::QUESTION() {
+  return getToken(NeoBasicParser::QUESTION, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::EXCEPTION_COALESCING() {
-  return getToken(NeoBasicParser::EXCEPTION_COALESCING, 0);
+tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::DOUBLE_QUESTION() {
+  return getToken(NeoBasicParser::DOUBLE_QUESTION, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::EXCEPTION_STATEMENT() {
-  return getToken(NeoBasicParser::EXCEPTION_STATEMENT, 0);
+tree::TerminalNode* NeoBasicParser::BinaryCoalescingOperatorContext::OTHERWISE() {
+  return getToken(NeoBasicParser::OTHERWISE, 0);
 }
 
 
@@ -4679,7 +5914,7 @@ void NeoBasicParser::BinaryCoalescingOperatorContext::exitRule(tree::ParseTreeLi
 
 NeoBasicParser::BinaryCoalescingOperatorContext* NeoBasicParser::binaryCoalescingOperator() {
   BinaryCoalescingOperatorContext *_localctx = _tracker.createInstance<BinaryCoalescingOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 112, NeoBasicParser::RuleBinaryCoalescingOperator);
+  enterRule(_localctx, 134, NeoBasicParser::RuleBinaryCoalescingOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4691,10 +5926,10 @@ NeoBasicParser::BinaryCoalescingOperatorContext* NeoBasicParser::binaryCoalescin
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(438);
+    setState(563);
     _la = _input->LA(1);
-    if (!(((((_la - 88) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 88)) & 63) != 0))) {
+    if (!(((((_la - 13) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 13)) & 1152921506217459715) != 0) || _la == NeoBasicParser::OTHERWISE)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4722,6 +5957,10 @@ NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::AssignmentOpera
   return getRuleContext<NeoBasicParser::SingleAssignmentOperatorContext>(0);
 }
 
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::AssignmentOperatorContext::multipleAssignmentOperator() {
+  return getRuleContext<NeoBasicParser::MultipleAssignmentOperatorContext>(0);
+}
+
 NeoBasicParser::CompoundAssignmentOperatorContext* NeoBasicParser::AssignmentOperatorContext::compoundAssignmentOperator() {
   return getRuleContext<NeoBasicParser::CompoundAssignmentOperatorContext>(0);
 }
@@ -4745,7 +5984,7 @@ void NeoBasicParser::AssignmentOperatorContext::exitRule(tree::ParseTreeListener
 
 NeoBasicParser::AssignmentOperatorContext* NeoBasicParser::assignmentOperator() {
   AssignmentOperatorContext *_localctx = _tracker.createInstance<AssignmentOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 114, NeoBasicParser::RuleAssignmentOperator);
+  enterRule(_localctx, 136, NeoBasicParser::RuleAssignmentOperator);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4755,48 +5994,32 @@ NeoBasicParser::AssignmentOperatorContext* NeoBasicParser::assignmentOperator() 
     exitRule();
   });
   try {
-    setState(442);
+    setState(568);
     _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case NeoBasicParser::BASIC_ASSIGNMENT:
-      case NeoBasicParser::DESTRUCTURING_ASSIGNMENT:
-      case NeoBasicParser::MACRO_ASSIGNMENT: {
-        enterOuterAlt(_localctx, 1);
-        setState(440);
-        singleAssignmentOperator();
-        break;
-      }
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 30, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(565);
+      singleAssignmentOperator();
+      break;
+    }
 
-      case NeoBasicParser::ADDITION_ASSIGNMENT:
-      case NeoBasicParser::SUBTRACTION_ASSIGNMENT:
-      case NeoBasicParser::MULTIPLICATION_ASSIGNMENT:
-      case NeoBasicParser::REAL_DIVISION_ASSIGNMENT:
-      case NeoBasicParser::INTEGER_DIVISION_ASSIGNMENT:
-      case NeoBasicParser::MODULO_ASSIGNMENT:
-      case NeoBasicParser::NTH_POWER_ASSIGNMENT:
-      case NeoBasicParser::NTH_ROOT_ASSIGNMENT:
-      case NeoBasicParser::PERCENTAGE_RATE_ASSIGNMENT:
-      case NeoBasicParser::PERCENTAGE_AMOUNT_ASSIGNMENT:
-      case NeoBasicParser::PERCENTAGE_INCREASE_ASSIGNMENT:
-      case NeoBasicParser::PERCENTAGE_DECREASE_ASSIGNMENT:
-      case NeoBasicParser::PERCENTAGE_VARIATION_ASSIGNMENT:
-      case NeoBasicParser::BIT_AND_ASSIGNMENT:
-      case NeoBasicParser::BIT_OR_ASSIGNMENT:
-      case NeoBasicParser::BIT_XOR_ASSIGNMENT:
-      case NeoBasicParser::BIT_CLEAR_ASSIGNMENT:
-      case NeoBasicParser::BIT_NOT_ASSIGNMENT:
-      case NeoBasicParser::LEFT_SHIFT_ASSIGNMENT:
-      case NeoBasicParser::SIGNED_RIGHT_SHIFT_ASSIGNMENT:
-      case NeoBasicParser::UNSIGNED_RIGHT_SHIFT_ASSIGNMENT:
-      case NeoBasicParser::NONE_COALESCING_ASSIGNMENT: {
-        enterOuterAlt(_localctx, 2);
-        setState(441);
-        compoundAssignmentOperator();
-        break;
-      }
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(566);
+      multipleAssignmentOperator();
+      break;
+    }
+
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(567);
+      compoundAssignmentOperator();
+      break;
+    }
 
     default:
-      throw NoViableAltException(this);
+      break;
     }
    
   }
@@ -4815,16 +6038,20 @@ NeoBasicParser::SingleAssignmentOperatorContext::SingleAssignmentOperatorContext
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::BASIC_ASSIGNMENT() {
-  return getToken(NeoBasicParser::BASIC_ASSIGNMENT, 0);
+tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::EQUAL() {
+  return getToken(NeoBasicParser::EQUAL, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::DESTRUCTURING_ASSIGNMENT() {
-  return getToken(NeoBasicParser::DESTRUCTURING_ASSIGNMENT, 0);
+tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::POP_ONE_ASSIGNMENT() {
+  return getToken(NeoBasicParser::POP_ONE_ASSIGNMENT, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::MACRO_ASSIGNMENT() {
-  return getToken(NeoBasicParser::MACRO_ASSIGNMENT, 0);
+tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::PULL_ALL_ASSIGNMENT() {
+  return getToken(NeoBasicParser::PULL_ALL_ASSIGNMENT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SingleAssignmentOperatorContext::PIPE_ASSIGNMENT() {
+  return getToken(NeoBasicParser::PIPE_ASSIGNMENT, 0);
 }
 
 
@@ -4846,7 +6073,7 @@ void NeoBasicParser::SingleAssignmentOperatorContext::exitRule(tree::ParseTreeLi
 
 NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::singleAssignmentOperator() {
   SingleAssignmentOperatorContext *_localctx = _tracker.createInstance<SingleAssignmentOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 116, NeoBasicParser::RuleSingleAssignmentOperator);
+  enterRule(_localctx, 138, NeoBasicParser::RuleSingleAssignmentOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -4858,10 +6085,77 @@ NeoBasicParser::SingleAssignmentOperatorContext* NeoBasicParser::singleAssignmen
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(444);
+    setState(570);
     _la = _input->LA(1);
-    if (!(((((_la - 94) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 94)) & 7) != 0))) {
+    if (!(((((_la - 31) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 31)) & 61572651155457) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- MultipleAssignmentOperatorContext ------------------------------------------------------------------
+
+NeoBasicParser::MultipleAssignmentOperatorContext::MultipleAssignmentOperatorContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::MultipleAssignmentOperatorContext::EQUAL() {
+  return getToken(NeoBasicParser::EQUAL, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::MultipleAssignmentOperatorContext::DESTRUCTURING_ASSIGNMENT() {
+  return getToken(NeoBasicParser::DESTRUCTURING_ASSIGNMENT, 0);
+}
+
+
+size_t NeoBasicParser::MultipleAssignmentOperatorContext::getRuleIndex() const {
+  return NeoBasicParser::RuleMultipleAssignmentOperator;
+}
+
+void NeoBasicParser::MultipleAssignmentOperatorContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterMultipleAssignmentOperator(this);
+}
+
+void NeoBasicParser::MultipleAssignmentOperatorContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitMultipleAssignmentOperator(this);
+}
+
+NeoBasicParser::MultipleAssignmentOperatorContext* NeoBasicParser::multipleAssignmentOperator() {
+  MultipleAssignmentOperatorContext *_localctx = _tracker.createInstance<MultipleAssignmentOperatorContext>(_ctx, getState());
+  enterRule(_localctx, 140, NeoBasicParser::RuleMultipleAssignmentOperator);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(572);
+    _la = _input->LA(1);
+    if (!(_la == NeoBasicParser::EQUAL
+
+    || _la == NeoBasicParser::DESTRUCTURING_ASSIGNMENT)) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -4953,10 +6247,6 @@ tree::TerminalNode* NeoBasicParser::CompoundAssignmentOperatorContext::BIT_OR_AS
   return getToken(NeoBasicParser::BIT_OR_ASSIGNMENT, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::CompoundAssignmentOperatorContext::BIT_NOT_ASSIGNMENT() {
-  return getToken(NeoBasicParser::BIT_NOT_ASSIGNMENT, 0);
-}
-
 tree::TerminalNode* NeoBasicParser::CompoundAssignmentOperatorContext::LEFT_SHIFT_ASSIGNMENT() {
   return getToken(NeoBasicParser::LEFT_SHIFT_ASSIGNMENT, 0);
 }
@@ -4992,7 +6282,7 @@ void NeoBasicParser::CompoundAssignmentOperatorContext::exitRule(tree::ParseTree
 
 NeoBasicParser::CompoundAssignmentOperatorContext* NeoBasicParser::compoundAssignmentOperator() {
   CompoundAssignmentOperatorContext *_localctx = _tracker.createInstance<CompoundAssignmentOperatorContext>(_ctx, getState());
-  enterRule(_localctx, 118, NeoBasicParser::RuleCompoundAssignmentOperator);
+  enterRule(_localctx, 142, NeoBasicParser::RuleCompoundAssignmentOperator);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -5004,16 +6294,69 @@ NeoBasicParser::CompoundAssignmentOperatorContext* NeoBasicParser::compoundAssig
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(446);
+    setState(574);
     _la = _input->LA(1);
-    if (!(((((_la - 97) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 97)) & 4194303) != 0))) {
+    if (!(((((_la - 78) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 78)) & 4194271) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
       _errHandler->reportMatch(this);
       consume();
     }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- LabelIdentifierContext ------------------------------------------------------------------
+
+NeoBasicParser::LabelIdentifierContext::LabelIdentifierContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::LabelIdentifierContext::TAG() {
+  return getToken(NeoBasicParser::TAG, 0);
+}
+
+
+size_t NeoBasicParser::LabelIdentifierContext::getRuleIndex() const {
+  return NeoBasicParser::RuleLabelIdentifier;
+}
+
+void NeoBasicParser::LabelIdentifierContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterLabelIdentifier(this);
+}
+
+void NeoBasicParser::LabelIdentifierContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitLabelIdentifier(this);
+}
+
+NeoBasicParser::LabelIdentifierContext* NeoBasicParser::labelIdentifier() {
+  LabelIdentifierContext *_localctx = _tracker.createInstance<LabelIdentifierContext>(_ctx, getState());
+  enterRule(_localctx, 144, NeoBasicParser::RuleLabelIdentifier);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(576);
+    match(NeoBasicParser::TAG);
    
   }
   catch (RecognitionException &e) {
@@ -5054,7 +6397,7 @@ void NeoBasicParser::SymbolIdentifierContext::exitRule(tree::ParseTreeListener *
 
 NeoBasicParser::SymbolIdentifierContext* NeoBasicParser::symbolIdentifier() {
   SymbolIdentifierContext *_localctx = _tracker.createInstance<SymbolIdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 120, NeoBasicParser::RuleSymbolIdentifier);
+  enterRule(_localctx, 146, NeoBasicParser::RuleSymbolIdentifier);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5065,7 +6408,7 @@ NeoBasicParser::SymbolIdentifierContext* NeoBasicParser::symbolIdentifier() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(448);
+    setState(578);
     match(NeoBasicParser::IDENTIFIER);
    
   }
@@ -5119,7 +6462,7 @@ void NeoBasicParser::QualifiedIdentifierContext::exitRule(tree::ParseTreeListene
 
 NeoBasicParser::QualifiedIdentifierContext* NeoBasicParser::qualifiedIdentifier() {
   QualifiedIdentifierContext *_localctx = _tracker.createInstance<QualifiedIdentifierContext>(_ctx, getState());
-  enterRule(_localctx, 122, NeoBasicParser::RuleQualifiedIdentifier);
+  enterRule(_localctx, 148, NeoBasicParser::RuleQualifiedIdentifier);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5131,21 +6474,21 @@ NeoBasicParser::QualifiedIdentifierContext* NeoBasicParser::qualifiedIdentifier(
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(450);
+    setState(580);
     match(NeoBasicParser::IDENTIFIER);
-    setState(455);
+    setState(585);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(451);
+        setState(581);
         match(NeoBasicParser::DOT);
-        setState(452);
+        setState(582);
         match(NeoBasicParser::IDENTIFIER); 
       }
-      setState(457);
+      setState(587);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx);
     }
    
   }
@@ -5199,7 +6542,7 @@ void NeoBasicParser::IdentifiersContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::IdentifiersContext* NeoBasicParser::identifiers() {
   IdentifiersContext *_localctx = _tracker.createInstance<IdentifiersContext>(_ctx, getState());
-  enterRule(_localctx, 124, NeoBasicParser::RuleIdentifiers);
+  enterRule(_localctx, 150, NeoBasicParser::RuleIdentifiers);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -5211,17 +6554,17 @@ NeoBasicParser::IdentifiersContext* NeoBasicParser::identifiers() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(458);
+    setState(588);
     match(NeoBasicParser::IDENTIFIER);
-    setState(463);
+    setState(593);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == NeoBasicParser::COMMA) {
-      setState(459);
+      setState(589);
       match(NeoBasicParser::COMMA);
-      setState(460);
+      setState(590);
       match(NeoBasicParser::IDENTIFIER);
-      setState(465);
+      setState(595);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -5277,7 +6620,8 @@ void NeoBasicParser::SymbolIdentifiersContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::symbolIdentifiers() {
   SymbolIdentifiersContext *_localctx = _tracker.createInstance<SymbolIdentifiersContext>(_ctx, getState());
-  enterRule(_localctx, 126, NeoBasicParser::RuleSymbolIdentifiers);
+  enterRule(_localctx, 152, NeoBasicParser::RuleSymbolIdentifiers);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5287,23 +6631,20 @@ NeoBasicParser::SymbolIdentifiersContext* NeoBasicParser::symbolIdentifiers() {
     exitRule();
   });
   try {
-    size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(466);
+    setState(596);
     symbolIdentifier();
-    setState(471);
+    setState(601);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx);
-    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
-      if (alt == 1) {
-        setState(467);
-        match(NeoBasicParser::COMMA);
-        setState(468);
-        symbolIdentifier(); 
-      }
-      setState(473);
+    _la = _input->LA(1);
+    while (_la == NeoBasicParser::COMMA) {
+      setState(597);
+      match(NeoBasicParser::COMMA);
+      setState(598);
+      symbolIdentifier();
+      setState(603);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx);
+      _la = _input->LA(1);
     }
    
   }
@@ -5357,7 +6698,7 @@ void NeoBasicParser::QualifiedIdentifiersContext::exitRule(tree::ParseTreeListen
 
 NeoBasicParser::QualifiedIdentifiersContext* NeoBasicParser::qualifiedIdentifiers() {
   QualifiedIdentifiersContext *_localctx = _tracker.createInstance<QualifiedIdentifiersContext>(_ctx, getState());
-  enterRule(_localctx, 128, NeoBasicParser::RuleQualifiedIdentifiers);
+  enterRule(_localctx, 154, NeoBasicParser::RuleQualifiedIdentifiers);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -5369,17 +6710,17 @@ NeoBasicParser::QualifiedIdentifiersContext* NeoBasicParser::qualifiedIdentifier
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(474);
+    setState(604);
     qualifiedIdentifier();
-    setState(479);
+    setState(609);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == NeoBasicParser::COMMA) {
-      setState(475);
+      setState(605);
       match(NeoBasicParser::COMMA);
-      setState(476);
+      setState(606);
       qualifiedIdentifier();
-      setState(481);
+      setState(611);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -5443,7 +6784,7 @@ void NeoBasicParser::TypeContext::exitRule(tree::ParseTreeListener *listener) {
 
 NeoBasicParser::TypeContext* NeoBasicParser::type() {
   TypeContext *_localctx = _tracker.createInstance<TypeContext>(_ctx, getState());
-  enterRule(_localctx, 130, NeoBasicParser::RuleType);
+  enterRule(_localctx, 156, NeoBasicParser::RuleType);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5453,50 +6794,50 @@ NeoBasicParser::TypeContext* NeoBasicParser::type() {
     exitRule();
   });
   try {
-    setState(495);
+    setState(625);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 27, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 35, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(482);
+      setState(612);
       nativeType();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(483);
+      setState(613);
       nativeType();
-      setState(484);
+      setState(614);
       posfixTypeWrapper();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(486);
+      setState(616);
       nativeType();
-      setState(487);
+      setState(617);
       match(NeoBasicParser::AMPERSAND);
-      setState(488);
+      setState(618);
       nativeType();
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(490);
+      setState(620);
       nativeType();
-      setState(491);
+      setState(621);
       match(NeoBasicParser::PIPE);
-      setState(492);
+      setState(622);
       type();
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(494);
+      setState(624);
       nativeType();
       break;
     }
@@ -5552,7 +6893,7 @@ void NeoBasicParser::NativeTypeContext::exitRule(tree::ParseTreeListener *listen
 
 NeoBasicParser::NativeTypeContext* NeoBasicParser::nativeType() {
   NativeTypeContext *_localctx = _tracker.createInstance<NativeTypeContext>(_ctx, getState());
-  enterRule(_localctx, 132, NeoBasicParser::RuleNativeType);
+  enterRule(_localctx, 158, NeoBasicParser::RuleNativeType);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5562,7 +6903,7 @@ NeoBasicParser::NativeTypeContext* NeoBasicParser::nativeType() {
     exitRule();
   });
   try {
-    setState(500);
+    setState(630);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::BOOL8:
@@ -5632,22 +6973,26 @@ NeoBasicParser::NativeTypeContext* NeoBasicParser::nativeType() {
       case NeoBasicParser::CHAR16:
       case NeoBasicParser::CHAR32:
       case NeoBasicParser::CHAR:
+      case NeoBasicParser::WCHAR:
+      case NeoBasicParser::ANSI:
+      case NeoBasicParser::STR8:
+      case NeoBasicParser::STR16:
+      case NeoBasicParser::STR32:
       case NeoBasicParser::STR:
-      case NeoBasicParser::STRING8:
-      case NeoBasicParser::STRING16:
-      case NeoBasicParser::STRING32:
-      case NeoBasicParser::STRING:
+      case NeoBasicParser::CSTR:
+      case NeoBasicParser::WSTR:
       case NeoBasicParser::REGEX:
       case NeoBasicParser::BINARY: {
         enterOuterAlt(_localctx, 1);
-        setState(497);
+        setState(627);
         escalarType();
         break;
       }
 
-      case NeoBasicParser::RANGE: {
+      case NeoBasicParser::RANGE:
+      case NeoBasicParser::PAIR: {
         enterOuterAlt(_localctx, 2);
-        setState(498);
+        setState(628);
         compositeType();
         break;
       }
@@ -5656,7 +7001,7 @@ NeoBasicParser::NativeTypeContext* NeoBasicParser::nativeType() {
       case NeoBasicParser::AUTO:
       case NeoBasicParser::VOID: {
         enterOuterAlt(_localctx, 3);
-        setState(499);
+        setState(629);
         metaType();
         break;
       }
@@ -5720,7 +7065,7 @@ void NeoBasicParser::PosfixTypeWrapperContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::PosfixTypeWrapperContext* NeoBasicParser::posfixTypeWrapper() {
   PosfixTypeWrapperContext *_localctx = _tracker.createInstance<PosfixTypeWrapperContext>(_ctx, getState());
-  enterRule(_localctx, 134, NeoBasicParser::RulePosfixTypeWrapper);
+  enterRule(_localctx, 160, NeoBasicParser::RulePosfixTypeWrapper);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5730,68 +7075,68 @@ NeoBasicParser::PosfixTypeWrapperContext* NeoBasicParser::posfixTypeWrapper() {
     exitRule();
   });
   try {
-    setState(516);
+    setState(646);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 37, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(502);
+      setState(632);
       match(NeoBasicParser::EXCLAMATION);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(503);
+      setState(633);
       match(NeoBasicParser::QUESTION);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(504);
+      setState(634);
       match(NeoBasicParser::QUESTION);
-      setState(505);
+      setState(635);
       match(NeoBasicParser::QUESTION);
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(506);
+      setState(636);
       match(NeoBasicParser::PIPE);
-      setState(507);
+      setState(637);
       match(NeoBasicParser::RIGHT_ANGLE);
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(508);
+      setState(638);
       match(NeoBasicParser::EXCLAMATION);
-      setState(509);
+      setState(639);
       match(NeoBasicParser::QUESTION);
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(510);
+      setState(640);
       match(NeoBasicParser::EXCLAMATION);
-      setState(511);
+      setState(641);
       match(NeoBasicParser::QUESTION);
-      setState(512);
+      setState(642);
       match(NeoBasicParser::QUESTION);
       break;
     }
 
     case 7: {
       enterOuterAlt(_localctx, 7);
-      setState(513);
+      setState(643);
       match(NeoBasicParser::EXCLAMATION);
-      setState(514);
+      setState(644);
       match(NeoBasicParser::PIPE);
-      setState(515);
+      setState(645);
       match(NeoBasicParser::RIGHT_ANGLE);
       break;
     }
@@ -5855,7 +7200,7 @@ void NeoBasicParser::EscalarTypeContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
   EscalarTypeContext *_localctx = _tracker.createInstance<EscalarTypeContext>(_ctx, getState());
-  enterRule(_localctx, 136, NeoBasicParser::RuleEscalarType);
+  enterRule(_localctx, 162, NeoBasicParser::RuleEscalarType);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -5865,7 +7210,7 @@ NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
     exitRule();
   });
   try {
-    setState(523);
+    setState(653);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::BOOL8:
@@ -5875,7 +7220,7 @@ NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
       case NeoBasicParser::BOOL128:
       case NeoBasicParser::BOOL: {
         enterOuterAlt(_localctx, 1);
-        setState(518);
+        setState(648);
         booleanType();
         break;
       }
@@ -5935,7 +7280,7 @@ NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
       case NeoBasicParser::QUATERN128:
       case NeoBasicParser::QUATERN: {
         enterOuterAlt(_localctx, 2);
-        setState(519);
+        setState(649);
         numericType();
         break;
       }
@@ -5943,7 +7288,7 @@ NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
       case NeoBasicParser::DATE:
       case NeoBasicParser::ELAPSE: {
         enterOuterAlt(_localctx, 3);
-        setState(520);
+        setState(650);
         temporalType();
         break;
       }
@@ -5952,22 +7297,25 @@ NeoBasicParser::EscalarTypeContext* NeoBasicParser::escalarType() {
       case NeoBasicParser::CHAR8:
       case NeoBasicParser::CHAR16:
       case NeoBasicParser::CHAR32:
-      case NeoBasicParser::CHAR: {
+      case NeoBasicParser::CHAR:
+      case NeoBasicParser::WCHAR: {
         enterOuterAlt(_localctx, 4);
-        setState(521);
+        setState(651);
         characterType();
         break;
       }
 
+      case NeoBasicParser::ANSI:
+      case NeoBasicParser::STR8:
+      case NeoBasicParser::STR16:
+      case NeoBasicParser::STR32:
       case NeoBasicParser::STR:
-      case NeoBasicParser::STRING8:
-      case NeoBasicParser::STRING16:
-      case NeoBasicParser::STRING32:
-      case NeoBasicParser::STRING:
+      case NeoBasicParser::CSTR:
+      case NeoBasicParser::WSTR:
       case NeoBasicParser::REGEX:
       case NeoBasicParser::BINARY: {
         enterOuterAlt(_localctx, 5);
-        setState(522);
+        setState(652);
         sequenceType();
         break;
       }
@@ -6035,7 +7383,7 @@ void NeoBasicParser::BooleanTypeContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::BooleanTypeContext* NeoBasicParser::booleanType() {
   BooleanTypeContext *_localctx = _tracker.createInstance<BooleanTypeContext>(_ctx, getState());
-  enterRule(_localctx, 138, NeoBasicParser::RuleBooleanType);
+  enterRule(_localctx, 164, NeoBasicParser::RuleBooleanType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6047,10 +7395,10 @@ NeoBasicParser::BooleanTypeContext* NeoBasicParser::booleanType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(525);
+    setState(655);
     _la = _input->LA(1);
-    if (!(((((_la - 199) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 199)) & 63) != 0))) {
+    if (!(((((_la - 324) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 324)) & 63) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6129,7 +7477,7 @@ void NeoBasicParser::NumericTypeContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
   NumericTypeContext *_localctx = _tracker.createInstance<NumericTypeContext>(_ctx, getState());
-  enterRule(_localctx, 140, NeoBasicParser::RuleNumericType);
+  enterRule(_localctx, 166, NeoBasicParser::RuleNumericType);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -6139,7 +7487,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
     exitRule();
   });
   try {
-    setState(536);
+    setState(666);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::DIG:
@@ -6149,7 +7497,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::NIBBLE:
       case NeoBasicParser::BYTE: {
         enterOuterAlt(_localctx, 1);
-        setState(527);
+        setState(657);
         numericDigit();
         break;
       }
@@ -6162,7 +7510,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::NAT:
       case NeoBasicParser::BIGNAT: {
         enterOuterAlt(_localctx, 2);
-        setState(528);
+        setState(658);
         numericNatural();
         break;
       }
@@ -6175,7 +7523,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::INT:
       case NeoBasicParser::BIGINT: {
         enterOuterAlt(_localctx, 3);
-        setState(529);
+        setState(659);
         numericInteger();
         break;
       }
@@ -6187,7 +7535,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::REAL:
       case NeoBasicParser::BIGREAL: {
         enterOuterAlt(_localctx, 4);
-        setState(530);
+        setState(660);
         numericReal();
         break;
       }
@@ -6204,7 +7552,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::MONEY:
       case NeoBasicParser::BIGDECIMAL: {
         enterOuterAlt(_localctx, 5);
-        setState(531);
+        setState(661);
         numericDecimal();
         break;
       }
@@ -6216,7 +7564,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::RATIO128:
       case NeoBasicParser::RATIO: {
         enterOuterAlt(_localctx, 6);
-        setState(532);
+        setState(662);
         numericRatio();
         break;
       }
@@ -6227,7 +7575,7 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::COMPLEX128:
       case NeoBasicParser::COMPLEX: {
         enterOuterAlt(_localctx, 7);
-        setState(533);
+        setState(663);
         numericComplex();
         break;
       }
@@ -6238,14 +7586,14 @@ NeoBasicParser::NumericTypeContext* NeoBasicParser::numericType() {
       case NeoBasicParser::QUATERN128:
       case NeoBasicParser::QUATERN: {
         enterOuterAlt(_localctx, 8);
-        setState(534);
+        setState(664);
         numericQuaternion();
         break;
       }
 
       case NeoBasicParser::NUMBER: {
         enterOuterAlt(_localctx, 9);
-        setState(535);
+        setState(665);
         match(NeoBasicParser::NUMBER);
         break;
       }
@@ -6313,7 +7661,7 @@ void NeoBasicParser::NumericDigitContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::NumericDigitContext* NeoBasicParser::numericDigit() {
   NumericDigitContext *_localctx = _tracker.createInstance<NumericDigitContext>(_ctx, getState());
-  enterRule(_localctx, 142, NeoBasicParser::RuleNumericDigit);
+  enterRule(_localctx, 168, NeoBasicParser::RuleNumericDigit);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6325,10 +7673,10 @@ NeoBasicParser::NumericDigitContext* NeoBasicParser::numericDigit() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(538);
+    setState(668);
     _la = _input->LA(1);
-    if (!(((((_la - 205) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 205)) & 63) != 0))) {
+    if (!(((((_la - 330) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 330)) & 111) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6399,7 +7747,7 @@ void NeoBasicParser::NumericNaturalContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::NumericNaturalContext* NeoBasicParser::numericNatural() {
   NumericNaturalContext *_localctx = _tracker.createInstance<NumericNaturalContext>(_ctx, getState());
-  enterRule(_localctx, 144, NeoBasicParser::RuleNumericNatural);
+  enterRule(_localctx, 170, NeoBasicParser::RuleNumericNatural);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6411,10 +7759,10 @@ NeoBasicParser::NumericNaturalContext* NeoBasicParser::numericNatural() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(540);
+    setState(670);
     _la = _input->LA(1);
-    if (!(((((_la - 212) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 212)) & 127) != 0))) {
+    if (!(((((_la - 338) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 338)) & 127) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6485,7 +7833,7 @@ void NeoBasicParser::NumericIntegerContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::NumericIntegerContext* NeoBasicParser::numericInteger() {
   NumericIntegerContext *_localctx = _tracker.createInstance<NumericIntegerContext>(_ctx, getState());
-  enterRule(_localctx, 146, NeoBasicParser::RuleNumericInteger);
+  enterRule(_localctx, 172, NeoBasicParser::RuleNumericInteger);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6497,10 +7845,10 @@ NeoBasicParser::NumericIntegerContext* NeoBasicParser::numericInteger() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(542);
+    setState(672);
     _la = _input->LA(1);
-    if (!(((((_la - 219) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 219)) & 127) != 0))) {
+    if (!(((((_la - 345) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 345)) & 127) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6567,7 +7915,7 @@ void NeoBasicParser::NumericRealContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::NumericRealContext* NeoBasicParser::numericReal() {
   NumericRealContext *_localctx = _tracker.createInstance<NumericRealContext>(_ctx, getState());
-  enterRule(_localctx, 148, NeoBasicParser::RuleNumericReal);
+  enterRule(_localctx, 174, NeoBasicParser::RuleNumericReal);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6579,10 +7927,10 @@ NeoBasicParser::NumericRealContext* NeoBasicParser::numericReal() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(544);
+    setState(674);
     _la = _input->LA(1);
-    if (!(((((_la - 226) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 226)) & 63) != 0))) {
+    if (!(((((_la - 352) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 352)) & 63) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6669,7 +8017,7 @@ void NeoBasicParser::NumericDecimalContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::NumericDecimalContext* NeoBasicParser::numericDecimal() {
   NumericDecimalContext *_localctx = _tracker.createInstance<NumericDecimalContext>(_ctx, getState());
-  enterRule(_localctx, 150, NeoBasicParser::RuleNumericDecimal);
+  enterRule(_localctx, 176, NeoBasicParser::RuleNumericDecimal);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6681,10 +8029,10 @@ NeoBasicParser::NumericDecimalContext* NeoBasicParser::numericDecimal() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(546);
+    setState(676);
     _la = _input->LA(1);
-    if (!(((((_la - 232) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 232)) & 2047) != 0))) {
+    if (!(((((_la - 358) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 358)) & 2047) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6751,7 +8099,7 @@ void NeoBasicParser::NumericRatioContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::NumericRatioContext* NeoBasicParser::numericRatio() {
   NumericRatioContext *_localctx = _tracker.createInstance<NumericRatioContext>(_ctx, getState());
-  enterRule(_localctx, 152, NeoBasicParser::RuleNumericRatio);
+  enterRule(_localctx, 178, NeoBasicParser::RuleNumericRatio);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6763,10 +8111,10 @@ NeoBasicParser::NumericRatioContext* NeoBasicParser::numericRatio() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(548);
+    setState(678);
     _la = _input->LA(1);
-    if (!(((((_la - 243) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 243)) & 63) != 0))) {
+    if (!(((((_la - 369) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 369)) & 63) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6829,7 +8177,7 @@ void NeoBasicParser::NumericComplexContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::NumericComplexContext* NeoBasicParser::numericComplex() {
   NumericComplexContext *_localctx = _tracker.createInstance<NumericComplexContext>(_ctx, getState());
-  enterRule(_localctx, 154, NeoBasicParser::RuleNumericComplex);
+  enterRule(_localctx, 180, NeoBasicParser::RuleNumericComplex);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6841,10 +8189,10 @@ NeoBasicParser::NumericComplexContext* NeoBasicParser::numericComplex() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(550);
+    setState(680);
     _la = _input->LA(1);
-    if (!(((((_la - 249) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 249)) & 31) != 0))) {
+    if (!(((((_la - 375) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 375)) & 31) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6907,7 +8255,7 @@ void NeoBasicParser::NumericQuaternionContext::exitRule(tree::ParseTreeListener 
 
 NeoBasicParser::NumericQuaternionContext* NeoBasicParser::numericQuaternion() {
   NumericQuaternionContext *_localctx = _tracker.createInstance<NumericQuaternionContext>(_ctx, getState());
-  enterRule(_localctx, 156, NeoBasicParser::RuleNumericQuaternion);
+  enterRule(_localctx, 182, NeoBasicParser::RuleNumericQuaternion);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6919,10 +8267,10 @@ NeoBasicParser::NumericQuaternionContext* NeoBasicParser::numericQuaternion() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(552);
+    setState(682);
     _la = _input->LA(1);
-    if (!(((((_la - 254) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 254)) & 31) != 0))) {
+    if (!(((((_la - 380) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 380)) & 31) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -6973,7 +8321,7 @@ void NeoBasicParser::TemporalTypeContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::TemporalTypeContext* NeoBasicParser::temporalType() {
   TemporalTypeContext *_localctx = _tracker.createInstance<TemporalTypeContext>(_ctx, getState());
-  enterRule(_localctx, 158, NeoBasicParser::RuleTemporalType);
+  enterRule(_localctx, 184, NeoBasicParser::RuleTemporalType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -6985,7 +8333,7 @@ NeoBasicParser::TemporalTypeContext* NeoBasicParser::temporalType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(554);
+    setState(684);
     _la = _input->LA(1);
     if (!(_la == NeoBasicParser::DATE
 
@@ -7033,6 +8381,10 @@ tree::TerminalNode* NeoBasicParser::CharacterTypeContext::CHAR() {
   return getToken(NeoBasicParser::CHAR, 0);
 }
 
+tree::TerminalNode* NeoBasicParser::CharacterTypeContext::WCHAR() {
+  return getToken(NeoBasicParser::WCHAR, 0);
+}
+
 
 size_t NeoBasicParser::CharacterTypeContext::getRuleIndex() const {
   return NeoBasicParser::RuleCharacterType;
@@ -7052,7 +8404,7 @@ void NeoBasicParser::CharacterTypeContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::CharacterTypeContext* NeoBasicParser::characterType() {
   CharacterTypeContext *_localctx = _tracker.createInstance<CharacterTypeContext>(_ctx, getState());
-  enterRule(_localctx, 160, NeoBasicParser::RuleCharacterType);
+  enterRule(_localctx, 186, NeoBasicParser::RuleCharacterType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -7064,10 +8416,10 @@ NeoBasicParser::CharacterTypeContext* NeoBasicParser::characterType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(556);
+    setState(686);
     _la = _input->LA(1);
-    if (!(((((_la - 261) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 261)) & 31) != 0))) {
+    if (!(((((_la - 387) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 387)) & 63) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -7091,24 +8443,32 @@ NeoBasicParser::SequenceTypeContext::SequenceTypeContext(ParserRuleContext *pare
   : ParserRuleContext(parent, invokingState) {
 }
 
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::ANSI() {
+  return getToken(NeoBasicParser::ANSI, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STR8() {
+  return getToken(NeoBasicParser::STR8, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STR16() {
+  return getToken(NeoBasicParser::STR16, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STR32() {
+  return getToken(NeoBasicParser::STR32, 0);
+}
+
 tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STR() {
   return getToken(NeoBasicParser::STR, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STRING8() {
-  return getToken(NeoBasicParser::STRING8, 0);
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::CSTR() {
+  return getToken(NeoBasicParser::CSTR, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STRING16() {
-  return getToken(NeoBasicParser::STRING16, 0);
-}
-
-tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STRING32() {
-  return getToken(NeoBasicParser::STRING32, 0);
-}
-
-tree::TerminalNode* NeoBasicParser::SequenceTypeContext::STRING() {
-  return getToken(NeoBasicParser::STRING, 0);
+tree::TerminalNode* NeoBasicParser::SequenceTypeContext::WSTR() {
+  return getToken(NeoBasicParser::WSTR, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::SequenceTypeContext::REGEX() {
@@ -7138,7 +8498,7 @@ void NeoBasicParser::SequenceTypeContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::SequenceTypeContext* NeoBasicParser::sequenceType() {
   SequenceTypeContext *_localctx = _tracker.createInstance<SequenceTypeContext>(_ctx, getState());
-  enterRule(_localctx, 162, NeoBasicParser::RuleSequenceType);
+  enterRule(_localctx, 188, NeoBasicParser::RuleSequenceType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -7150,10 +8510,10 @@ NeoBasicParser::SequenceTypeContext* NeoBasicParser::sequenceType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(558);
+    setState(688);
     _la = _input->LA(1);
-    if (!(((((_la - 266) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 266)) & 127) != 0))) {
+    if (!(((((_la - 393) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 393)) & 511) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -7181,6 +8541,10 @@ tree::TerminalNode* NeoBasicParser::CompositeTypeContext::RANGE() {
   return getToken(NeoBasicParser::RANGE, 0);
 }
 
+tree::TerminalNode* NeoBasicParser::CompositeTypeContext::PAIR() {
+  return getToken(NeoBasicParser::PAIR, 0);
+}
+
 
 size_t NeoBasicParser::CompositeTypeContext::getRuleIndex() const {
   return NeoBasicParser::RuleCompositeType;
@@ -7200,7 +8564,8 @@ void NeoBasicParser::CompositeTypeContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::CompositeTypeContext* NeoBasicParser::compositeType() {
   CompositeTypeContext *_localctx = _tracker.createInstance<CompositeTypeContext>(_ctx, getState());
-  enterRule(_localctx, 164, NeoBasicParser::RuleCompositeType);
+  enterRule(_localctx, 190, NeoBasicParser::RuleCompositeType);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -7211,8 +8576,17 @@ NeoBasicParser::CompositeTypeContext* NeoBasicParser::compositeType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(560);
-    match(NeoBasicParser::RANGE);
+    setState(690);
+    _la = _input->LA(1);
+    if (!(_la == NeoBasicParser::RANGE
+
+    || _la == NeoBasicParser::PAIR)) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
    
   }
   catch (RecognitionException &e) {
@@ -7261,7 +8635,7 @@ void NeoBasicParser::MetaTypeContext::exitRule(tree::ParseTreeListener *listener
 
 NeoBasicParser::MetaTypeContext* NeoBasicParser::metaType() {
   MetaTypeContext *_localctx = _tracker.createInstance<MetaTypeContext>(_ctx, getState());
-  enterRule(_localctx, 166, NeoBasicParser::RuleMetaType);
+  enterRule(_localctx, 192, NeoBasicParser::RuleMetaType);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -7273,10 +8647,10 @@ NeoBasicParser::MetaTypeContext* NeoBasicParser::metaType() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(562);
+    setState(692);
     _la = _input->LA(1);
-    if (!(((((_la - 196) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 196)) & 7) != 0))) {
+    if (!(((((_la - 321) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 321)) & 7) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -7335,7 +8709,7 @@ void NeoBasicParser::ExpressionsContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::ExpressionsContext* NeoBasicParser::expressions() {
   ExpressionsContext *_localctx = _tracker.createInstance<ExpressionsContext>(_ctx, getState());
-  enterRule(_localctx, 168, NeoBasicParser::RuleExpressions);
+  enterRule(_localctx, 194, NeoBasicParser::RuleExpressions);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -7347,21 +8721,21 @@ NeoBasicParser::ExpressionsContext* NeoBasicParser::expressions() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(564);
+    setState(694);
     expression(0);
-    setState(569);
+    setState(699);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 32, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 40, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(565);
+        setState(695);
         match(NeoBasicParser::COMMA);
-        setState(566);
+        setState(696);
         expression(0); 
       }
-      setState(571);
+      setState(701);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 32, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 40, _ctx);
     }
    
   }
@@ -7374,40 +8748,40 @@ NeoBasicParser::ExpressionsContext* NeoBasicParser::expressions() {
   return _localctx;
 }
 
-//----------------- JuxtapositionExpressionContext ------------------------------------------------------------------
+//----------------- JuxtapositionExpressionsContext ------------------------------------------------------------------
 
-NeoBasicParser::JuxtapositionExpressionContext::JuxtapositionExpressionContext(ParserRuleContext *parent, size_t invokingState)
+NeoBasicParser::JuxtapositionExpressionsContext::JuxtapositionExpressionsContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::JuxtapositionExpressionContext::expression() {
+std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::JuxtapositionExpressionsContext::expression() {
   return getRuleContexts<NeoBasicParser::ExpressionContext>();
 }
 
-NeoBasicParser::ExpressionContext* NeoBasicParser::JuxtapositionExpressionContext::expression(size_t i) {
+NeoBasicParser::ExpressionContext* NeoBasicParser::JuxtapositionExpressionsContext::expression(size_t i) {
   return getRuleContext<NeoBasicParser::ExpressionContext>(i);
 }
 
 
-size_t NeoBasicParser::JuxtapositionExpressionContext::getRuleIndex() const {
-  return NeoBasicParser::RuleJuxtapositionExpression;
+size_t NeoBasicParser::JuxtapositionExpressionsContext::getRuleIndex() const {
+  return NeoBasicParser::RuleJuxtapositionExpressions;
 }
 
-void NeoBasicParser::JuxtapositionExpressionContext::enterRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::JuxtapositionExpressionsContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterJuxtapositionExpression(this);
+    parserListener->enterJuxtapositionExpressions(this);
 }
 
-void NeoBasicParser::JuxtapositionExpressionContext::exitRule(tree::ParseTreeListener *listener) {
+void NeoBasicParser::JuxtapositionExpressionsContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitJuxtapositionExpression(this);
+    parserListener->exitJuxtapositionExpressions(this);
 }
 
-NeoBasicParser::JuxtapositionExpressionContext* NeoBasicParser::juxtapositionExpression() {
-  JuxtapositionExpressionContext *_localctx = _tracker.createInstance<JuxtapositionExpressionContext>(_ctx, getState());
-  enterRule(_localctx, 170, NeoBasicParser::RuleJuxtapositionExpression);
+NeoBasicParser::JuxtapositionExpressionsContext* NeoBasicParser::juxtapositionExpressions() {
+  JuxtapositionExpressionsContext *_localctx = _tracker.createInstance<JuxtapositionExpressionsContext>(_ctx, getState());
+  enterRule(_localctx, 196, NeoBasicParser::RuleJuxtapositionExpressions);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -7419,19 +8793,19 @@ NeoBasicParser::JuxtapositionExpressionContext* NeoBasicParser::juxtapositionExp
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(572);
+    setState(702);
     expression(0);
-    setState(576);
+    setState(706);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-      setState(573);
+      ((1ULL << _la) & 26880891280162818) != 0) || ((((_la - 123) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 123)) & 4399279987541) != 0) || ((((_la - 288) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 288)) & 17448451) != 0) || ((((_la - 420) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 420)) & 2243005863952383) != 0)) {
+      setState(703);
       expression(0);
-      setState(578);
+      setState(708);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -7487,7 +8861,7 @@ void NeoBasicParser::PrimaryExpressionsContext::exitRule(tree::ParseTreeListener
 
 NeoBasicParser::PrimaryExpressionsContext* NeoBasicParser::primaryExpressions() {
   PrimaryExpressionsContext *_localctx = _tracker.createInstance<PrimaryExpressionsContext>(_ctx, getState());
-  enterRule(_localctx, 172, NeoBasicParser::RulePrimaryExpressions);
+  enterRule(_localctx, 198, NeoBasicParser::RulePrimaryExpressions);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -7499,17 +8873,17 @@ NeoBasicParser::PrimaryExpressionsContext* NeoBasicParser::primaryExpressions() 
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(579);
+    setState(709);
     primaryExpression(0);
-    setState(584);
+    setState(714);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while (_la == NeoBasicParser::COMMA) {
-      setState(580);
+      setState(710);
       match(NeoBasicParser::COMMA);
-      setState(581);
+      setState(711);
       primaryExpression(0);
-      setState(586);
+      setState(716);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -7552,6 +8926,10 @@ NeoBasicParser::AssignmentExpressionContext* NeoBasicParser::ExpressionContext::
 
 NeoBasicParser::CondicionalExpressionContext* NeoBasicParser::ExpressionContext::condicionalExpression() {
   return getRuleContext<NeoBasicParser::CondicionalExpressionContext>(0);
+}
+
+NeoBasicParser::MacroExpressionContext* NeoBasicParser::ExpressionContext::macroExpression() {
+  return getRuleContext<NeoBasicParser::MacroExpressionContext>(0);
 }
 
 NeoBasicParser::BinaryExponentialOperatorContext* NeoBasicParser::ExpressionContext::binaryExponentialOperator() {
@@ -7642,8 +9020,8 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::expression(int precedence) {
   NeoBasicParser::ExpressionContext *_localctx = _tracker.createInstance<ExpressionContext>(_ctx, parentState);
   NeoBasicParser::ExpressionContext *previousContext = _localctx;
   (void)previousContext; // Silence compiler, in case the context is not used by generated code.
-  size_t startState = 174;
-  enterRecursionRule(_localctx, 174, NeoBasicParser::RuleExpression, precedence);
+  size_t startState = 200;
+  enterRecursionRule(_localctx, 200, NeoBasicParser::RuleExpression, precedence);
 
     
 
@@ -7657,32 +9035,38 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::expression(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(594);
+    setState(725);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 35, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 43, _ctx)) {
     case 1: {
-      setState(588);
+      setState(718);
       primaryExpression(0);
       break;
     }
 
     case 2: {
-      setState(589);
+      setState(719);
       prefixUnaryOperator();
-      setState(590);
-      expression(18);
+      setState(720);
+      expression(19);
       break;
     }
 
     case 3: {
-      setState(592);
+      setState(722);
       assignmentExpression();
       break;
     }
 
     case 4: {
-      setState(593);
+      setState(723);
       condicionalExpression();
+      break;
+    }
+
+    case 5: {
+      setState(724);
+      macroExpression();
       break;
     }
 
@@ -7690,193 +9074,193 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::expression(int precedence) {
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(657);
+    setState(788);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 38, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 46, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(655);
+        setState(786);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 37, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 45, _ctx)) {
         case 1: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(596);
+          setState(727);
 
-          if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
-          setState(597);
+          if (!(precpred(_ctx, 17))) throw FailedPredicateException(this, "precpred(_ctx, 17)");
+          setState(728);
           binaryExponentialOperator();
-          setState(598);
-          expression(17);
+          setState(729);
+          expression(18);
           break;
         }
 
         case 2: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(600);
+          setState(731);
 
-          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
-          setState(601);
+          if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
+          setState(732);
           binaryMultiplicativeOperator();
-          setState(602);
-          expression(16);
+          setState(733);
+          expression(17);
           break;
         }
 
         case 3: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(604);
+          setState(735);
 
-          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(605);
+          if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
+          setState(736);
           binaryAdditiveOperator();
-          setState(606);
-          expression(15);
+          setState(737);
+          expression(16);
           break;
         }
 
         case 4: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(608);
+          setState(739);
 
-          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(609);
+          if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
+          setState(740);
           bitShiftOperator();
-          setState(610);
-          expression(14);
+          setState(741);
+          expression(15);
           break;
         }
 
         case 5: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(612);
+          setState(743);
 
-          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(613);
+          if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
+          setState(744);
           bitConjunctionOperator();
-          setState(614);
-          expression(13);
+          setState(745);
+          expression(14);
           break;
         }
 
         case 6: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(616);
+          setState(747);
 
-          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(617);
+          if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
+          setState(748);
           bitExclusiveDisjunctionOperator();
-          setState(618);
-          expression(12);
+          setState(749);
+          expression(13);
           break;
         }
 
         case 7: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(620);
+          setState(751);
 
-          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(621);
+          if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
+          setState(752);
           bitDisjunctionOperator();
-          setState(622);
-          expression(11);
+          setState(753);
+          expression(12);
           break;
         }
 
         case 8: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(624);
+          setState(755);
 
-          if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(625);
+          if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
+          setState(756);
           binaryComparisonOperator();
-          setState(626);
-          expression(10);
+          setState(757);
+          expression(11);
           break;
         }
 
         case 9: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(628);
+          setState(759);
 
-          if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
-          setState(629);
+          if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
+          setState(760);
           binaryRelationalOperator();
-          setState(630);
-          expression(9);
+          setState(761);
+          expression(10);
           break;
         }
 
         case 10: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(632);
+          setState(763);
 
-          if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
-          setState(633);
+          if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
+          setState(764);
           binaryConditionalOperator();
-          setState(634);
-          expression(8);
+          setState(765);
+          expression(9);
           break;
         }
 
         case 11: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(636);
+          setState(767);
 
-          if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
-          setState(637);
+          if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
+          setState(768);
           binaryConjunctionOperator();
-          setState(638);
-          expression(7);
+          setState(769);
+          expression(8);
           break;
         }
 
         case 12: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(640);
+          setState(771);
 
-          if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
-          setState(641);
+          if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
+          setState(772);
           binaryExclusiveDisjunctionOperator();
-          setState(642);
-          expression(6);
+          setState(773);
+          expression(7);
           break;
         }
 
         case 13: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(644);
+          setState(775);
 
-          if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
-          setState(645);
+          if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
+          setState(776);
           binaryDisjunctionOperator();
-          setState(646);
-          expression(5);
+          setState(777);
+          expression(6);
           break;
         }
 
         case 14: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(648);
+          setState(779);
 
-          if (!(precpred(_ctx, 17))) throw FailedPredicateException(this, "precpred(_ctx, 17)");
-          setState(649);
+          if (!(precpred(_ctx, 18))) throw FailedPredicateException(this, "precpred(_ctx, 18)");
+          setState(780);
           posfixUnaryOperator();
           break;
         }
@@ -7884,17 +9268,17 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::expression(int precedence) {
         case 15: {
           _localctx = _tracker.createInstance<ExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleExpression);
-          setState(650);
+          setState(781);
 
-          if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(651);
+          if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
+          setState(782);
           binaryCoalescingOperator();
-          setState(653);
+          setState(784);
           _errHandler->sync(this);
 
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 36, _ctx)) {
+          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 44, _ctx)) {
           case 1: {
-            setState(652);
+            setState(783);
             expression(0);
             break;
           }
@@ -7909,9 +9293,9 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::expression(int precedence) {
           break;
         } 
       }
-      setState(659);
+      setState(790);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 38, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 46, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -7984,8 +9368,8 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
   NeoBasicParser::PrimaryExpressionContext *_localctx = _tracker.createInstance<PrimaryExpressionContext>(_ctx, parentState);
   NeoBasicParser::PrimaryExpressionContext *previousContext = _localctx;
   (void)previousContext; // Silence compiler, in case the context is not used by generated code.
-  size_t startState = 176;
-  enterRecursionRule(_localctx, 176, NeoBasicParser::RulePrimaryExpression, precedence);
+  size_t startState = 202;
+  enterRecursionRule(_localctx, 202, NeoBasicParser::RulePrimaryExpression, precedence);
 
     
 
@@ -7999,27 +9383,27 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(661);
+    setState(792);
     operand();
     _ctx->stop = _input->LT(-1);
-    setState(675);
+    setState(806);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 40, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 48, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(673);
+        setState(804);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 39, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 47, _ctx)) {
         case 1: {
           _localctx = _tracker.createInstance<PrimaryExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RulePrimaryExpression);
-          setState(663);
+          setState(794);
 
           if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
-          setState(664);
+          setState(795);
           converter();
           break;
         }
@@ -8027,10 +9411,10 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
         case 2: {
           _localctx = _tracker.createInstance<PrimaryExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RulePrimaryExpression);
-          setState(665);
+          setState(796);
 
           if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
-          setState(666);
+          setState(797);
           selector();
           break;
         }
@@ -8038,10 +9422,10 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
         case 3: {
           _localctx = _tracker.createInstance<PrimaryExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RulePrimaryExpression);
-          setState(667);
+          setState(798);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(668);
+          setState(799);
           indexing();
           break;
         }
@@ -8049,10 +9433,10 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
         case 4: {
           _localctx = _tracker.createInstance<PrimaryExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RulePrimaryExpression);
-          setState(669);
+          setState(800);
 
           if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-          setState(670);
+          setState(801);
           slicing();
           break;
         }
@@ -8060,10 +9444,10 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
         case 5: {
           _localctx = _tracker.createInstance<PrimaryExpressionContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RulePrimaryExpression);
-          setState(671);
+          setState(802);
 
           if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
-          setState(672);
+          setState(803);
           arguments();
           break;
         }
@@ -8072,9 +9456,9 @@ NeoBasicParser::PrimaryExpressionContext* NeoBasicParser::primaryExpression(int 
           break;
         } 
       }
-      setState(677);
+      setState(808);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 40, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 48, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -8146,7 +9530,7 @@ void NeoBasicParser::OperandContext::exitRule(tree::ParseTreeListener *listener)
 
 NeoBasicParser::OperandContext* NeoBasicParser::operand() {
   OperandContext *_localctx = _tracker.createInstance<OperandContext>(_ctx, getState());
-  enterRule(_localctx, 178, NeoBasicParser::RuleOperand);
+  enterRule(_localctx, 204, NeoBasicParser::RuleOperand);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8156,59 +9540,59 @@ NeoBasicParser::OperandContext* NeoBasicParser::operand() {
     exitRule();
   });
   try {
-    setState(693);
+    setState(824);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 41, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 49, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(678);
+      setState(809);
       literal();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(679);
+      setState(810);
       predeclaredValue();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(680);
+      setState(811);
       qualifiedIdentifier();
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(681);
+      setState(812);
       qualifiedIdentifier();
-      setState(682);
+      setState(813);
       expression(0);
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(684);
+      setState(815);
       factScope();
-      setState(685);
+      setState(816);
       match(NeoBasicParser::BACKTICK);
-      setState(686);
+      setState(817);
       qualifiedIdentifier();
-      setState(687);
+      setState(818);
       expressions();
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(689);
+      setState(820);
       match(NeoBasicParser::LEFT_PARENTHESIS);
-      setState(690);
+      setState(821);
       expressions();
-      setState(691);
+      setState(822);
       match(NeoBasicParser::RIGHT_PARENTHESIS);
       break;
     }
@@ -8272,7 +9656,7 @@ void NeoBasicParser::FactScopeContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::FactScopeContext* NeoBasicParser::factScope() {
   FactScopeContext *_localctx = _tracker.createInstance<FactScopeContext>(_ctx, getState());
-  enterRule(_localctx, 180, NeoBasicParser::RuleFactScope);
+  enterRule(_localctx, 206, NeoBasicParser::RuleFactScope);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -8284,10 +9668,10 @@ NeoBasicParser::FactScopeContext* NeoBasicParser::factScope() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(695);
+    setState(826);
     _la = _input->LA(1);
-    if (!(((((_la - 177) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 177)) & 31) != 0))) {
+    if (!(((((_la - 297) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 297)) & 31) != 0))) {
     _errHandler->recoverInline(this);
     }
     else {
@@ -8338,7 +9722,7 @@ void NeoBasicParser::ConverterContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::ConverterContext* NeoBasicParser::converter() {
   ConverterContext *_localctx = _tracker.createInstance<ConverterContext>(_ctx, getState());
-  enterRule(_localctx, 182, NeoBasicParser::RuleConverter);
+  enterRule(_localctx, 208, NeoBasicParser::RuleConverter);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8349,9 +9733,9 @@ NeoBasicParser::ConverterContext* NeoBasicParser::converter() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(697);
+    setState(828);
     match(NeoBasicParser::SEMICOLON);
-    setState(698);
+    setState(829);
     qualifiedIdentifier();
    
   }
@@ -8397,7 +9781,7 @@ void NeoBasicParser::SelectorContext::exitRule(tree::ParseTreeListener *listener
 
 NeoBasicParser::SelectorContext* NeoBasicParser::selector() {
   SelectorContext *_localctx = _tracker.createInstance<SelectorContext>(_ctx, getState());
-  enterRule(_localctx, 184, NeoBasicParser::RuleSelector);
+  enterRule(_localctx, 210, NeoBasicParser::RuleSelector);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8408,9 +9792,9 @@ NeoBasicParser::SelectorContext* NeoBasicParser::selector() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(700);
+    setState(831);
     match(NeoBasicParser::DOT);
-    setState(701);
+    setState(832);
     match(NeoBasicParser::IDENTIFIER);
    
   }
@@ -8460,7 +9844,7 @@ void NeoBasicParser::IndexingContext::exitRule(tree::ParseTreeListener *listener
 
 NeoBasicParser::IndexingContext* NeoBasicParser::indexing() {
   IndexingContext *_localctx = _tracker.createInstance<IndexingContext>(_ctx, getState());
-  enterRule(_localctx, 186, NeoBasicParser::RuleIndexing);
+  enterRule(_localctx, 212, NeoBasicParser::RuleIndexing);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8471,11 +9855,11 @@ NeoBasicParser::IndexingContext* NeoBasicParser::indexing() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(703);
+    setState(834);
     match(NeoBasicParser::LEFT_BRACKET);
-    setState(704);
+    setState(835);
     expressions();
-    setState(705);
+    setState(836);
     match(NeoBasicParser::RIGHT_BRACKET);
    
   }
@@ -8525,7 +9909,7 @@ void NeoBasicParser::SlicingContext::exitRule(tree::ParseTreeListener *listener)
 
 NeoBasicParser::SlicingContext* NeoBasicParser::slicing() {
   SlicingContext *_localctx = _tracker.createInstance<SlicingContext>(_ctx, getState());
-  enterRule(_localctx, 188, NeoBasicParser::RuleSlicing);
+  enterRule(_localctx, 214, NeoBasicParser::RuleSlicing);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8536,11 +9920,11 @@ NeoBasicParser::SlicingContext* NeoBasicParser::slicing() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(707);
+    setState(838);
     match(NeoBasicParser::LEFT_BRACKET);
-    setState(708);
+    setState(839);
     slicingRange();
-    setState(709);
+    setState(840);
     match(NeoBasicParser::RIGHT_BRACKET);
    
   }
@@ -8559,24 +9943,16 @@ NeoBasicParser::SlicingRangeContext::SlicingRangeContext(ParserRuleContext *pare
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::SlicingRangeContext::INTERVAL() {
-  return getToken(NeoBasicParser::INTERVAL, 0);
+NeoBasicParser::RangeExpressionContext* NeoBasicParser::SlicingRangeContext::rangeExpression() {
+  return getRuleContext<NeoBasicParser::RangeExpressionContext>(0);
 }
 
-std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::SlicingRangeContext::expression() {
-  return getRuleContexts<NeoBasicParser::ExpressionContext>();
+tree::TerminalNode* NeoBasicParser::SlicingRangeContext::COLON() {
+  return getToken(NeoBasicParser::COLON, 0);
 }
 
-NeoBasicParser::ExpressionContext* NeoBasicParser::SlicingRangeContext::expression(size_t i) {
-  return getRuleContext<NeoBasicParser::ExpressionContext>(i);
-}
-
-std::vector<tree::TerminalNode *> NeoBasicParser::SlicingRangeContext::COLON() {
-  return getTokens(NeoBasicParser::COLON);
-}
-
-tree::TerminalNode* NeoBasicParser::SlicingRangeContext::COLON(size_t i) {
-  return getToken(NeoBasicParser::COLON, i);
+NeoBasicParser::ExpressionContext* NeoBasicParser::SlicingRangeContext::expression() {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(0);
 }
 
 
@@ -8598,8 +9974,7 @@ void NeoBasicParser::SlicingRangeContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::SlicingRangeContext* NeoBasicParser::slicingRange() {
   SlicingRangeContext *_localctx = _tracker.createInstance<SlicingRangeContext>(_ctx, getState());
-  enterRule(_localctx, 190, NeoBasicParser::RuleSlicingRange);
-  size_t _la = 0;
+  enterRule(_localctx, 216, NeoBasicParser::RuleSlicingRange);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8609,120 +9984,23 @@ NeoBasicParser::SlicingRangeContext* NeoBasicParser::slicingRange() {
     exitRule();
   });
   try {
-    setState(740);
+    setState(847);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 49, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 50, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(712);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(711);
-        expression(0);
-      }
-      setState(714);
-      match(NeoBasicParser::INTERVAL);
-      setState(716);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(715);
-        expression(0);
-      }
+      setState(842);
+      rangeExpression(0);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(719);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(718);
-        expression(0);
-      }
-      setState(721);
-      match(NeoBasicParser::INTERVAL);
-      setState(723);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(722);
-        expression(0);
-      }
-      setState(725);
+      setState(843);
+      rangeExpression(0);
+      setState(844);
       match(NeoBasicParser::COLON);
-      setState(726);
-      expression(0);
-      break;
-    }
-
-    case 3: {
-      enterOuterAlt(_localctx, 3);
-      setState(728);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(727);
-        expression(0);
-      }
-      setState(730);
-      match(NeoBasicParser::INTERVAL);
-      setState(732);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(731);
-        expression(0);
-      }
-      setState(734);
-      match(NeoBasicParser::COLON);
-      setState(736);
-      _errHandler->sync(this);
-
-      _la = _input->LA(1);
-      if ((((_la & ~ 0x3fULL) == 0) &&
-        ((1ULL << _la) & 8779718459394) != 0) || ((((_la - 84) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 84)) & 364808131210903553) != 0) || ((((_la - 175) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 175)) & 767) != 0) || ((((_la - 274) & ~ 0x3fULL) == 0) &&
-        ((1ULL << (_la - 274)) & 549751619583) != 0)) {
-        setState(735);
-        expression(0);
-      }
-      setState(738);
-      match(NeoBasicParser::COLON);
-      setState(739);
+      setState(845);
       expression(0);
       break;
     }
@@ -8738,6 +10016,151 @@ NeoBasicParser::SlicingRangeContext* NeoBasicParser::slicingRange() {
     _errHandler->recover(this, _localctx->exception);
   }
 
+  return _localctx;
+}
+
+//----------------- RangeExpressionContext ------------------------------------------------------------------
+
+NeoBasicParser::RangeExpressionContext::RangeExpressionContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::RangeExpressionContext::expression() {
+  return getRuleContexts<NeoBasicParser::ExpressionContext>();
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::RangeExpressionContext::expression(size_t i) {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(i);
+}
+
+tree::TerminalNode* NeoBasicParser::RangeExpressionContext::INTERVAL() {
+  return getToken(NeoBasicParser::INTERVAL, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::RangeExpressionContext::INTERVAL_LEFT() {
+  return getToken(NeoBasicParser::INTERVAL_LEFT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::RangeExpressionContext::INTERVAL_RIGHT() {
+  return getToken(NeoBasicParser::INTERVAL_RIGHT, 0);
+}
+
+NeoBasicParser::RangeExpressionContext* NeoBasicParser::RangeExpressionContext::rangeExpression() {
+  return getRuleContext<NeoBasicParser::RangeExpressionContext>(0);
+}
+
+tree::TerminalNode* NeoBasicParser::RangeExpressionContext::COLON() {
+  return getToken(NeoBasicParser::COLON, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::RangeExpressionContext::INTEGER_NUMBER() {
+  return getToken(NeoBasicParser::INTEGER_NUMBER, 0);
+}
+
+
+size_t NeoBasicParser::RangeExpressionContext::getRuleIndex() const {
+  return NeoBasicParser::RuleRangeExpression;
+}
+
+void NeoBasicParser::RangeExpressionContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterRangeExpression(this);
+}
+
+void NeoBasicParser::RangeExpressionContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitRangeExpression(this);
+}
+
+
+NeoBasicParser::RangeExpressionContext* NeoBasicParser::rangeExpression() {
+   return rangeExpression(0);
+}
+
+NeoBasicParser::RangeExpressionContext* NeoBasicParser::rangeExpression(int precedence) {
+  ParserRuleContext *parentContext = _ctx;
+  size_t parentState = getState();
+  NeoBasicParser::RangeExpressionContext *_localctx = _tracker.createInstance<RangeExpressionContext>(_ctx, parentState);
+  NeoBasicParser::RangeExpressionContext *previousContext = _localctx;
+  (void)previousContext; // Silence compiler, in case the context is not used by generated code.
+  size_t startState = 218;
+  enterRecursionRule(_localctx, 218, NeoBasicParser::RuleRangeExpression, precedence);
+
+    
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    unrollRecursionContexts(parentContext);
+  });
+  try {
+    size_t alt;
+    enterOuterAlt(_localctx, 1);
+    setState(859);
+    _errHandler->sync(this);
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 51, _ctx)) {
+    case 1: {
+      setState(850);
+      expression(0);
+      setState(851);
+      match(NeoBasicParser::INTERVAL);
+      setState(852);
+      expression(0);
+      break;
+    }
+
+    case 2: {
+      setState(854);
+      expression(0);
+      setState(855);
+      match(NeoBasicParser::INTERVAL_LEFT);
+      break;
+    }
+
+    case 3: {
+      setState(857);
+      match(NeoBasicParser::INTERVAL_RIGHT);
+      setState(858);
+      expression(0);
+      break;
+    }
+
+    default:
+      break;
+    }
+    _ctx->stop = _input->LT(-1);
+    setState(866);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 52, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        if (!_parseListeners.empty())
+          triggerExitRuleEvent();
+        previousContext = _localctx;
+        _localctx = _tracker.createInstance<RangeExpressionContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleRangeExpression);
+        setState(861);
+
+        if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
+        setState(862);
+        match(NeoBasicParser::COLON);
+        setState(863);
+        match(NeoBasicParser::INTEGER_NUMBER); 
+      }
+      setState(868);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 52, _ctx);
+    }
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
   return _localctx;
 }
 
@@ -8778,7 +10201,7 @@ void NeoBasicParser::ArgumentsContext::exitRule(tree::ParseTreeListener *listene
 
 NeoBasicParser::ArgumentsContext* NeoBasicParser::arguments() {
   ArgumentsContext *_localctx = _tracker.createInstance<ArgumentsContext>(_ctx, getState());
-  enterRule(_localctx, 192, NeoBasicParser::RuleArguments);
+  enterRule(_localctx, 220, NeoBasicParser::RuleArguments);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8789,11 +10212,11 @@ NeoBasicParser::ArgumentsContext* NeoBasicParser::arguments() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(742);
+    setState(869);
     match(NeoBasicParser::LEFT_PARENTHESIS);
-    setState(743);
+    setState(870);
     expressions();
-    setState(744);
+    setState(871);
     match(NeoBasicParser::RIGHT_PARENTHESIS);
    
   }
@@ -8843,7 +10266,7 @@ void NeoBasicParser::AssignmentExpressionContext::exitRule(tree::ParseTreeListen
 
 NeoBasicParser::AssignmentExpressionContext* NeoBasicParser::assignmentExpression() {
   AssignmentExpressionContext *_localctx = _tracker.createInstance<AssignmentExpressionContext>(_ctx, getState());
-  enterRule(_localctx, 194, NeoBasicParser::RuleAssignmentExpression);
+  enterRule(_localctx, 222, NeoBasicParser::RuleAssignmentExpression);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8854,11 +10277,11 @@ NeoBasicParser::AssignmentExpressionContext* NeoBasicParser::assignmentExpressio
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(746);
+    setState(873);
     primaryExpression(0);
-    setState(747);
+    setState(874);
     assignmentOperator();
-    setState(748);
+    setState(875);
     expression(0);
    
   }
@@ -8900,7 +10323,7 @@ void NeoBasicParser::CondicionalExpressionContext::exitRule(tree::ParseTreeListe
 
 NeoBasicParser::CondicionalExpressionContext* NeoBasicParser::condicionalExpression() {
   CondicionalExpressionContext *_localctx = _tracker.createInstance<CondicionalExpressionContext>(_ctx, getState());
-  enterRule(_localctx, 196, NeoBasicParser::RuleCondicionalExpression);
+  enterRule(_localctx, 224, NeoBasicParser::RuleCondicionalExpression);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8911,7 +10334,7 @@ NeoBasicParser::CondicionalExpressionContext* NeoBasicParser::condicionalExpress
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(750);
+    setState(877);
     guardsExpression();
    
   }
@@ -8961,7 +10384,7 @@ void NeoBasicParser::GuardsExpressionContext::exitRule(tree::ParseTreeListener *
 
 NeoBasicParser::GuardsExpressionContext* NeoBasicParser::guardsExpression() {
   GuardsExpressionContext *_localctx = _tracker.createInstance<GuardsExpressionContext>(_ctx, getState());
-  enterRule(_localctx, 198, NeoBasicParser::RuleGuardsExpression);
+  enterRule(_localctx, 226, NeoBasicParser::RuleGuardsExpression);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -8973,13 +10396,13 @@ NeoBasicParser::GuardsExpressionContext* NeoBasicParser::guardsExpression() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(753); 
+    setState(880); 
     _errHandler->sync(this);
     alt = 1;
     do {
       switch (alt) {
         case 1: {
-              setState(752);
+              setState(879);
               guardClause();
               break;
             }
@@ -8987,16 +10410,16 @@ NeoBasicParser::GuardsExpressionContext* NeoBasicParser::guardsExpression() {
       default:
         throw NoViableAltException(this);
       }
-      setState(755); 
+      setState(882); 
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 50, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 53, _ctx);
     } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
-    setState(758);
+    setState(885);
     _errHandler->sync(this);
 
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 51, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 54, _ctx)) {
     case 1: {
-      setState(757);
+      setState(884);
       guardDefault();
       break;
     }
@@ -9033,8 +10456,8 @@ NeoBasicParser::ExpressionContext* NeoBasicParser::GuardClauseContext::expressio
   return getRuleContext<NeoBasicParser::ExpressionContext>(i);
 }
 
-tree::TerminalNode* NeoBasicParser::GuardClauseContext::IMPLICIT_RETURN() {
-  return getToken(NeoBasicParser::IMPLICIT_RETURN, 0);
+tree::TerminalNode* NeoBasicParser::GuardClauseContext::COLON() {
+  return getToken(NeoBasicParser::COLON, 0);
 }
 
 
@@ -9056,7 +10479,7 @@ void NeoBasicParser::GuardClauseContext::exitRule(tree::ParseTreeListener *liste
 
 NeoBasicParser::GuardClauseContext* NeoBasicParser::guardClause() {
   GuardClauseContext *_localctx = _tracker.createInstance<GuardClauseContext>(_ctx, getState());
-  enterRule(_localctx, 200, NeoBasicParser::RuleGuardClause);
+  enterRule(_localctx, 228, NeoBasicParser::RuleGuardClause);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9067,13 +10490,13 @@ NeoBasicParser::GuardClauseContext* NeoBasicParser::guardClause() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(760);
+    setState(887);
     match(NeoBasicParser::PIPE);
-    setState(761);
+    setState(888);
     expression(0);
-    setState(762);
-    match(NeoBasicParser::IMPLICIT_RETURN);
-    setState(763);
+    setState(889);
+    match(NeoBasicParser::COLON);
+    setState(890);
     expression(0);
    
   }
@@ -9119,7 +10542,7 @@ void NeoBasicParser::GuardDefaultContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::GuardDefaultContext* NeoBasicParser::guardDefault() {
   GuardDefaultContext *_localctx = _tracker.createInstance<GuardDefaultContext>(_ctx, getState());
-  enterRule(_localctx, 202, NeoBasicParser::RuleGuardDefault);
+  enterRule(_localctx, 230, NeoBasicParser::RuleGuardDefault);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9130,10 +10553,158 @@ NeoBasicParser::GuardDefaultContext* NeoBasicParser::guardDefault() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(765);
+    setState(892);
     match(NeoBasicParser::PIPE);
-    setState(766);
+    setState(893);
     expression(0);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- MacroExpressionContext ------------------------------------------------------------------
+
+NeoBasicParser::MacroExpressionContext::MacroExpressionContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+std::vector<NeoBasicParser::MacroCallContext *> NeoBasicParser::MacroExpressionContext::macroCall() {
+  return getRuleContexts<NeoBasicParser::MacroCallContext>();
+}
+
+NeoBasicParser::MacroCallContext* NeoBasicParser::MacroExpressionContext::macroCall(size_t i) {
+  return getRuleContext<NeoBasicParser::MacroCallContext>(i);
+}
+
+
+size_t NeoBasicParser::MacroExpressionContext::getRuleIndex() const {
+  return NeoBasicParser::RuleMacroExpression;
+}
+
+void NeoBasicParser::MacroExpressionContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterMacroExpression(this);
+}
+
+void NeoBasicParser::MacroExpressionContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitMacroExpression(this);
+}
+
+NeoBasicParser::MacroExpressionContext* NeoBasicParser::macroExpression() {
+  MacroExpressionContext *_localctx = _tracker.createInstance<MacroExpressionContext>(_ctx, getState());
+  enterRule(_localctx, 232, NeoBasicParser::RuleMacroExpression);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    size_t alt;
+    enterOuterAlt(_localctx, 1);
+    setState(896); 
+    _errHandler->sync(this);
+    alt = 1;
+    do {
+      switch (alt) {
+        case 1: {
+              setState(895);
+              macroCall();
+              break;
+            }
+
+      default:
+        throw NoViableAltException(this);
+      }
+      setState(898); 
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 55, _ctx);
+    } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- MacroCallContext ------------------------------------------------------------------
+
+NeoBasicParser::MacroCallContext::MacroCallContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+NeoBasicParser::QualifiedIdentifierContext* NeoBasicParser::MacroCallContext::qualifiedIdentifier() {
+  return getRuleContext<NeoBasicParser::QualifiedIdentifierContext>(0);
+}
+
+std::vector<NeoBasicParser::ExpressionContext *> NeoBasicParser::MacroCallContext::expression() {
+  return getRuleContexts<NeoBasicParser::ExpressionContext>();
+}
+
+NeoBasicParser::ExpressionContext* NeoBasicParser::MacroCallContext::expression(size_t i) {
+  return getRuleContext<NeoBasicParser::ExpressionContext>(i);
+}
+
+
+size_t NeoBasicParser::MacroCallContext::getRuleIndex() const {
+  return NeoBasicParser::RuleMacroCall;
+}
+
+void NeoBasicParser::MacroCallContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterMacroCall(this);
+}
+
+void NeoBasicParser::MacroCallContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitMacroCall(this);
+}
+
+NeoBasicParser::MacroCallContext* NeoBasicParser::macroCall() {
+  MacroCallContext *_localctx = _tracker.createInstance<MacroCallContext>(_ctx, getState());
+  enterRule(_localctx, 234, NeoBasicParser::RuleMacroCall);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    size_t alt;
+    enterOuterAlt(_localctx, 1);
+    setState(900);
+    qualifiedIdentifier();
+    setState(904);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 56, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(901);
+        expression(0); 
+      }
+      setState(906);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 56, _ctx);
+    }
    
   }
   catch (RecognitionException &e) {
@@ -9153,10 +10724,6 @@ NeoBasicParser::LiteralContext::LiteralContext(ParserRuleContext *parent, size_t
 
 NeoBasicParser::EscalarLiteralContext* NeoBasicParser::LiteralContext::escalarLiteral() {
   return getRuleContext<NeoBasicParser::EscalarLiteralContext>(0);
-}
-
-NeoBasicParser::CompositeLiteralContext* NeoBasicParser::LiteralContext::compositeLiteral() {
-  return getRuleContext<NeoBasicParser::CompositeLiteralContext>(0);
 }
 
 NeoBasicParser::OptionLiteralContext* NeoBasicParser::LiteralContext::optionLiteral() {
@@ -9182,7 +10749,7 @@ void NeoBasicParser::LiteralContext::exitRule(tree::ParseTreeListener *listener)
 
 NeoBasicParser::LiteralContext* NeoBasicParser::literal() {
   LiteralContext *_localctx = _tracker.createInstance<LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 204, NeoBasicParser::RuleLiteral);
+  enterRule(_localctx, 236, NeoBasicParser::RuleLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9192,14 +10759,24 @@ NeoBasicParser::LiteralContext* NeoBasicParser::literal() {
     exitRule();
   });
   try {
-    setState(771);
+    setState(909);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::NUMBER_LIT:
-      case NeoBasicParser::TIME_LIT:
-      case NeoBasicParser::SEQUENCE_LIT:
+      case NeoBasicParser::DEC_LIT:
+      case NeoBasicParser::REAL_LIT:
+      case NeoBasicParser::RATIO_LIT:
+      case NeoBasicParser::IMAGINARY_LIT:
+      case NeoBasicParser::NATURAL_LIT:
+      case NeoBasicParser::INTEGER_LIT:
+      case NeoBasicParser::BINARY_LIT:
       case NeoBasicParser::HEREDOC_LITERAL:
+      case NeoBasicParser::REGULAR_EXPRESSION_LIT:
+      case NeoBasicParser::STRING_LIT:
+      case NeoBasicParser::WSTRING_LIT:
       case NeoBasicParser::CHAR_LIT:
+      case NeoBasicParser::WCHAR_LIT:
+      case NeoBasicParser::ASCII_LIT:
+      case NeoBasicParser::ATOM_DOT_LIT:
       case NeoBasicParser::TRUE:
       case NeoBasicParser::FALSE:
       case NeoBasicParser::NONZERO:
@@ -9231,15 +10808,8 @@ NeoBasicParser::LiteralContext* NeoBasicParser::literal() {
       case NeoBasicParser::BLANK:
       case NeoBasicParser::NONBLANK: {
         enterOuterAlt(_localctx, 1);
-        setState(768);
+        setState(907);
         escalarLiteral();
-        break;
-      }
-
-      case NeoBasicParser::RANGE_LIT: {
-        enterOuterAlt(_localctx, 2);
-        setState(769);
-        compositeLiteral();
         break;
       }
 
@@ -9251,8 +10821,8 @@ NeoBasicParser::LiteralContext* NeoBasicParser::literal() {
       case NeoBasicParser::NAY:
       case NeoBasicParser::DATA:
       case NeoBasicParser::EOT: {
-        enterOuterAlt(_localctx, 3);
-        setState(770);
+        enterOuterAlt(_localctx, 2);
+        setState(908);
         optionLiteral();
         break;
       }
@@ -9304,7 +10874,7 @@ void NeoBasicParser::PredeclaredValueContext::exitRule(tree::ParseTreeListener *
 
 NeoBasicParser::PredeclaredValueContext* NeoBasicParser::predeclaredValue() {
   PredeclaredValueContext *_localctx = _tracker.createInstance<PredeclaredValueContext>(_ctx, getState());
-  enterRule(_localctx, 206, NeoBasicParser::RulePredeclaredValue);
+  enterRule(_localctx, 238, NeoBasicParser::RulePredeclaredValue);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -9316,7 +10886,7 @@ NeoBasicParser::PredeclaredValueContext* NeoBasicParser::predeclaredValue() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(773);
+    setState(911);
     _la = _input->LA(1);
     if (!(_la == NeoBasicParser::THIS
 
@@ -9375,7 +10945,7 @@ void NeoBasicParser::ValueConstructContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::ValueConstructContext* NeoBasicParser::valueConstruct() {
   ValueConstructContext *_localctx = _tracker.createInstance<ValueConstructContext>(_ctx, getState());
-  enterRule(_localctx, 208, NeoBasicParser::RuleValueConstruct);
+  enterRule(_localctx, 240, NeoBasicParser::RuleValueConstruct);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9386,11 +10956,11 @@ NeoBasicParser::ValueConstructContext* NeoBasicParser::valueConstruct() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(775);
+    setState(913);
     match(NeoBasicParser::LEFT_PARENTHESIS);
-    setState(776);
+    setState(914);
     expression(0);
-    setState(777);
+    setState(915);
     match(NeoBasicParser::RIGHT_PARENTHESIS);
    
   }
@@ -9448,7 +11018,7 @@ void NeoBasicParser::EscalarLiteralContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::EscalarLiteralContext* NeoBasicParser::escalarLiteral() {
   EscalarLiteralContext *_localctx = _tracker.createInstance<EscalarLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 210, NeoBasicParser::RuleEscalarLiteral);
+  enterRule(_localctx, 242, NeoBasicParser::RuleEscalarLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9458,76 +11028,46 @@ NeoBasicParser::EscalarLiteralContext* NeoBasicParser::escalarLiteral() {
     exitRule();
   });
   try {
-    setState(784);
+    setState(922);
     _errHandler->sync(this);
-    switch (_input->LA(1)) {
-      case NeoBasicParser::TRUE:
-      case NeoBasicParser::FALSE: {
-        enterOuterAlt(_localctx, 1);
-        setState(779);
-        booleanLiteral();
-        break;
-      }
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 58, _ctx)) {
+    case 1: {
+      enterOuterAlt(_localctx, 1);
+      setState(917);
+      booleanLiteral();
+      break;
+    }
 
-      case NeoBasicParser::NUMBER_LIT:
-      case NeoBasicParser::NONZERO:
-      case NeoBasicParser::ZERO:
-      case NeoBasicParser::MINVALUE:
-      case NeoBasicParser::MAXVALUE:
-      case NeoBasicParser::NAN:
-      case NeoBasicParser::POSITIVEINFINITY:
-      case NeoBasicParser::NEGATIVEINFINITY: {
-        enterOuterAlt(_localctx, 2);
-        setState(780);
-        numericLiteral();
-        break;
-      }
+    case 2: {
+      enterOuterAlt(_localctx, 2);
+      setState(918);
+      numericLiteral();
+      break;
+    }
 
-      case NeoBasicParser::TIME_LIT:
-      case NeoBasicParser::LOCALDATE:
-      case NeoBasicParser::LOCALDATETIME:
-      case NeoBasicParser::OFFSETDATE:
-      case NeoBasicParser::OFFSETDATETIME:
-      case NeoBasicParser::ZONEDDATE:
-      case NeoBasicParser::ZONEDDATETIME:
-      case NeoBasicParser::TOMORROW:
-      case NeoBasicParser::TODAY:
-      case NeoBasicParser::NOW:
-      case NeoBasicParser::YESTERDAY:
-      case NeoBasicParser::EON:
-      case NeoBasicParser::EPOCH: {
-        enterOuterAlt(_localctx, 3);
-        setState(781);
-        temporalLiteral();
-        break;
-      }
+    case 3: {
+      enterOuterAlt(_localctx, 3);
+      setState(919);
+      temporalLiteral();
+      break;
+    }
 
-      case NeoBasicParser::CHAR_LIT:
-      case NeoBasicParser::LETTER:
-      case NeoBasicParser::DIGIT:
-      case NeoBasicParser::PUNCTUATION:
-      case NeoBasicParser::SYMBOL:
-      case NeoBasicParser::SEPARATOR:
-      case NeoBasicParser::NONPRINTABLE:
-      case NeoBasicParser::NULL_: {
-        enterOuterAlt(_localctx, 4);
-        setState(782);
-        characterLiteral();
-        break;
-      }
+    case 4: {
+      enterOuterAlt(_localctx, 4);
+      setState(920);
+      characterLiteral();
+      break;
+    }
 
-      case NeoBasicParser::SEQUENCE_LIT:
-      case NeoBasicParser::HEREDOC_LITERAL:
-      case NeoBasicParser::BLANK:
-      case NeoBasicParser::NONBLANK: {
-        enterOuterAlt(_localctx, 5);
-        setState(783);
-        sequenceLiteral();
-        break;
-      }
+    case 5: {
+      enterOuterAlt(_localctx, 5);
+      setState(921);
+      sequenceLiteral();
+      break;
+    }
 
     default:
-      throw NoViableAltException(this);
+      break;
     }
    
   }
@@ -9573,7 +11113,7 @@ void NeoBasicParser::BooleanLiteralContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::BooleanLiteralContext* NeoBasicParser::booleanLiteral() {
   BooleanLiteralContext *_localctx = _tracker.createInstance<BooleanLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 212, NeoBasicParser::RuleBooleanLiteral);
+  enterRule(_localctx, 244, NeoBasicParser::RuleBooleanLiteral);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -9585,7 +11125,7 @@ NeoBasicParser::BooleanLiteralContext* NeoBasicParser::booleanLiteral() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(786);
+    setState(924);
     _la = _input->LA(1);
     if (!(_la == NeoBasicParser::TRUE
 
@@ -9613,8 +11153,28 @@ NeoBasicParser::NumericLiteralContext::NumericLiteralContext(ParserRuleContext *
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::NumericLiteralContext::NUMBER_LIT() {
-  return getToken(NeoBasicParser::NUMBER_LIT, 0);
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::NATURAL_LIT() {
+  return getToken(NeoBasicParser::NATURAL_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::INTEGER_LIT() {
+  return getToken(NeoBasicParser::INTEGER_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::DEC_LIT() {
+  return getToken(NeoBasicParser::DEC_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::REAL_LIT() {
+  return getToken(NeoBasicParser::REAL_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::RATIO_LIT() {
+  return getToken(NeoBasicParser::RATIO_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::NumericLiteralContext::IMAGINARY_LIT() {
+  return getToken(NeoBasicParser::IMAGINARY_LIT, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::NumericLiteralContext::NONZERO() {
@@ -9668,7 +11228,7 @@ void NeoBasicParser::NumericLiteralContext::exitRule(tree::ParseTreeListener *li
 
 NeoBasicParser::NumericLiteralContext* NeoBasicParser::numericLiteral() {
   NumericLiteralContext *_localctx = _tracker.createInstance<NumericLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 214, NeoBasicParser::RuleNumericLiteral);
+  enterRule(_localctx, 246, NeoBasicParser::RuleNumericLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9678,63 +11238,98 @@ NeoBasicParser::NumericLiteralContext* NeoBasicParser::numericLiteral() {
     exitRule();
   });
   try {
-    setState(797);
+    setState(940);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::NUMBER_LIT: {
+      case NeoBasicParser::NATURAL_LIT: {
         enterOuterAlt(_localctx, 1);
-        setState(788);
-        match(NeoBasicParser::NUMBER_LIT);
+        setState(926);
+        match(NeoBasicParser::NATURAL_LIT);
+        break;
+      }
+
+      case NeoBasicParser::INTEGER_LIT: {
+        enterOuterAlt(_localctx, 2);
+        setState(927);
+        match(NeoBasicParser::INTEGER_LIT);
+        break;
+      }
+
+      case NeoBasicParser::DEC_LIT: {
+        enterOuterAlt(_localctx, 3);
+        setState(928);
+        match(NeoBasicParser::DEC_LIT);
+        break;
+      }
+
+      case NeoBasicParser::REAL_LIT: {
+        enterOuterAlt(_localctx, 4);
+        setState(929);
+        match(NeoBasicParser::REAL_LIT);
+        break;
+      }
+
+      case NeoBasicParser::RATIO_LIT: {
+        enterOuterAlt(_localctx, 5);
+        setState(930);
+        match(NeoBasicParser::RATIO_LIT);
+        break;
+      }
+
+      case NeoBasicParser::IMAGINARY_LIT: {
+        enterOuterAlt(_localctx, 6);
+        setState(931);
+        match(NeoBasicParser::IMAGINARY_LIT);
         break;
       }
 
       case NeoBasicParser::NONZERO: {
-        enterOuterAlt(_localctx, 2);
-        setState(789);
+        enterOuterAlt(_localctx, 7);
+        setState(932);
         match(NeoBasicParser::NONZERO);
-        setState(790);
+        setState(933);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::ZERO: {
-        enterOuterAlt(_localctx, 3);
-        setState(791);
+        enterOuterAlt(_localctx, 8);
+        setState(934);
         match(NeoBasicParser::ZERO);
         break;
       }
 
       case NeoBasicParser::MINVALUE: {
-        enterOuterAlt(_localctx, 4);
-        setState(792);
+        enterOuterAlt(_localctx, 9);
+        setState(935);
         match(NeoBasicParser::MINVALUE);
         break;
       }
 
       case NeoBasicParser::MAXVALUE: {
-        enterOuterAlt(_localctx, 5);
-        setState(793);
+        enterOuterAlt(_localctx, 10);
+        setState(936);
         match(NeoBasicParser::MAXVALUE);
         break;
       }
 
       case NeoBasicParser::NAN: {
-        enterOuterAlt(_localctx, 6);
-        setState(794);
+        enterOuterAlt(_localctx, 11);
+        setState(937);
         match(NeoBasicParser::NAN);
         break;
       }
 
       case NeoBasicParser::POSITIVEINFINITY: {
-        enterOuterAlt(_localctx, 7);
-        setState(795);
+        enterOuterAlt(_localctx, 12);
+        setState(938);
         match(NeoBasicParser::POSITIVEINFINITY);
         break;
       }
 
       case NeoBasicParser::NEGATIVEINFINITY: {
-        enterOuterAlt(_localctx, 8);
-        setState(796);
+        enterOuterAlt(_localctx, 13);
+        setState(939);
         match(NeoBasicParser::NEGATIVEINFINITY);
         break;
       }
@@ -9759,8 +11354,8 @@ NeoBasicParser::TemporalLiteralContext::TemporalLiteralContext(ParserRuleContext
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* NeoBasicParser::TemporalLiteralContext::TIME_LIT() {
-  return getToken(NeoBasicParser::TIME_LIT, 0);
+tree::TerminalNode* NeoBasicParser::TemporalLiteralContext::ATOM_DOT_LIT() {
+  return getToken(NeoBasicParser::ATOM_DOT_LIT, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::TemporalLiteralContext::LOCALDATE() {
@@ -9834,7 +11429,7 @@ void NeoBasicParser::TemporalLiteralContext::exitRule(tree::ParseTreeListener *l
 
 NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
   TemporalLiteralContext *_localctx = _tracker.createInstance<TemporalLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 216, NeoBasicParser::RuleTemporalLiteral);
+  enterRule(_localctx, 248, NeoBasicParser::RuleTemporalLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -9844,26 +11439,26 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
     exitRule();
   });
   try {
-    setState(830);
+    setState(973);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::TIME_LIT: {
+      case NeoBasicParser::ATOM_DOT_LIT: {
         enterOuterAlt(_localctx, 1);
-        setState(799);
-        match(NeoBasicParser::TIME_LIT);
+        setState(942);
+        match(NeoBasicParser::ATOM_DOT_LIT);
         break;
       }
 
       case NeoBasicParser::LOCALDATE: {
         enterOuterAlt(_localctx, 2);
-        setState(800);
+        setState(943);
         match(NeoBasicParser::LOCALDATE);
-        setState(802);
+        setState(945);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 55, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 60, _ctx)) {
         case 1: {
-          setState(801);
+          setState(944);
           valueConstruct();
           break;
         }
@@ -9876,14 +11471,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::LOCALDATETIME: {
         enterOuterAlt(_localctx, 3);
-        setState(804);
+        setState(947);
         match(NeoBasicParser::LOCALDATETIME);
-        setState(806);
+        setState(949);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 56, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 61, _ctx)) {
         case 1: {
-          setState(805);
+          setState(948);
           valueConstruct();
           break;
         }
@@ -9896,14 +11491,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::OFFSETDATE: {
         enterOuterAlt(_localctx, 4);
-        setState(808);
+        setState(951);
         match(NeoBasicParser::OFFSETDATE);
-        setState(810);
+        setState(953);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 57, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 62, _ctx)) {
         case 1: {
-          setState(809);
+          setState(952);
           valueConstruct();
           break;
         }
@@ -9916,14 +11511,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::OFFSETDATETIME: {
         enterOuterAlt(_localctx, 5);
-        setState(812);
+        setState(955);
         match(NeoBasicParser::OFFSETDATETIME);
-        setState(814);
+        setState(957);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 58, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 63, _ctx)) {
         case 1: {
-          setState(813);
+          setState(956);
           valueConstruct();
           break;
         }
@@ -9936,14 +11531,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::ZONEDDATE: {
         enterOuterAlt(_localctx, 6);
-        setState(816);
+        setState(959);
         match(NeoBasicParser::ZONEDDATE);
-        setState(818);
+        setState(961);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 59, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 64, _ctx)) {
         case 1: {
-          setState(817);
+          setState(960);
           valueConstruct();
           break;
         }
@@ -9956,14 +11551,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::ZONEDDATETIME: {
         enterOuterAlt(_localctx, 7);
-        setState(820);
+        setState(963);
         match(NeoBasicParser::ZONEDDATETIME);
-        setState(822);
+        setState(965);
         _errHandler->sync(this);
 
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 60, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 65, _ctx)) {
         case 1: {
-          setState(821);
+          setState(964);
           valueConstruct();
           break;
         }
@@ -9976,42 +11571,42 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
       case NeoBasicParser::TOMORROW: {
         enterOuterAlt(_localctx, 8);
-        setState(824);
+        setState(967);
         match(NeoBasicParser::TOMORROW);
         break;
       }
 
       case NeoBasicParser::TODAY: {
         enterOuterAlt(_localctx, 9);
-        setState(825);
+        setState(968);
         match(NeoBasicParser::TODAY);
         break;
       }
 
       case NeoBasicParser::NOW: {
         enterOuterAlt(_localctx, 10);
-        setState(826);
+        setState(969);
         match(NeoBasicParser::NOW);
         break;
       }
 
       case NeoBasicParser::YESTERDAY: {
         enterOuterAlt(_localctx, 11);
-        setState(827);
+        setState(970);
         match(NeoBasicParser::YESTERDAY);
         break;
       }
 
       case NeoBasicParser::EON: {
         enterOuterAlt(_localctx, 12);
-        setState(828);
+        setState(971);
         match(NeoBasicParser::EON);
         break;
       }
 
       case NeoBasicParser::EPOCH: {
         enterOuterAlt(_localctx, 13);
-        setState(829);
+        setState(972);
         match(NeoBasicParser::EPOCH);
         break;
       }
@@ -10034,6 +11629,14 @@ NeoBasicParser::TemporalLiteralContext* NeoBasicParser::temporalLiteral() {
 
 NeoBasicParser::CharacterLiteralContext::CharacterLiteralContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::CharacterLiteralContext::ASCII_LIT() {
+  return getToken(NeoBasicParser::ASCII_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::CharacterLiteralContext::WCHAR_LIT() {
+  return getToken(NeoBasicParser::WCHAR_LIT, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::CharacterLiteralContext::CHAR_LIT() {
@@ -10091,7 +11694,7 @@ void NeoBasicParser::CharacterLiteralContext::exitRule(tree::ParseTreeListener *
 
 NeoBasicParser::CharacterLiteralContext* NeoBasicParser::characterLiteral() {
   CharacterLiteralContext *_localctx = _tracker.createInstance<CharacterLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 218, NeoBasicParser::RuleCharacterLiteral);
+  enterRule(_localctx, 250, NeoBasicParser::RuleCharacterLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10101,73 +11704,87 @@ NeoBasicParser::CharacterLiteralContext* NeoBasicParser::characterLiteral() {
     exitRule();
   });
   try {
-    setState(846);
+    setState(991);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
-      case NeoBasicParser::CHAR_LIT: {
+      case NeoBasicParser::ASCII_LIT: {
         enterOuterAlt(_localctx, 1);
-        setState(832);
+        setState(975);
+        match(NeoBasicParser::ASCII_LIT);
+        break;
+      }
+
+      case NeoBasicParser::WCHAR_LIT: {
+        enterOuterAlt(_localctx, 2);
+        setState(976);
+        match(NeoBasicParser::WCHAR_LIT);
+        break;
+      }
+
+      case NeoBasicParser::CHAR_LIT: {
+        enterOuterAlt(_localctx, 3);
+        setState(977);
         match(NeoBasicParser::CHAR_LIT);
         break;
       }
 
       case NeoBasicParser::LETTER: {
-        enterOuterAlt(_localctx, 2);
-        setState(833);
+        enterOuterAlt(_localctx, 4);
+        setState(978);
         match(NeoBasicParser::LETTER);
-        setState(834);
+        setState(979);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::DIGIT: {
-        enterOuterAlt(_localctx, 3);
-        setState(835);
+        enterOuterAlt(_localctx, 5);
+        setState(980);
         match(NeoBasicParser::DIGIT);
-        setState(836);
+        setState(981);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::PUNCTUATION: {
-        enterOuterAlt(_localctx, 4);
-        setState(837);
+        enterOuterAlt(_localctx, 6);
+        setState(982);
         match(NeoBasicParser::PUNCTUATION);
-        setState(838);
+        setState(983);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::SYMBOL: {
-        enterOuterAlt(_localctx, 5);
-        setState(839);
+        enterOuterAlt(_localctx, 7);
+        setState(984);
         match(NeoBasicParser::SYMBOL);
-        setState(840);
+        setState(985);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::SEPARATOR: {
-        enterOuterAlt(_localctx, 6);
-        setState(841);
+        enterOuterAlt(_localctx, 8);
+        setState(986);
         match(NeoBasicParser::SEPARATOR);
-        setState(842);
+        setState(987);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::NONPRINTABLE: {
-        enterOuterAlt(_localctx, 7);
-        setState(843);
+        enterOuterAlt(_localctx, 9);
+        setState(988);
         match(NeoBasicParser::NONPRINTABLE);
-        setState(844);
+        setState(989);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::NULL_: {
-        enterOuterAlt(_localctx, 8);
-        setState(845);
+        enterOuterAlt(_localctx, 10);
+        setState(990);
         match(NeoBasicParser::NULL_);
         break;
       }
@@ -10196,8 +11813,24 @@ tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::HEREDOC_LITERAL() {
   return getToken(NeoBasicParser::HEREDOC_LITERAL, 0);
 }
 
-tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::SEQUENCE_LIT() {
-  return getToken(NeoBasicParser::SEQUENCE_LIT, 0);
+tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::REGULAR_EXPRESSION_LIT() {
+  return getToken(NeoBasicParser::REGULAR_EXPRESSION_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::WSTRING_LIT() {
+  return getToken(NeoBasicParser::WSTRING_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::STRING_LIT() {
+  return getToken(NeoBasicParser::STRING_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::ATOM_DOT_LIT() {
+  return getToken(NeoBasicParser::ATOM_DOT_LIT, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::BINARY_LIT() {
+  return getToken(NeoBasicParser::BINARY_LIT, 0);
 }
 
 tree::TerminalNode* NeoBasicParser::SequenceLiteralContext::NONBLANK() {
@@ -10231,7 +11864,7 @@ void NeoBasicParser::SequenceLiteralContext::exitRule(tree::ParseTreeListener *l
 
 NeoBasicParser::SequenceLiteralContext* NeoBasicParser::sequenceLiteral() {
   SequenceLiteralContext *_localctx = _tracker.createInstance<SequenceLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 220, NeoBasicParser::RuleSequenceLiteral);
+  enterRule(_localctx, 252, NeoBasicParser::RuleSequenceLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10241,35 +11874,63 @@ NeoBasicParser::SequenceLiteralContext* NeoBasicParser::sequenceLiteral() {
     exitRule();
   });
   try {
-    setState(853);
+    setState(1002);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::HEREDOC_LITERAL: {
         enterOuterAlt(_localctx, 1);
-        setState(848);
+        setState(993);
         match(NeoBasicParser::HEREDOC_LITERAL);
         break;
       }
 
-      case NeoBasicParser::SEQUENCE_LIT: {
+      case NeoBasicParser::REGULAR_EXPRESSION_LIT: {
         enterOuterAlt(_localctx, 2);
-        setState(849);
-        match(NeoBasicParser::SEQUENCE_LIT);
+        setState(994);
+        match(NeoBasicParser::REGULAR_EXPRESSION_LIT);
+        break;
+      }
+
+      case NeoBasicParser::WSTRING_LIT: {
+        enterOuterAlt(_localctx, 3);
+        setState(995);
+        match(NeoBasicParser::WSTRING_LIT);
+        break;
+      }
+
+      case NeoBasicParser::STRING_LIT: {
+        enterOuterAlt(_localctx, 4);
+        setState(996);
+        match(NeoBasicParser::STRING_LIT);
+        break;
+      }
+
+      case NeoBasicParser::ATOM_DOT_LIT: {
+        enterOuterAlt(_localctx, 5);
+        setState(997);
+        match(NeoBasicParser::ATOM_DOT_LIT);
+        break;
+      }
+
+      case NeoBasicParser::BINARY_LIT: {
+        enterOuterAlt(_localctx, 6);
+        setState(998);
+        match(NeoBasicParser::BINARY_LIT);
         break;
       }
 
       case NeoBasicParser::NONBLANK: {
-        enterOuterAlt(_localctx, 3);
-        setState(850);
+        enterOuterAlt(_localctx, 7);
+        setState(999);
         match(NeoBasicParser::NONBLANK);
-        setState(851);
+        setState(1000);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::BLANK: {
-        enterOuterAlt(_localctx, 4);
-        setState(852);
+        enterOuterAlt(_localctx, 8);
+        setState(1001);
         match(NeoBasicParser::BLANK);
         break;
       }
@@ -10277,59 +11938,6 @@ NeoBasicParser::SequenceLiteralContext* NeoBasicParser::sequenceLiteral() {
     default:
       throw NoViableAltException(this);
     }
-   
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-
-  return _localctx;
-}
-
-//----------------- CompositeLiteralContext ------------------------------------------------------------------
-
-NeoBasicParser::CompositeLiteralContext::CompositeLiteralContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* NeoBasicParser::CompositeLiteralContext::RANGE_LIT() {
-  return getToken(NeoBasicParser::RANGE_LIT, 0);
-}
-
-
-size_t NeoBasicParser::CompositeLiteralContext::getRuleIndex() const {
-  return NeoBasicParser::RuleCompositeLiteral;
-}
-
-void NeoBasicParser::CompositeLiteralContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterCompositeLiteral(this);
-}
-
-void NeoBasicParser::CompositeLiteralContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitCompositeLiteral(this);
-}
-
-NeoBasicParser::CompositeLiteralContext* NeoBasicParser::compositeLiteral() {
-  CompositeLiteralContext *_localctx = _tracker.createInstance<CompositeLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 222, NeoBasicParser::RuleCompositeLiteral);
-
-#if __cplusplus > 201703L
-  auto onExit = finally([=, this] {
-#else
-  auto onExit = finally([=] {
-#endif
-    exitRule();
-  });
-  try {
-    enterOuterAlt(_localctx, 1);
-    setState(855);
-    match(NeoBasicParser::RANGE_LIT);
    
   }
   catch (RecognitionException &e) {
@@ -10382,7 +11990,7 @@ void NeoBasicParser::OptionLiteralContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::OptionLiteralContext* NeoBasicParser::optionLiteral() {
   OptionLiteralContext *_localctx = _tracker.createInstance<OptionLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 224, NeoBasicParser::RuleOptionLiteral);
+  enterRule(_localctx, 254, NeoBasicParser::RuleOptionLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10392,13 +12000,13 @@ NeoBasicParser::OptionLiteralContext* NeoBasicParser::optionLiteral() {
     exitRule();
   });
   try {
-    setState(861);
+    setState(1008);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::OKAY:
       case NeoBasicParser::FAIL: {
         enterOuterAlt(_localctx, 1);
-        setState(857);
+        setState(1004);
         resultLiteral();
         break;
       }
@@ -10406,7 +12014,7 @@ NeoBasicParser::OptionLiteralContext* NeoBasicParser::optionLiteral() {
       case NeoBasicParser::SOME:
       case NeoBasicParser::NONE: {
         enterOuterAlt(_localctx, 2);
-        setState(858);
+        setState(1005);
         maybeLiteral();
         break;
       }
@@ -10414,7 +12022,7 @@ NeoBasicParser::OptionLiteralContext* NeoBasicParser::optionLiteral() {
       case NeoBasicParser::YEA:
       case NeoBasicParser::NAY: {
         enterOuterAlt(_localctx, 3);
-        setState(859);
+        setState(1006);
         eitherLiteral();
         break;
       }
@@ -10422,7 +12030,7 @@ NeoBasicParser::OptionLiteralContext* NeoBasicParser::optionLiteral() {
       case NeoBasicParser::DATA:
       case NeoBasicParser::EOT: {
         enterOuterAlt(_localctx, 4);
-        setState(860);
+        setState(1007);
         streamLiteral();
         break;
       }
@@ -10478,7 +12086,7 @@ void NeoBasicParser::ResultLiteralContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::ResultLiteralContext* NeoBasicParser::resultLiteral() {
   ResultLiteralContext *_localctx = _tracker.createInstance<ResultLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 226, NeoBasicParser::RuleResultLiteral);
+  enterRule(_localctx, 256, NeoBasicParser::RuleResultLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10488,23 +12096,23 @@ NeoBasicParser::ResultLiteralContext* NeoBasicParser::resultLiteral() {
     exitRule();
   });
   try {
-    setState(867);
+    setState(1014);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::OKAY: {
         enterOuterAlt(_localctx, 1);
-        setState(863);
+        setState(1010);
         match(NeoBasicParser::OKAY);
-        setState(864);
+        setState(1011);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::FAIL: {
         enterOuterAlt(_localctx, 2);
-        setState(865);
+        setState(1012);
         match(NeoBasicParser::FAIL);
-        setState(866);
+        setState(1013);
         valueConstruct();
         break;
       }
@@ -10560,7 +12168,7 @@ void NeoBasicParser::MaybeLiteralContext::exitRule(tree::ParseTreeListener *list
 
 NeoBasicParser::MaybeLiteralContext* NeoBasicParser::maybeLiteral() {
   MaybeLiteralContext *_localctx = _tracker.createInstance<MaybeLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 228, NeoBasicParser::RuleMaybeLiteral);
+  enterRule(_localctx, 258, NeoBasicParser::RuleMaybeLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10570,21 +12178,21 @@ NeoBasicParser::MaybeLiteralContext* NeoBasicParser::maybeLiteral() {
     exitRule();
   });
   try {
-    setState(872);
+    setState(1019);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::SOME: {
         enterOuterAlt(_localctx, 1);
-        setState(869);
+        setState(1016);
         match(NeoBasicParser::SOME);
-        setState(870);
+        setState(1017);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::NONE: {
         enterOuterAlt(_localctx, 2);
-        setState(871);
+        setState(1018);
         match(NeoBasicParser::NONE);
         break;
       }
@@ -10640,7 +12248,7 @@ void NeoBasicParser::EitherLiteralContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::EitherLiteralContext* NeoBasicParser::eitherLiteral() {
   EitherLiteralContext *_localctx = _tracker.createInstance<EitherLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 230, NeoBasicParser::RuleEitherLiteral);
+  enterRule(_localctx, 260, NeoBasicParser::RuleEitherLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10650,23 +12258,23 @@ NeoBasicParser::EitherLiteralContext* NeoBasicParser::eitherLiteral() {
     exitRule();
   });
   try {
-    setState(878);
+    setState(1025);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::YEA: {
         enterOuterAlt(_localctx, 1);
-        setState(874);
+        setState(1021);
         match(NeoBasicParser::YEA);
-        setState(875);
+        setState(1022);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::NAY: {
         enterOuterAlt(_localctx, 2);
-        setState(876);
+        setState(1023);
         match(NeoBasicParser::NAY);
-        setState(877);
+        setState(1024);
         valueConstruct();
         break;
       }
@@ -10722,7 +12330,7 @@ void NeoBasicParser::StreamLiteralContext::exitRule(tree::ParseTreeListener *lis
 
 NeoBasicParser::StreamLiteralContext* NeoBasicParser::streamLiteral() {
   StreamLiteralContext *_localctx = _tracker.createInstance<StreamLiteralContext>(_ctx, getState());
-  enterRule(_localctx, 232, NeoBasicParser::RuleStreamLiteral);
+  enterRule(_localctx, 262, NeoBasicParser::RuleStreamLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -10732,21 +12340,21 @@ NeoBasicParser::StreamLiteralContext* NeoBasicParser::streamLiteral() {
     exitRule();
   });
   try {
-    setState(883);
+    setState(1030);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case NeoBasicParser::DATA: {
         enterOuterAlt(_localctx, 1);
-        setState(880);
+        setState(1027);
         match(NeoBasicParser::DATA);
-        setState(881);
+        setState(1028);
         valueConstruct();
         break;
       }
 
       case NeoBasicParser::EOT: {
         enterOuterAlt(_localctx, 2);
-        setState(882);
+        setState(1029);
         match(NeoBasicParser::EOT);
         break;
       }
@@ -10765,10 +12373,93 @@ NeoBasicParser::StreamLiteralContext* NeoBasicParser::streamLiteral() {
   return _localctx;
 }
 
+//----------------- LoggingLevelContext ------------------------------------------------------------------
+
+NeoBasicParser::LoggingLevelContext::LoggingLevelContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::TRACE() {
+  return getToken(NeoBasicParser::TRACE, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::DEBUG() {
+  return getToken(NeoBasicParser::DEBUG, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::INFO() {
+  return getToken(NeoBasicParser::INFO, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::WARN() {
+  return getToken(NeoBasicParser::WARN, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::ERROR() {
+  return getToken(NeoBasicParser::ERROR, 0);
+}
+
+tree::TerminalNode* NeoBasicParser::LoggingLevelContext::FATAL() {
+  return getToken(NeoBasicParser::FATAL, 0);
+}
+
+
+size_t NeoBasicParser::LoggingLevelContext::getRuleIndex() const {
+  return NeoBasicParser::RuleLoggingLevel;
+}
+
+void NeoBasicParser::LoggingLevelContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterLoggingLevel(this);
+}
+
+void NeoBasicParser::LoggingLevelContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<NeoBasicParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitLoggingLevel(this);
+}
+
+NeoBasicParser::LoggingLevelContext* NeoBasicParser::loggingLevel() {
+  LoggingLevelContext *_localctx = _tracker.createInstance<LoggingLevelContext>(_ctx, getState());
+  enterRule(_localctx, 264, NeoBasicParser::RuleLoggingLevel);
+  size_t _la = 0;
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    enterOuterAlt(_localctx, 1);
+    setState(1032);
+    _la = _input->LA(1);
+    if (!(((((_la - 507) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 507)) & 63) != 0))) {
+    _errHandler->recoverInline(this);
+    }
+    else {
+      _errHandler->reportMatch(this);
+      consume();
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
 bool NeoBasicParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 87: return expressionSempred(antlrcpp::downCast<ExpressionContext *>(context), predicateIndex);
-    case 88: return primaryExpressionSempred(antlrcpp::downCast<PrimaryExpressionContext *>(context), predicateIndex);
+    case 100: return expressionSempred(antlrcpp::downCast<ExpressionContext *>(context), predicateIndex);
+    case 101: return primaryExpressionSempred(antlrcpp::downCast<PrimaryExpressionContext *>(context), predicateIndex);
+    case 109: return rangeExpressionSempred(antlrcpp::downCast<RangeExpressionContext *>(context), predicateIndex);
 
   default:
     break;
@@ -10778,21 +12469,21 @@ bool NeoBasicParser::sempred(RuleContext *context, size_t ruleIndex, size_t pred
 
 bool NeoBasicParser::expressionSempred(ExpressionContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
-    case 0: return precpred(_ctx, 16);
-    case 1: return precpred(_ctx, 15);
-    case 2: return precpred(_ctx, 14);
-    case 3: return precpred(_ctx, 13);
-    case 4: return precpred(_ctx, 12);
-    case 5: return precpred(_ctx, 11);
-    case 6: return precpred(_ctx, 10);
-    case 7: return precpred(_ctx, 9);
-    case 8: return precpred(_ctx, 8);
-    case 9: return precpred(_ctx, 7);
-    case 10: return precpred(_ctx, 6);
-    case 11: return precpred(_ctx, 5);
-    case 12: return precpred(_ctx, 4);
-    case 13: return precpred(_ctx, 17);
-    case 14: return precpred(_ctx, 3);
+    case 0: return precpred(_ctx, 17);
+    case 1: return precpred(_ctx, 16);
+    case 2: return precpred(_ctx, 15);
+    case 3: return precpred(_ctx, 14);
+    case 4: return precpred(_ctx, 13);
+    case 5: return precpred(_ctx, 12);
+    case 6: return precpred(_ctx, 11);
+    case 7: return precpred(_ctx, 10);
+    case 8: return precpred(_ctx, 9);
+    case 9: return precpred(_ctx, 8);
+    case 10: return precpred(_ctx, 7);
+    case 11: return precpred(_ctx, 6);
+    case 12: return precpred(_ctx, 5);
+    case 13: return precpred(_ctx, 18);
+    case 14: return precpred(_ctx, 4);
 
   default:
     break;
@@ -10807,6 +12498,16 @@ bool NeoBasicParser::primaryExpressionSempred(PrimaryExpressionContext *_localct
     case 17: return precpred(_ctx, 3);
     case 18: return precpred(_ctx, 2);
     case 19: return precpred(_ctx, 1);
+
+  default:
+    break;
+  }
+  return true;
+}
+
+bool NeoBasicParser::rangeExpressionSempred(RangeExpressionContext *_localctx, size_t predicateIndex) {
+  switch (predicateIndex) {
+    case 20: return precpred(_ctx, 1);
 
   default:
     break;

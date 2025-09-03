@@ -39,56 +39,80 @@ public:
   virtual void enterPragmaDirective(NeoBasicParser::PragmaDirectiveContext * /*ctx*/) override { }
   virtual void exitPragmaDirective(NeoBasicParser::PragmaDirectiveContext * /*ctx*/) override { }
 
-  virtual void enterCanaryTestDirective(NeoBasicParser::CanaryTestDirectiveContext * /*ctx*/) override { }
-  virtual void exitCanaryTestDirective(NeoBasicParser::CanaryTestDirectiveContext * /*ctx*/) override { }
+  virtual void enterCanaryTestingDirective(NeoBasicParser::CanaryTestingDirectiveContext * /*ctx*/) override { }
+  virtual void exitCanaryTestingDirective(NeoBasicParser::CanaryTestingDirectiveContext * /*ctx*/) override { }
 
   virtual void enterDeclaration(NeoBasicParser::DeclarationContext * /*ctx*/) override { }
   virtual void exitDeclaration(NeoBasicParser::DeclarationContext * /*ctx*/) override { }
 
-  virtual void enterConstDeclaration(NeoBasicParser::ConstDeclarationContext * /*ctx*/) override { }
-  virtual void exitConstDeclaration(NeoBasicParser::ConstDeclarationContext * /*ctx*/) override { }
+  virtual void enterAccessSpecifier(NeoBasicParser::AccessSpecifierContext * /*ctx*/) override { }
+  virtual void exitAccessSpecifier(NeoBasicParser::AccessSpecifierContext * /*ctx*/) override { }
+
+  virtual void enterConstSentence(NeoBasicParser::ConstSentenceContext * /*ctx*/) override { }
+  virtual void exitConstSentence(NeoBasicParser::ConstSentenceContext * /*ctx*/) override { }
+
+  virtual void enterConstSpecifier(NeoBasicParser::ConstSpecifierContext * /*ctx*/) override { }
+  virtual void exitConstSpecifier(NeoBasicParser::ConstSpecifierContext * /*ctx*/) override { }
 
   virtual void enterConstClause(NeoBasicParser::ConstClauseContext * /*ctx*/) override { }
   virtual void exitConstClause(NeoBasicParser::ConstClauseContext * /*ctx*/) override { }
 
-  virtual void enterConstants(NeoBasicParser::ConstantsContext * /*ctx*/) override { }
-  virtual void exitConstants(NeoBasicParser::ConstantsContext * /*ctx*/) override { }
+  virtual void enterConstDeclare(NeoBasicParser::ConstDeclareContext * /*ctx*/) override { }
+  virtual void exitConstDeclare(NeoBasicParser::ConstDeclareContext * /*ctx*/) override { }
 
-  virtual void enterConstant(NeoBasicParser::ConstantContext * /*ctx*/) override { }
-  virtual void exitConstant(NeoBasicParser::ConstantContext * /*ctx*/) override { }
+  virtual void enterConstDeclareSingle(NeoBasicParser::ConstDeclareSingleContext * /*ctx*/) override { }
+  virtual void exitConstDeclareSingle(NeoBasicParser::ConstDeclareSingleContext * /*ctx*/) override { }
 
-  virtual void enterValDeclaration(NeoBasicParser::ValDeclarationContext * /*ctx*/) override { }
-  virtual void exitValDeclaration(NeoBasicParser::ValDeclarationContext * /*ctx*/) override { }
+  virtual void enterConstDeclareMultiple(NeoBasicParser::ConstDeclareMultipleContext * /*ctx*/) override { }
+  virtual void exitConstDeclareMultiple(NeoBasicParser::ConstDeclareMultipleContext * /*ctx*/) override { }
+
+  virtual void enterConstDeclareParallel(NeoBasicParser::ConstDeclareParallelContext * /*ctx*/) override { }
+  virtual void exitConstDeclareParallel(NeoBasicParser::ConstDeclareParallelContext * /*ctx*/) override { }
+
+  virtual void enterValSentence(NeoBasicParser::ValSentenceContext * /*ctx*/) override { }
+  virtual void exitValSentence(NeoBasicParser::ValSentenceContext * /*ctx*/) override { }
+
+  virtual void enterValSpecifier(NeoBasicParser::ValSpecifierContext * /*ctx*/) override { }
+  virtual void exitValSpecifier(NeoBasicParser::ValSpecifierContext * /*ctx*/) override { }
 
   virtual void enterValClause(NeoBasicParser::ValClauseContext * /*ctx*/) override { }
   virtual void exitValClause(NeoBasicParser::ValClauseContext * /*ctx*/) override { }
 
-  virtual void enterVarDeclaration(NeoBasicParser::VarDeclarationContext * /*ctx*/) override { }
-  virtual void exitVarDeclaration(NeoBasicParser::VarDeclarationContext * /*ctx*/) override { }
+  virtual void enterValDeclare(NeoBasicParser::ValDeclareContext * /*ctx*/) override { }
+  virtual void exitValDeclare(NeoBasicParser::ValDeclareContext * /*ctx*/) override { }
+
+  virtual void enterValDeclareSingle(NeoBasicParser::ValDeclareSingleContext * /*ctx*/) override { }
+  virtual void exitValDeclareSingle(NeoBasicParser::ValDeclareSingleContext * /*ctx*/) override { }
+
+  virtual void enterValDeclareMultiple(NeoBasicParser::ValDeclareMultipleContext * /*ctx*/) override { }
+  virtual void exitValDeclareMultiple(NeoBasicParser::ValDeclareMultipleContext * /*ctx*/) override { }
+
+  virtual void enterValDeclareParallel(NeoBasicParser::ValDeclareParallelContext * /*ctx*/) override { }
+  virtual void exitValDeclareParallel(NeoBasicParser::ValDeclareParallelContext * /*ctx*/) override { }
+
+  virtual void enterVarSentence(NeoBasicParser::VarSentenceContext * /*ctx*/) override { }
+  virtual void exitVarSentence(NeoBasicParser::VarSentenceContext * /*ctx*/) override { }
+
+  virtual void enterVarSpecifier(NeoBasicParser::VarSpecifierContext * /*ctx*/) override { }
+  virtual void exitVarSpecifier(NeoBasicParser::VarSpecifierContext * /*ctx*/) override { }
 
   virtual void enterVarClause(NeoBasicParser::VarClauseContext * /*ctx*/) override { }
   virtual void exitVarClause(NeoBasicParser::VarClauseContext * /*ctx*/) override { }
 
-  virtual void enterVariables(NeoBasicParser::VariablesContext * /*ctx*/) override { }
-  virtual void exitVariables(NeoBasicParser::VariablesContext * /*ctx*/) override { }
+  virtual void enterVarDeclare(NeoBasicParser::VarDeclareContext * /*ctx*/) override { }
+  virtual void exitVarDeclare(NeoBasicParser::VarDeclareContext * /*ctx*/) override { }
 
-  virtual void enterVariable(NeoBasicParser::VariableContext * /*ctx*/) override { }
-  virtual void exitVariable(NeoBasicParser::VariableContext * /*ctx*/) override { }
+  virtual void enterVarDeclareSingle(NeoBasicParser::VarDeclareSingleContext * /*ctx*/) override { }
+  virtual void exitVarDeclareSingle(NeoBasicParser::VarDeclareSingleContext * /*ctx*/) override { }
+
+  virtual void enterVarDeclareMultiple(NeoBasicParser::VarDeclareMultipleContext * /*ctx*/) override { }
+  virtual void exitVarDeclareMultiple(NeoBasicParser::VarDeclareMultipleContext * /*ctx*/) override { }
+
+  virtual void enterVarDeclareParallel(NeoBasicParser::VarDeclareParallelContext * /*ctx*/) override { }
+  virtual void exitVarDeclareParallel(NeoBasicParser::VarDeclareParallelContext * /*ctx*/) override { }
 
   virtual void enterStatement(NeoBasicParser::StatementContext * /*ctx*/) override { }
   virtual void exitStatement(NeoBasicParser::StatementContext * /*ctx*/) override { }
-
-  virtual void enterLabeledStatement(NeoBasicParser::LabeledStatementContext * /*ctx*/) override { }
-  virtual void exitLabeledStatement(NeoBasicParser::LabeledStatementContext * /*ctx*/) override { }
-
-  virtual void enterDebugingStatement(NeoBasicParser::DebugingStatementContext * /*ctx*/) override { }
-  virtual void exitDebugingStatement(NeoBasicParser::DebugingStatementContext * /*ctx*/) override { }
-
-  virtual void enterLoggingStatement(NeoBasicParser::LoggingStatementContext * /*ctx*/) override { }
-  virtual void exitLoggingStatement(NeoBasicParser::LoggingStatementContext * /*ctx*/) override { }
-
-  virtual void enterSExpressionStatement(NeoBasicParser::SExpressionStatementContext * /*ctx*/) override { }
-  virtual void exitSExpressionStatement(NeoBasicParser::SExpressionStatementContext * /*ctx*/) override { }
 
   virtual void enterSimpleStatement(NeoBasicParser::SimpleStatementContext * /*ctx*/) override { }
   virtual void exitSimpleStatement(NeoBasicParser::SimpleStatementContext * /*ctx*/) override { }
@@ -101,6 +125,15 @@ public:
 
   virtual void enterAssignmentStatement(NeoBasicParser::AssignmentStatementContext * /*ctx*/) override { }
   virtual void exitAssignmentStatement(NeoBasicParser::AssignmentStatementContext * /*ctx*/) override { }
+
+  virtual void enterAssignmentSingle(NeoBasicParser::AssignmentSingleContext * /*ctx*/) override { }
+  virtual void exitAssignmentSingle(NeoBasicParser::AssignmentSingleContext * /*ctx*/) override { }
+
+  virtual void enterAssignmentMultiple(NeoBasicParser::AssignmentMultipleContext * /*ctx*/) override { }
+  virtual void exitAssignmentMultiple(NeoBasicParser::AssignmentMultipleContext * /*ctx*/) override { }
+
+  virtual void enterAssignmentParallel(NeoBasicParser::AssignmentParallelContext * /*ctx*/) override { }
+  virtual void exitAssignmentParallel(NeoBasicParser::AssignmentParallelContext * /*ctx*/) override { }
 
   virtual void enterCompoundStatement(NeoBasicParser::CompoundStatementContext * /*ctx*/) override { }
   virtual void exitCompoundStatement(NeoBasicParser::CompoundStatementContext * /*ctx*/) override { }
@@ -195,8 +228,14 @@ public:
   virtual void enterSingleAssignmentOperator(NeoBasicParser::SingleAssignmentOperatorContext * /*ctx*/) override { }
   virtual void exitSingleAssignmentOperator(NeoBasicParser::SingleAssignmentOperatorContext * /*ctx*/) override { }
 
+  virtual void enterMultipleAssignmentOperator(NeoBasicParser::MultipleAssignmentOperatorContext * /*ctx*/) override { }
+  virtual void exitMultipleAssignmentOperator(NeoBasicParser::MultipleAssignmentOperatorContext * /*ctx*/) override { }
+
   virtual void enterCompoundAssignmentOperator(NeoBasicParser::CompoundAssignmentOperatorContext * /*ctx*/) override { }
   virtual void exitCompoundAssignmentOperator(NeoBasicParser::CompoundAssignmentOperatorContext * /*ctx*/) override { }
+
+  virtual void enterLabelIdentifier(NeoBasicParser::LabelIdentifierContext * /*ctx*/) override { }
+  virtual void exitLabelIdentifier(NeoBasicParser::LabelIdentifierContext * /*ctx*/) override { }
 
   virtual void enterSymbolIdentifier(NeoBasicParser::SymbolIdentifierContext * /*ctx*/) override { }
   virtual void exitSymbolIdentifier(NeoBasicParser::SymbolIdentifierContext * /*ctx*/) override { }
@@ -273,8 +312,8 @@ public:
   virtual void enterExpressions(NeoBasicParser::ExpressionsContext * /*ctx*/) override { }
   virtual void exitExpressions(NeoBasicParser::ExpressionsContext * /*ctx*/) override { }
 
-  virtual void enterJuxtapositionExpression(NeoBasicParser::JuxtapositionExpressionContext * /*ctx*/) override { }
-  virtual void exitJuxtapositionExpression(NeoBasicParser::JuxtapositionExpressionContext * /*ctx*/) override { }
+  virtual void enterJuxtapositionExpressions(NeoBasicParser::JuxtapositionExpressionsContext * /*ctx*/) override { }
+  virtual void exitJuxtapositionExpressions(NeoBasicParser::JuxtapositionExpressionsContext * /*ctx*/) override { }
 
   virtual void enterPrimaryExpressions(NeoBasicParser::PrimaryExpressionsContext * /*ctx*/) override { }
   virtual void exitPrimaryExpressions(NeoBasicParser::PrimaryExpressionsContext * /*ctx*/) override { }
@@ -306,6 +345,9 @@ public:
   virtual void enterSlicingRange(NeoBasicParser::SlicingRangeContext * /*ctx*/) override { }
   virtual void exitSlicingRange(NeoBasicParser::SlicingRangeContext * /*ctx*/) override { }
 
+  virtual void enterRangeExpression(NeoBasicParser::RangeExpressionContext * /*ctx*/) override { }
+  virtual void exitRangeExpression(NeoBasicParser::RangeExpressionContext * /*ctx*/) override { }
+
   virtual void enterArguments(NeoBasicParser::ArgumentsContext * /*ctx*/) override { }
   virtual void exitArguments(NeoBasicParser::ArgumentsContext * /*ctx*/) override { }
 
@@ -323,6 +365,12 @@ public:
 
   virtual void enterGuardDefault(NeoBasicParser::GuardDefaultContext * /*ctx*/) override { }
   virtual void exitGuardDefault(NeoBasicParser::GuardDefaultContext * /*ctx*/) override { }
+
+  virtual void enterMacroExpression(NeoBasicParser::MacroExpressionContext * /*ctx*/) override { }
+  virtual void exitMacroExpression(NeoBasicParser::MacroExpressionContext * /*ctx*/) override { }
+
+  virtual void enterMacroCall(NeoBasicParser::MacroCallContext * /*ctx*/) override { }
+  virtual void exitMacroCall(NeoBasicParser::MacroCallContext * /*ctx*/) override { }
 
   virtual void enterLiteral(NeoBasicParser::LiteralContext * /*ctx*/) override { }
   virtual void exitLiteral(NeoBasicParser::LiteralContext * /*ctx*/) override { }
@@ -351,9 +399,6 @@ public:
   virtual void enterSequenceLiteral(NeoBasicParser::SequenceLiteralContext * /*ctx*/) override { }
   virtual void exitSequenceLiteral(NeoBasicParser::SequenceLiteralContext * /*ctx*/) override { }
 
-  virtual void enterCompositeLiteral(NeoBasicParser::CompositeLiteralContext * /*ctx*/) override { }
-  virtual void exitCompositeLiteral(NeoBasicParser::CompositeLiteralContext * /*ctx*/) override { }
-
   virtual void enterOptionLiteral(NeoBasicParser::OptionLiteralContext * /*ctx*/) override { }
   virtual void exitOptionLiteral(NeoBasicParser::OptionLiteralContext * /*ctx*/) override { }
 
@@ -368,6 +413,9 @@ public:
 
   virtual void enterStreamLiteral(NeoBasicParser::StreamLiteralContext * /*ctx*/) override { }
   virtual void exitStreamLiteral(NeoBasicParser::StreamLiteralContext * /*ctx*/) override { }
+
+  virtual void enterLoggingLevel(NeoBasicParser::LoggingLevelContext * /*ctx*/) override { }
+  virtual void exitLoggingLevel(NeoBasicParser::LoggingLevelContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }
